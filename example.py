@@ -53,8 +53,8 @@ search2 = cks.cricketstats.search(allplayers=True)
 # First we can setup our arguments.
 # Required input arguments:
 database ="/Users/ved14/Downloads/all_json.zip"
-from_date = (2024, 5, 25) # The (Year, Month, Day) from which to start search
-to_date = (2024, 5, 27) # The (Year, Month, Day) from which to end search
+from_date = (2010, 5, 1) # The (Year, Month, Day) from which to start search
+to_date = (2024, 6, 30) # The (Year, Month, Day) from which to end search
 matchtype = ["T20"] # Options: ["Test", "MDM", "ODI", "ODM", "T20", "IT20"] Explanation of what these mean is found at https://cricsheet.org/downloads/
 
 # Optional Arguments:
@@ -97,7 +97,7 @@ print(search2.result[["Games", "Batting Avg", "Score MeanAD", "Balls Faced"]])
 # print(search1.inningsresult)
 
 # If you want to save the search result as a csv file that you can open in excel you can use the line below.
-search2.result.to_csv("./iplfinal.csv")
+search2.result.to_csv("./t20.csv")
 
 """ 4. Plotting """
 # You can use the plotting methods from the pandas package or matplotlib.pyplot for plotting.
