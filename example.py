@@ -22,6 +22,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+
 # If you installed cricketstats by pip import the module with line below
 import cricketstats as cks
 
@@ -52,8 +53,8 @@ search2 = cks.cricketstats.search(allplayers=True)
 
 # First we can setup our arguments.
 # Required input arguments:
-database ="/Users/ved14/Downloads/all_json.zip"
-from_date = (2010, 5, 1) # The (Year, Month, Day) from which to start search
+database ="/Users/ayush_arya/Downloads/Inter_IIT_Tech_13/dream11-inter-iit/all_json.zip"
+from_date = (2024, 5, 1) # The (Year, Month, Day) from which to start search
 to_date = (2024, 6, 30) # The (Year, Month, Day) from which to end search
 matchtype = ["T20"] # Options: ["Test", "MDM", "ODI", "ODM", "T20", "IT20"] Explanation of what these mean is found at https://cricsheet.org/downloads/
 
