@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: rgb(73, 42, 42);
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.test-box {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 80%;
+  height: 80%;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  border: 2px dotted rgb(96 139 168);
+}
+
+.players-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.badge-bg {
+  background-image: url("../../public/badge.svg");
+  background-repeat: no-repeat;
+  padding: 10px;
+  margin: 1rem;
+  width: 11.6rem;
+  height: 19rem;
+}
+
+.player-image {
+  min-width: 100px;
+  max-width: 120px;
+  height: 120px;
+  border-radius: 5%;
+  object-fit: cover;
+}
+
+.flag {
+  width: 30px;
+  height: 20px;
+  object-fit: cover;
+}
+
+.flag-hr {
+  width: 30px;
+  border: 1px solid #c0af64;
+  margin: 5px 0;
+}
+
+.player-image-container {
+  display: flex;
+  margin-top: 16%;
+}
+
+.flag-container {
+  flex: 0 0 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+}
+
+.image-container {
+  flex: 0 0 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.player-name {
+  text-transform: uppercase;
+  font-weight: bold;
+  text-align: center;
+  padding: 2px 0;
+}
+
+.player-bio {
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
+  justify-content: center;
+}
+
+.player-bio-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.player-hr {
+  width: 130px;
+  border: 1px solid #c0af64;
+}
