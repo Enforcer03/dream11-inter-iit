@@ -1,4 +1,6 @@
 import json
+import math
+import numpy as np
 from calculator import calculate_fantasy_points_t20
 file_path = '/Users/ved14/Library/CloudStorage/GoogleDrive-v_umrajkar@ma.iitr.ac.in/My Drive/SEM7/extras/dream11-inter-iit/player_match_data.json'
 
@@ -11,11 +13,11 @@ for player, matches in player_data.items():
     fantasy_points[player] = {}
     for match_id, stats in matches.items():
         # Calculate points for each match
-        points = calculate_fantasy_points_t20(stats)
-        fantasy_points[player][match_id] = points
+        split = calculate_fantasy_points_t20(stats)
+        fantasy_points[player][match_id]=split
 
-# Display or store results
-print(fantasy_points)
+# print(fantasy_points)
+
 
 # Optionally, write results to a new JSON file
 output_path = '/Users/ved14/Library/CloudStorage/GoogleDrive-v_umrajkar@ma.iitr.ac.in/My Drive/SEM7/extras/dream11-inter-iit/player_fantasy_points.json'

@@ -1,12 +1,8 @@
 import json
 
-
-
-# Function to calculate fantasy points based on the provided rules
-def calculate_fantasy_points_t20(player_stats):
+# Function to calculate batting points
+def calculate_batting_points(player_stats):
     points = 0
-
-    # Batting Points Calculation
     runs_scored = player_stats.get("Runs Scored", 0)
     boundaries = player_stats.get("Fours", 0)
     sixes = player_stats.get("Sixes", 0)
@@ -14,8 +10,8 @@ def calculate_fantasy_points_t20(player_stats):
     try:
         how_out = player_stats.get("how Out", "").lower()
     except AttributeError:
-        print("how_out issue - not existing")
-        how_out = 'out'
+        print("how out issue ")
+        how_out = "nan"
     
     # +1 point per run
     points += runs_scored * 1
@@ -52,7 +48,11 @@ def calculate_fantasy_points_t20(player_stats):
         elif strike_rate < 50:
             points -= 6
 
-    # Bowling Points Calculation
+    return points
+
+# Function to calculate bowling points
+def calculate_bowling_points(player_stats):
+    points = 0
     wickets = player_stats.get("Wickets", 0)
     overs_bowled = player_stats.get("Overs Bowled", 0)
     economy_rate = player_stats.get("Economy Rate", 0)
@@ -89,7 +89,11 @@ def calculate_fantasy_points_t20(player_stats):
         elif economy_rate > 12:
             points -= 6
 
-    # Fielding Points Calculation
+    return points
+
+# Function to calculate fielding points
+def calculate_fielding_points(player_stats):
+    points = 0
     catches_taken = player_stats.get("Catches Taken", 0)
     stumped_outs = player_stats.get("Stumped Outs Made", 0)
     run_outs_direct = player_stats.get("Direct Hit Run Outs Made", 0)
@@ -107,3 +111,17 @@ def calculate_fantasy_points_t20(player_stats):
 
     return points
 
+# Wrapper function to calculate total fantasy points
+def calculate_fantasy_points_t20(player_stats):
+    batting_points = calculate_batting_points(player_stats)
+    bowling_points = calculate_bowling_points(player_stats)
+    fielding_points = calculate_fielding_points(player_stats)
+    
+    # Total points
+    total_points = batting_points + bowling_points + fielding_points
+    return {
+        "total_points": total_points,
+        "batting_points": batting_points,
+        "bowling_points": bowling_points,
+        "fielding_points": fielding_points
+    }
