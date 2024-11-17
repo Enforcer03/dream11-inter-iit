@@ -1,0 +1,121 @@
+{
+    "Team1": {
+      "players": [
+        {
+          "name": "Virat Kohli",
+          "role": "Batter",
+          "score": 85
+        },
+        {
+          "name": "MS Dhoni",
+          "role": "Wicket-Keeper",
+          "score": 65
+        },
+        {
+          "name": "Jasprit Bumrah",
+          "role": "Bowler",
+          "score": 90
+        },
+        {
+          "name": "Hardik Pandya",
+          "role": "All-Rounder",
+          "score": 80
+        },
+        {
+          "name": "Rohit Sharma",
+          "role": "Batter",
+          "score": 75
+        },
+        {
+          "name": "Rashid Khan",
+          "role": "Bowler",
+          "score": 88
+        },
+        {
+          "name": "KL Rahul",
+          "role": "Batter",
+          "score": 70
+        },
+        {
+          "name": "Ravindra Jadeja",
+          "role": "All-Rounder",
+          "score": 78
+        },
+        {
+          "name": "Mohammed Shami",
+          "role": "Bowler",
+          "score": 84
+        },
+        {
+          "name": "Suryakumar Yadav",
+          "role": "Batter",
+          "score": 79
+        },
+        {
+          "name": "Yuzvendra Chahal",
+          "role": "Bowler",
+          "score": 82
+        }
+      ]
+    },
+    "Team2": {
+      "players": [
+        {
+          "name": "David Warner",
+          "role": "Batter",
+          "score": 74
+        },
+        {
+          "name": "Andre Russell",
+          "role": "All-Rounder",
+          "score": 77
+        },
+        {
+          "name": "Kane Williamson",
+          "role": "Batter",
+          "score": 67
+        },
+        {
+          "name": "Bhuvneshwar Kumar",
+          "role": "Bowler",
+          "score": 73
+        },
+        {
+          "name": "Rishabh Pant",
+          "role": "Wicket-Keeper",
+          "score": 71
+        },
+        {
+          "name": "Shikhar Dhawan",
+          "role": "Batter",
+          "score": 68
+        },
+        {
+          "name": "Pat Cummins",
+          "role": "Bowler",
+          "score": 80
+        },
+        {
+          "name": "Glenn Maxwell",
+          "role": "All-Rounder",
+          "score": 76
+        },
+        {
+          "name": "Faf du Plessis",
+          "role": "Batter",
+          "score": 72
+        },
+        {
+          "name": "Quinton de Kock",
+          "role": "Wicket-Keeper",
+          "score": 69
+        },
+        {
+          "name": "Trent Boult",
+          "role": "Bowler",
+          "score": 81
+        }
+      ]
+    }
+  }
+  
