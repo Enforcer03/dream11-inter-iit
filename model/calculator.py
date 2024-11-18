@@ -3,7 +3,7 @@ import json
 # Function to calculate batting points
 def calculate_batting_points(player_stats):
     points = 0
-    runs_scored = player_stats.get("Runs Scored", 0)
+    runs_scored = player_stats.get("Total Runs Scored", 0)
     boundaries = player_stats.get("Fours", 0)
     sixes = player_stats.get("Sixes", 0)
     balls_faced = player_stats.get("Balls Faced", 0)
@@ -125,3 +125,64 @@ def calculate_fantasy_points_t20(player_stats):
         "bowling_points": bowling_points,
         "fielding_points": fielding_points
     }
+
+
+if __name__== '__main__':
+    print(calculate_fantasy_points_t20({
+            "Team Name": "Rajasthan Royals",
+            "Batting Innings": 1,
+            "Bowling Innings": 1,
+            "Total Runs Scored": 60.0,
+            "Avg Runs Per Inning": 60.0,
+            "Boundaries": 10.0,
+            "Sixes": 5.0,
+            "Average Sixes Per Inning": 5.0,
+            "Fours": 5.0,
+            "Average Fours Per Inning": 5.0,
+            "Boundary% Per Inning": 40.0,
+            "Boundary Rate Per Inning": 2.5,
+            "Wickets": 2.0,
+            "Avg Wickets Per Inning": 2.0,
+            "Opposition Team": "Chennai Super Kings",
+            "Catches Taken": 1,
+            "Stumped Outs Made": 0,
+            "Run Outs Made": 0,
+            "Match Date": "2010-04-03",
+            "Match ID": "Chennai_Super_Kings-Rajasthan_Royals-2010-04-03-male-T20",
+            "Match Type": "T20",
+            "Venue": "MA Chidambaram Stadium, Chepauk",
+            "Event": "Indian Premier League",
+            "Match Winner": "Chennai Super Kings",
+            "Balls Faced": 25.0,
+            "Avg Balls Faced Per Inning": 25.0,
+            "Avg Batting S/R Per Inning": 240.0,
+            "Avg Runs/Ball Per Inning": 2.4,
+            "*how Out": "Not Played",
+            "Overs Bowled": 4.0,
+            "Bowls Bowled": 24.0,
+            "Average Bowls Bowled Per Inning": 24.0,
+            "Avg Economy Rate per inning": 11.75,
+            "Bowling Average": 23.5,
+            "Average Consecutive Dot Balls": 2.0,
+            "Maiden Overs": 0.0,
+            "Avg Bowling S/R Per Inning": 12.0,
+            "Runs Given": 47.0,
+            "RunsGiven/Ball Per Inning": 1.9583333333333333,
+            "Batting S/R AA(Above Average)": 134.52502446199924,
+            "How Out Inning 1 (Not Played)": 0,
+            "How Out Inning 1 (caught)": 1,
+            "How Out Inning 1 (not out)": 0,
+            "How Out Inning 1 (lbw)": 0,
+            "How Out Inning 1 (bowled)": 0,
+            "How Out Inning 1 (Run Out)": 0,
+            "How Out Inning 1 (caught and bowled)": 0,
+            "How Out Inning 1 (stumped)": 0,
+            "How Out Inning 2 (Not Played)": 0,
+            "How Out Inning 2 (caught)": 0,
+            "How Out Inning 2 (not out)": 0,
+            "How Out Inning 2 (lbw)": 0,
+            "How Out Inning 2 (bowled)": 1,
+            "How Out Inning 2 (Run Out)": 0,
+            "How Out Inning 2 (caught and bowled)": 0,
+            "How Out Inning 2 (stumped)": 0
+        }))
