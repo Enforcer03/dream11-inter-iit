@@ -8,7 +8,7 @@ from lazypredict.Supervised import LazyRegressor
 import joblib
 
 
-file_path = '/Users/ved14/Library/CloudStorage/GoogleDrive-v_umrajkar@ma.iitr.ac.in/My Drive/SEM7/extras/dream11-inter-iit/player_fantasy_points.json'
+file_path = '/Users/ved14/Library/CloudStorage/GoogleDrive-v_umrajkar@ma.iitr.ac.in/My Drive/SEM7/extras/dream11-inter-iit/player_fantasy_points_test.json'
 with open(file_path, 'r') as file:
     player_data = json.load(file)
 

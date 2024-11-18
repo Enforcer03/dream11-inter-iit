@@ -1,5 +1,5 @@
 import json
-from calculator import calculate_fantasy_points_t20
+from calculator_test import calculate_fantasy_points_test
 
 # Path to the input JSON file containing player match data
 file_path = '/Users/ved14/Library/CloudStorage/GoogleDrive-v_umrajkar@ma.iitr.ac.in/My Drive/SEM7/extras/dream11-inter-iit/model/player_match_test_data.json'
@@ -17,7 +17,7 @@ for player, matches in player_data.items():
     
     for match_id, stats in matches.items():
         # Calculate points for each match using the existing function
-        points = calculate_fantasy_points_t20(stats)
+        points = calculate_fantasy_points_test(stats)
         
         # Include the relevant statistics in the output dictionary
         extended_stats = {
@@ -61,7 +61,8 @@ for player, matches in player_data.items():
         fantasy_points[player][match_id] = extended_stats
 
 # Optionally, write the results to a new JSON file
-output_path = '/Users/ved14/Library/CloudStorage/GoogleDrive-v_umrajkar@ma.iitr.ac.in/My Drive/SEM7/extras/dream11-inter-iit/player_fantasy_points.json'
+output_path = '/Users/ved14/Library/CloudStorage/GoogleDrive-v_umrajkar@ma.iitr.ac.in/My Drive/SEM7/extras/dream11-inter-iit/player_fantasy_points_test.json'
 with open(output_path, 'w') as outfile:
     json.dump(fantasy_points, outfile, indent=4)
+print("saved the fantasy points")
 
