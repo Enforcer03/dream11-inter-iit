@@ -12,7 +12,10 @@ body {
   justify-content: center;
 }
 
-.test-box {
+.displayBoxDiv {
+  position: absolute;
+  bottom: 5rem;
+  left: 10.3%;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -21,7 +24,6 @@ body {
   overflow: hidden;
   justify-content: center;
   align-items: center;
-  border: 2px dotted rgb(96 139 168);
 }
 
 .players-list {
@@ -110,17 +112,14 @@ body {
 }
 
 .main_window {
-  /* background-image: url("../public/main_window.svg"); */
   background-size: contain;
   background-repeat: no-repeat;
-  width: 90rem;
-  height: 70rem;
 }
 
-.inside-Div {
-  /* background-image: url("../public/Subtract.svg"); */
-  background-size: contain;
-  background-repeat: no-repeat;
+.backgroundSVG {
+  background-image: url("../public/Subtract.svg");
+  width: 99rem;
+  height: 52.5rem;
 }
 
 .outer-page {
@@ -129,11 +128,106 @@ body {
   background-repeat: no-repeat;
 }
 
+.buttonCompDiv {
+  position: absolute;
+  bottom: 0.3rem;
+  left: 25%;
+}
+
 .buttonComp {
-  background: url("../public/Button.svg") no-repeat center;
+  background: url("../public/buttonComp.svg") no-repeat center;
   background-size: contain;
-  padding: 10rem 10rem;
+  width: 20rem;
+  height: 7rem;
+  text-align: center;
+  padding: 2rem 2rem;
+  margin: 0 5rem;
   color: #e8ba15;
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: bold;
+  letter-spacing: 5px;
+}
+
+.buttonComp:hover {
+  background: url("../public/buttonCompHover.svg") no-repeat center;
+  background-size: contain;
+  color: #000000;
+}
+
+.topButtonCompDiv {
+  position: absolute;
+  top: -0.8rem;
+  left: 36.2%;
+}
+
+.topButtonComp {
+  background: url("../public/topButtonComp.svg") no-repeat center;
+  background-size: contain;
+  width: 34.4rem;
+  height: 9rem;
+  letter-spacing: 5px;
+  color: #fad053c0;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.instructionsDiv {
+  position: absolute;
+  top: 17%;
+  left: 17%;
+  margin: 0 5rem;
+  color: #c2c0c0;
+  font-size: 1.5rem;
+  font-weight: lighter;
+  letter-spacing: 5px;
+}
+
+.videoCompDiv {
+  position: absolute;
+  bottom: 7.5%;
+  left: 16%;
+}
+
+.videoComp {
+  display: flex;
+  background: url("../public/leftBottomButtonComp.svg") no-repeat center;
+  background-size: contain;
+  width: 24rem;
+  height: 5.5rem;
+  color: #fad0539f;
+  font-size: 1.5rem;
+  font-weight: lighter;
+  align-items: flex-end;
+  padding: 0 1rem;
+}
+
+.videoCam {
+  display: flex;
+  background: url("../public/videoCam.svg") no-repeat center;
+  background-size: contain;
+  width: 4rem;
+  height: 4rem;
+  margin: 0 1rem -0.5rem 0.5rem;
+}
+
+.audioCompDiv {
+  position: absolute;
+  bottom: 7.5%;
+  right: 18%;
+}
+
+.audioComp {
+  display: flex;
+  background: url("../public/speaker.svg") no-repeat center;
+  background-size: contain;
+  width: 4rem;
+  height: 4rem;
+}
+
+.audioCompClicked {
+  display: flex;
+  background: url("../public/speakerCrossed.svg") no-repeat center;
+  background-size: contain;
+  width: 4rem;
+  height: 4rem;
 }
