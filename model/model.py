@@ -3,16 +3,15 @@ import json
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
-from calculator import calculate_fantasy_points_t20
+# from calculator import calculate_fantasy_points_t20
 from lazypredict.Supervised import LazyRegressor
 import joblib
 
-
-file_path = '/Users/ved14/Library/CloudStorage/GoogleDrive-v_umrajkar@ma.iitr.ac.in/My Drive/SEM7/extras/dream11-inter-iit/player_fantasy_points.json'
+# assuming running from the root directory
+file_path = './player_fantasy_points.json'
 with open(file_path, 'r') as file:
     player_data = json.load(file)
 
-    
 data = []
 
 num_prev_matches = 2
@@ -39,21 +38,28 @@ for player, matches in player_data.items():
         bowl_points = stats.get('bowling_points', 0)
         field_points = stats.get('fielding_points', 0)
 
-        # Check if we have enough previous matches to create a row
-        if len(prev_bat) >= num_prev_matches:
+        # If we have no history, we ain't doing anything
+        if len(prev_bat) != 0:
+            
             # Create a new row for the current match
             row = {}
 
+            # duplicate oldest match if there are not enough past matches
+            padded_bat = [prev_bat[0] for i in range(num_prev_matches - len(prev_bat))] + prev_bat
+            padded_bowl = [prev_bowl[0] for i in range(num_prev_matches - len(prev_bowl))] + prev_bowl
+            padded_field = [prev_field[0] for i in range(num_prev_matches - len(prev_field))] + prev_field
+
             # Add previous match points as features (batting, bowling, fielding)
             for i in range(num_prev_matches):
-                row[f'fantasy_bat_prev_{i+1}'] = prev_bat[-(i+1)]
-                row[f'fantasy_bowl_prev_{i+1}'] = prev_bowl[-(i+1)]
-                row[f'fantasy_field_prev_{i+1}'] = prev_field[-(i+1)]
+                row[f'fantasy_bat_prev_{i+1}'] = padded_bat[-(i+1)]
+                row[f'fantasy_bowl_prev_{i+1}'] = padded_bowl[-(i+1)]
+                row[f'fantasy_field_prev_{i+1}'] = padded_field[-(i+1)]
 
             # Add previous match statistics as features (like total_runs, boundaries, wickets, etc.)
             for feature in prev_stats.keys():
+                padded_feature = [prev_stats[feature][0] for i in range(num_prev_matches - len(prev_stats[feature]))] + prev_stats[feature]
                 for i in range(num_prev_matches):
-                    row[f'{feature}_prev_{i+1}'] = prev_stats[feature][- (i + 1)]
+                    row[f'{feature}_prev_{i+1}'] = padded_feature[-(i+1)]
 
             # Add the current match points as the target variables (DO NOT LEAK)
             row['bat_points'] = bat_points

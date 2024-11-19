@@ -1,5 +1,8 @@
 import json
 
+# Point System: https://www.dream11.com/games/point-system
+# TODO: Add scoring for other formats, these are for T20 only
+
 # Function to calculate batting points
 def calculate_batting_points(player_stats):
     points = 0
@@ -10,7 +13,7 @@ def calculate_batting_points(player_stats):
     try:
         how_out = player_stats.get("how Out", "").lower()
     except AttributeError:
-        print("how out issue ")
+        print("how out issue")
         how_out = "nan"
     
     # +1 point per run
@@ -28,22 +31,26 @@ def calculate_batting_points(player_stats):
     elif runs_scored >= 30:
         points += 4
 
+    # TODO: Insert a Bowler check for the below points
+
     # -2 points if dismissed for a duck (only if not a bowler)
     if runs_scored == 0 and how_out != "not out" and balls_faced > 0:
         points -= 2
 
-    # Strike Rate Bonus (Min 10 balls faced)
+    # Strike Rate Bonus (Min 10 balls faced) (only if not a bowler)
     if balls_faced >= 10:
         strike_rate = (runs_scored / balls_faced) * 100
         if strike_rate > 170:
             points += 6
-        elif 150 < strike_rate <= 170:
+        elif strike_rate > 150:
             points += 4
-        elif 130 <= strike_rate <= 150:
+        elif strike_rate >= 130:
             points += 2
-        elif 60 <= strike_rate < 70:
+        elif strike_rate >= 70:
+            pass
+        elif strike_rate >= 60:
             points -= 2
-        elif 50 <= strike_rate < 60:
+        elif strike_rate >= 50:
             points -= 4
         elif strike_rate < 50:
             points -= 6
@@ -57,6 +64,7 @@ def calculate_bowling_points(player_stats):
     overs_bowled = player_stats.get("Overs Bowled", 0)
     economy_rate = player_stats.get("Economy Rate", 0)
     bowled_or_lbw = player_stats.get("Bowled", 0) + player_stats.get("LBW", 0)
+    maiden_overs = player_stats.get("Maiden Overs", 0)
 
     # +25 points per wicket, +8 points for bowled/LBW dismissals
     points += wickets * 25
@@ -71,20 +79,21 @@ def calculate_bowling_points(player_stats):
         points += 4
 
     # +12 for each maiden over
-    maiden_overs = player_stats.get("Maiden Overs", 0)
     points += maiden_overs * 12
 
     # Economy Rate Bonus (Min 2 overs bowled)
     if overs_bowled >= 2:
         if economy_rate < 5:
             points += 6
-        elif 5 <= economy_rate <= 5.99:
+        elif economy_rate < 6:
             points += 4
-        elif 6 <= economy_rate <= 7:
+        elif economy_rate <= 7:
             points += 2
-        elif 10 <= economy_rate <= 11:
+        elif economy_rate < 10:
+            pass
+        elif economy_rate <= 11:
             points -= 2
-        elif 11.01 <= economy_rate <= 12:
+        elif economy_rate <= 12:
             points -= 4
         elif economy_rate > 12:
             points -= 6
@@ -116,7 +125,9 @@ def calculate_fantasy_points_t20(player_stats):
     batting_points = calculate_batting_points(player_stats)
     bowling_points = calculate_bowling_points(player_stats)
     fielding_points = calculate_fielding_points(player_stats)
-    
+
+    # TODO: Add +4 for all starting players (to stay correct with Dream11 ground truth values)
+
     # Total points
     total_points = batting_points + bowling_points + fielding_points
     return {
