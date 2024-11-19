@@ -7,8 +7,8 @@ from sklearn.metrics import mean_squared_error
 from lazypredict.Supervised import LazyRegressor
 import joblib
 
-# assuming running from the root directory
-file_path = './player_fantasy_points.json'
+
+file_path = './player_fantasy_points_test.json'
 with open(file_path, 'r') as file:
     player_data = json.load(file)
 
