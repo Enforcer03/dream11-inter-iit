@@ -128,3 +128,12 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
 }
+
+.buttonComp {
+  background: url("../public/Button.svg") no-repeat center;
+  background-size: contain;
+  padding: 10rem 10rem;
+  color: #e8ba15;
+  font-size: 2rem;
+  font-weight: bold;
+}
