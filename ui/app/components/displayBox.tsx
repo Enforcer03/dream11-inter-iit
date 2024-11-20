@@ -25,10 +25,10 @@ const PlayerList = () => {
         <div key={player.id} className="badge-bg">
           <div className="player-image-container">
             <div className="flag-container">
-            <img src={player.countryFlag} alt="Flag" className="flag" />
-            <hr className="flag-hr" />
-            <img src={player.countryFlag} alt="Flag" className="flag" />
-            <hr className="flag-hr" />
+              <img src={player.countryFlag} alt="Flag" className="flag" />
+              <hr className="flag-hr" />
+              <img src={player.countryFlag} alt="Flag" className="flag" />
+              <hr className="flag-hr" />
               <img src={player.countryFlag} alt="Flag" className="flag" />
             </div>
             <div className="image-container">

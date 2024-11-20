@@ -217,7 +217,6 @@ body {
 }
 
 .audioComp {
-  display: flex;
   background: url("../public/speaker.svg") no-repeat center;
   background-size: contain;
   width: 4rem;
@@ -225,9 +224,70 @@ body {
 }
 
 .audioCompClicked {
-  display: flex;
   background: url("../public/speakerCrossed.svg") no-repeat center;
   background-size: contain;
   width: 4rem;
   height: 4rem;
+}
+
+.badge-bg-small {
+  background-image: url("../public/badge.svg");
+  background-repeat: no-repeat;
+  padding: 10px;
+  margin: 0.6rem;
+  width: 8rem;
+  height: 15rem;
+}
+
+.anonymousPlayer {
+  background: url("../public/anonymousPlayer.svg") no-repeat center;
+  background-size: contain;
+  width: 5rem;
+  height: 5rem;
+}
+
+.anonymousPlayerText {
+  color: #fad0539f;
+  font-size: 0.8rem;
+  font-weight: lighter;
+  letter-spacing: 3px;
+}
+
+.bgSelectedPlayer {
+  background: url("../public/bgSelectedPlayer.svg") no-repeat center;
+  background-size: contain;
+  width: 5rem;
+  height: 5rem;
+}
+
+.selectionListDiv {
+  position: absolute;
+  top: 10%;
+  right: 14%;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.buttonPlayerSelectionDiv {
+  position: absolute;
+  bottom: 5rem;
+  left: 19%;
+  width: 10rem;
+  padding: 0;
+}
+
+.buttonPlayerSelectionDiv .buttonComp {
+  margin: -0.5rem 0;
+}
+
+.selectListDiv {
+  position: absolute;
+  bottom: 4%;
+  right: 15%;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
