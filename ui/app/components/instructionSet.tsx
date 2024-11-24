@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 interface Instruction {
   id: number;
@@ -15,20 +15,20 @@ const Instructions: React.FC = () => {
   useEffect(() => {
     const fetchInstructions = async () => {
       try {
-        const response = await fetch('/instructions.txt');
+        const response = await fetch("/instructions.txt");
         if (!response.ok) {
-          throw new Error('Failed to load instructions');
+          throw new Error("Failed to load instructions");
         }
 
         const text = await response.text();
-        const instructionsList = text.split('\n').map((line, index) => ({
+        const instructionsList = text.split("\n").map((line, index) => ({
           id: index + 1,
           text: line.trim(),
         }));
 
         setInstructions(instructionsList);
       } catch (error) {
-        setError('There was an error fetching the instructions.');
+        setError("There was an error fetching the instructions.");
       } finally {
         setLoading(false);
       }

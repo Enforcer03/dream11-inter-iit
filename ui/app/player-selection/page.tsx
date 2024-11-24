@@ -1,5 +1,5 @@
-import PageTemplate from "../components/pageTemplate";
 import Button from "../components/buttonComp";
+import PageTemplate from "../components/pageTemplate";
 import PlayersSelect from "../components/playersSelect";
 
 function InstructionsPage() {
@@ -8,8 +8,8 @@ function InstructionsPage() {
       <PageTemplate />
       <PlayersSelect />
       <div className="buttonPlayerSelectionDiv">
-        <Button children={"NEXT"} />
-        <Button children={"BACK"} />
+        <Button>NEXT</Button>
+        <Button>BACK</Button>
       </div>
     </div>
   );

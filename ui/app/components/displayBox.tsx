@@ -32,17 +32,12 @@ const PlayerList = () => {
               <img src={player.countryFlag} alt="Flag" className="flag" />
             </div>
             <div className="image-container">
-              <img
-                src={player.image}
-                alt="Player Image"
-                className="player-image"
-              />
+              <img src={player.image} alt="Player Image" className="player-image" />
             </div>
           </div>
           <div className="player-bio-container">
             <h3 className="player-name">
-              {player.name.split(" ")[0].charAt(0)}.{" "}
-              {player.name.split(" ").slice(1).join(" ")}
+              {player.name.split(" ")[0].charAt(0)}. {player.name.split(" ").slice(1).join(" ")}
             </h3>
             <hr className="player-hr" />
             <p className="player-bio">

@@ -5,12 +5,8 @@ import AnonymousPlayer from "./anonymousPlayer";
 import playersData from "../../public/players.json";
 
 const PeopleDisplay = () => {
-  const [selectedPlayers, setSelectedPlayers] = useState(
-    playersData.players.slice(0, 11)
-  );
-  const [filledDivs, setFilledDivs] = useState<
-    (null | (typeof playersData.players)[0])[]
-  >(Array(11).fill(null));
+  const [selectedPlayers, setSelectedPlayers] = useState(playersData.players.slice(0, 11));
+  const [filledDivs, setFilledDivs] = useState<(null | (typeof playersData.players)[0])[]>(Array(11).fill(null));
 
   const handleOptionClick = (player: (typeof playersData.players)[0]) => {
     if (filledDivs.some((filledPlayer) => filledPlayer?.id === player.id)) {
@@ -45,11 +41,7 @@ const PeopleDisplay = () => {
               key={player.id}
               onClick={() => handleOptionClick(player)}
               className={`text-center cursor-pointer badge-bg-small ${
-                filledDivs.some(
-                  (filledPlayer) => filledPlayer?.id === player.id
-                )
-                  ? "cursor-not-allowed"
-                  : ""
+                filledDivs.some((filledPlayer) => filledPlayer?.id === player.id) ? "cursor-not-allowed" : ""
               }`}
               style={{ minHeight: "150px" }}
             >
@@ -62,11 +54,7 @@ const PeopleDisplay = () => {
                   <img src={player.countryFlag} alt="Flag" className="flag" />
                 </div>
                 <div className="image-container">
-                  <img
-                    src={player.image}
-                    alt="Player Image"
-                    className="player-image"
-                  />
+                  <img src={player.image} alt="Player Image" className="player-image" />
                 </div>
               </div>
               {/* <div className="player-bio-container">
@@ -91,44 +79,26 @@ const PeopleDisplay = () => {
             <div
               key={index}
               onClick={() => handleEmptyDivClick(index)}
-              className={`text-center ${
-                player ? "bgSelectedPlayer cursor-pointer" : ""
-              }`}
+              className={`text-center ${player ? "bgSelectedPlayer cursor-pointer" : ""}`}
               style={{ minHeight: "150px" }}
             >
               {player ? (
                 <div className="flex flex-col items-center">
                   <div className="player-image-container">
                     <div className="flag-container">
-                      <img
-                        src={player.countryFlag}
-                        alt="Flag"
-                        className="flag"
-                      />
+                      <img src={player.countryFlag} alt="Flag" className="flag" />
                       <hr className="flag-hr" />
-                      <img
-                        src={player.countryFlag}
-                        alt="Flag"
-                        className="flag"
-                      />
+                      <img src={player.countryFlag} alt="Flag" className="flag" />
                       <hr className="flag-hr" />
-                      <img
-                        src={player.countryFlag}
-                        alt="Flag"
-                        className="flag"
-                      />
+                      <img src={player.countryFlag} alt="Flag" className="flag" />
                     </div>
                     <div className="image-container">
-                      <img
-                        src={player.image}
-                        alt="Player Image"
-                        className="player-image"
-                      />
+                      <img src={player.image} alt="Player Image" className="player-image" />
                     </div>
                   </div>
                 </div>
               ) : (
-                <AnonymousPlayer children={"PLAYER"} />
+                <AnonymousPlayer>PLAYER</AnonymousPlayer>
               )}
             </div>
           ))}

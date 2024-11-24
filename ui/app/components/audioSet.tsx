@@ -9,13 +9,7 @@ function AudioComponent() {
     setClicked((prevState) => !prevState);
   };
 
-  return (
-    <button
-      className={`audioComp ${clicked ? "audioCompClicked" : ""}`}
-      onClick={handleClick}
-    >
-    </button>
-  );
+  return <button className={`audioComp ${clicked ? "audioCompClicked" : ""}`} onClick={handleClick}></button>;
 }
 
 export default AudioComponent;
