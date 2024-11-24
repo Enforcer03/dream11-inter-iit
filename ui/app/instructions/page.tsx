@@ -2,16 +2,12 @@ import AudioComp from "../components/audioSet";
 import Button from "../components/buttonComp";
 import InstructionSet from "../components/instructionSet";
 import PageTemplate from "../components/pageTemplate";
-import TopButton from "../components/topButtonComp";
 import VideoComp from "../components/videoSet";
 
 function InstructionsPage() {
   return (
     <div className="">
-      <div className="topButtonCompDiv">
-        <TopButton>INSTRUCTIONS</TopButton>
-      </div>
-      <PageTemplate />
+      <PageTemplate title="instructions" />
       <div className="instructionsDiv">
         <InstructionSet />
       </div>

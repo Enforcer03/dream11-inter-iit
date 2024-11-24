@@ -112,7 +112,9 @@ body {
 }
 
 .main_window {
-  background-size: contain;
+  background-image: url("../public/newSubtract.svg");
+  background-size: 100% 100%;
+  background-position: center;
   background-repeat: no-repeat;
 }
 
