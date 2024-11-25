@@ -16,7 +16,7 @@ interface ButtonComponentProps {
 
 function PlayerInformation({ child1, child2, child3, child4 }: ButtonComponentProps) {
   return (
-    <div className="flex flex-col justify-center items-center backdrop-blur-md uppercase w-30 h-full">
+    <div className="flex flex-col justify-center items-center uppercase w-30 h-full">
       <h1 className="uppercase text-dream11FontColor font-bold text-3xl tracking-widest mb-8">{child1}</h1>
       <div className="rounded-full border-dream11FontColor border-2 profilePhoto w-32 h-32 mb-8 flex items-center justify-center">
         <Image

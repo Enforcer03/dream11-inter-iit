@@ -7,7 +7,7 @@ interface ButtonComponentProps {
 
 function ButtonComponent({ child1, child2 }: ButtonComponentProps) {
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div>
       <div className='my-1 bgSelectedPlayer'>{child1}</div>
 
       <div className="my-1 anonymousPlayerText">{child2}</div>

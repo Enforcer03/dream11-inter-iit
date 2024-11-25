@@ -57,7 +57,7 @@ const PeopleDisplay = () => {
       </div>
 
       <div className="selectionListDiv">
-        <div className="players-list">
+        <div className="players-list w-5/6">
           {selectedPlayers.map((player) => (
             <div
               key={player.id}
@@ -86,8 +86,8 @@ const PeopleDisplay = () => {
                 </h3>
                 <hr className="player-hr" />
                 <p className="player-bio">
-                  {player.bio.split(" ").slice(0, 7).join(" ")}
-                  {player.bio.split(" ").length > 10 ? "..." : ""}
+                  {player.bio.split(" ").slice(0, 5).join(" ")}
+                  {player.bio.split(" ").length > 7 ? "..." : ""}
                 </p>
               </div>
             </div>
@@ -106,7 +106,7 @@ const PeopleDisplay = () => {
             <div
               key={index}
               onClick={() => handleEmptyDivClick(index)}
-              className={`text-center ${player ? "cursor-pointer" : ""}`}
+              className={`text-center ${player ? "cursor-pointer" : ""} flex flex-col items-center justify-center`}
               style={{ minHeight: "150px" }}
             >
               {player ? (

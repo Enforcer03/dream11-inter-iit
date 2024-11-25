@@ -20,7 +20,7 @@ const PlayerList = () => {
   }, []);
 
   return (
-    <div className="players-list">
+    <div className="players-list w-5/6">
       {players.map((player) => (
         <div key={player.id} className="badge-bg">
           <div className="player-image-container">
@@ -41,8 +41,8 @@ const PlayerList = () => {
             </h3>
             <hr className="player-hr" />
             <p className="player-bio">
-              {player.bio.split(" ").slice(0, 7).join(" ")}
-              {player.bio.split(" ").length > 10 ? "..." : ""}
+              {player.bio.split(" ").slice(0, 5).join(" ")}
+              {player.bio.split(" ").length > 7 ? "..." : ""}
             </p>
           </div>
         </div>
