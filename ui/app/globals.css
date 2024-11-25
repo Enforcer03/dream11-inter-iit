@@ -321,3 +321,21 @@ body {
   width: 5rem;
   height: 5rem;
 }
+
+.main_window_without_top {
+  background-image: url("../public/backgroundBlur.svg");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+th {
+  color: white;
+}
+
+.profilePhoto {
+  background: url("../public/Grass.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
