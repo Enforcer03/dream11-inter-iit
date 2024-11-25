@@ -30,7 +30,6 @@ body {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
   padding: 2rem;
 }
 
@@ -156,23 +155,6 @@ body {
   color: #000000;
 }
 
-.topButtonCompDiv {
-  position: absolute;
-  top: -0.8rem;
-  left: 36.2%;
-}
-
-.topButtonComp {
-  background: url("../public/topButtonComp.svg") no-repeat center;
-  background-size: contain;
-  width: 34.4rem;
-  height: 9rem;
-  letter-spacing: 5px;
-  color: #fad053c0;
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
 .instructionsDiv {
   position: absolute;
   top: 17%;
@@ -232,15 +214,6 @@ body {
   height: 4rem;
 }
 
-.badge-bg-small {
-  background-image: url("../public/badge.svg");
-  background-repeat: no-repeat;
-  padding: 10px;
-  margin: 0.6rem;
-  width: 8rem;
-  height: 15rem;
-}
-
 .anonymousPlayer {
   background: url("../public/anonymousPlayer.svg") no-repeat center;
   background-size: contain;
@@ -249,15 +222,22 @@ body {
 }
 
 .anonymousPlayerText {
+  text-transform: uppercase;
   color: #fad0539f;
   font-size: 0.8rem;
   font-weight: lighter;
   letter-spacing: 3px;
 }
 
+.select-player-image {
+  width: 5rem;
+  height: 5rem;
+  padding: 0 6px;
+  object-fit: cover;
+}
+
 .bgSelectedPlayer {
-  background: url("../public/bgSelectedPlayer.svg") no-repeat center;
-  background-size: contain;
+  display: flex;
   width: 5rem;
   height: 5rem;
 }
@@ -267,9 +247,8 @@ body {
   top: 10%;
   right: 14%;
   width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  height: 64%;
+  overflow-y: scroll;
 }
 
 .buttonPlayerSelectionDiv {
@@ -286,21 +265,18 @@ body {
 
 .selectListDiv {
   position: absolute;
-  bottom: 4%;
+  bottom: 0%;
   right: 15%;
   width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .dateInputMatch {
   background: url("../public/DateInputBG.svg") no-repeat center;
   background-size: contain;
   color: white;
-  height: 7rem;
+  width: 100%;
   text-align: center;
-  padding: 2rem 2rem;
+  padding: 0.5rem 16rem;
   font-size: 1.5rem;
   font-weight: bold;
   letter-spacing: 5px;
@@ -309,17 +285,28 @@ body {
 }
 
 .leftArrowBtn {
+  position: absolute;
+  right: 0%;
   background: url("../public/leftArrow.svg") no-repeat center;
   background-size: contain;
-  width: 5rem;
-  height: 5rem;
+  width: 2rem;
+  height: 2rem;
 }
 
 .rightArrowBtn {
   background: url("../public/rightArrow.svg") no-repeat center;
   background-size: contain;
-  width: 5rem;
-  height: 5rem;
+  width: 2rem;
+  height: 2rem;
+}
+
+.selectMatchDiv {
+  position: absolute;
+  top: 17%;
+  left: 25%;
+  font-size: 1rem;
+  font-weight: lighter;
+
 }
 
 .main_window_without_top {
@@ -345,4 +332,27 @@ th {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+.playerShortDetails {
+  position: absolute;
+  top: 10%;
+  left: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.autoSelectBtn {
+  background: url("../public/autoSelectBtn.svg") no-repeat center;
+  background-size: contain;
+  width: 10rem;
+  height: 2.5rem;
+  text-align: center;
+  margin: 0 1rem;
+  color: #e8ba15;
+  font-size: 1rem;
+  font-weight: bold;
+
 }

@@ -5,7 +5,6 @@ import AudioComponent from "../components/audioSet";
 import ButtonComponent from "../components/buttonComp";
 import PageTemplate from "../components/pageTemplate";
 import VideoComponent from "../components/videoSet";
-import MatchLeagueInput from "../components/leagueSelector";
 import LeagueSelector from "../components/leagueSelector";
 import MatchSelector from "../components/matchSelector";
 
@@ -42,8 +41,8 @@ function MatchDateInput({ date, setDate }) {
   };
 
   return (
-    <div>
-      <span className="block uppercase text-dream11FontColor font-bold">Date of Match</span>
+    <div className="flex flex-col items-center justify-center mt-16">
+      <h1 className="text-3xl font-bold mb-8 text-[#FFD700] uppercase">Date of Match</h1>
       <input
         className="dateInputMatch"
         type="text"
@@ -61,13 +60,13 @@ function SelectMatchScreen() {
   const [match, setMatch] = useState("");
 
   return (
-    <PageTemplate title="INPUT DETAILS">
-      <div>
+    <div>
+      <PageTemplate title="INPUT DETAILS" />
+        <div className="selectMatchDiv">
         <MatchDateInput date={date} setDate={setDate} />
         <LeagueSelector setLeague={setLeague} />
         <MatchSelector setMatch={setMatch} />
-      </div>
-      <div>
+        </div>
         <div className="buttonCompDiv">
           <ButtonComponent>BACK</ButtonComponent>
           <ButtonComponent>NEXT</ButtonComponent>
@@ -78,8 +77,8 @@ function SelectMatchScreen() {
         <div className="audioCompDiv">
           <AudioComponent />
         </div>
-      </div>
-    </PageTemplate>
+    </div>
+
   );
 }
 

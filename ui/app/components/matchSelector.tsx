@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 
 export default function MatchSelector({ setMatch }: { setMatch: (match: any) => void }) {
   const [selectedIndex, setSelectedIndex] = useState(3);
@@ -63,10 +62,10 @@ export default function MatchSelector({ setMatch }: { setMatch: (match: any) => 
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center mt-24">
-      <h1 className="text-4xl font-bold mb-12 text-[#FFD700]">SELECT MATCH</h1>
-      <div className="w-full max-w-4xl px-4 relative">
-        <div className="flex justify-center items-center">
+    <div className="flex flex-col items-center justify-center mt-8">
+      <h1 className="text-3xl font-bold mb-16 text-[#FFD700]">SELECT MATCH</h1>
+      <div className="w-full px-4 relative">
+        <div className="flex justify-center items-center mb-8">
           {teams.map((team, index) => {
             const distance = Math.abs(selectedIndex - index);
             const isVisible = distance <= 2;
@@ -82,12 +81,12 @@ export default function MatchSelector({ setMatch }: { setMatch: (match: any) => 
                 }}
               >
                 <button
-                  className={`w-32 h-32 relative rounded-lg overflow-hidden border-2 transition-all duration-300 focus:outline-none ${
+                  className={`w-32 h-16 relative rounded-lg overflow-hidden border-2 transition-all duration-300 focus:outline-none ${
                     selectedIndex === index ? "border-white" : "border-transparent hover:border-white/50"
                   }`}
                   onClick={() => setSelectedIndex(index)}
                 >
-                  <Image src={team.logo} alt={team.name} fill className="object-cover" />
+                  <img src={team.logo} alt={team.name} className="object-cover" />
                 </button>
               </div>
             );

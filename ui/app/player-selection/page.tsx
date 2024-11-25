@@ -1,11 +1,11 @@
 import Button from "../components/buttonComp";
-import PageTemplate from "../components/pageTemplate";
+import PageTemplateNoTop from "../components/pageTemplateNoTop";
 import PlayersSelect from "../components/playersSelect";
 
 function InstructionsPage() {
   return (
     <div className="">
-      <PageTemplate />
+      <PageTemplateNoTop />
       <PlayersSelect />
       <div className="buttonPlayerSelectionDiv">
         <Button>NEXT</Button>
