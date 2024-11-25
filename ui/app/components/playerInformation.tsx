@@ -7,7 +7,7 @@ import flagPhoto from "../../public/germany.png";
 
 export default function PlayerInformation({ title }: { title: string }) {
   return (
-    <div className="flex flex-col justify-center items-center backdrop-blur-md uppercase">
+    <div className="flex flex-col justify-center items-center backdrop-blur-md uppercase w-full h-full">
       <h1 className="uppercase text-dream11FontColor font-bold text-5xl tracking-widest">{title}</h1>
       <Image
         src={profilePhoto}

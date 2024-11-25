@@ -339,3 +339,10 @@ th {
   background-position: center;
   background-repeat: no-repeat;
 }
+
+.pitch {
+  background: url("../public/Grass.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
