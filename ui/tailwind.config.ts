@@ -11,6 +11,7 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        dream11FontColor: "#E8BA15",
       },
     },
   },

@@ -293,3 +293,31 @@ body {
   justify-content: center;
   align-items: center;
 }
+
+.dateInputMatch {
+  background: url("../public/DateInputBG.svg") no-repeat center;
+  background-size: contain;
+  color: white;
+  height: 7rem;
+  text-align: center;
+  padding: 2rem 2rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 5px;
+  outline: none;
+  border: none;
+}
+
+.leftArrowBtn {
+  background: url("../public/leftArrow.svg") no-repeat center;
+  background-size: contain;
+  width: 5rem;
+  height: 5rem;
+}
+
+.rightArrowBtn {
+  background: url("../public/rightArrow.svg") no-repeat center;
+  background-size: contain;
+  width: 5rem;
+  height: 5rem;
+}

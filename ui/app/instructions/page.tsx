@@ -6,11 +6,12 @@ import VideoComp from "../components/videoSet";
 
 function InstructionsPage() {
   return (
-    <div className="">
-      <PageTemplate title="instructions" />
-      <div className="instructionsDiv">
-        <InstructionSet />
-      </div>
+    <div>
+      <PageTemplate title="instructions">
+        <div className="instructionsDiv">
+          <InstructionSet />
+        </div>
+      </PageTemplate>
       <div className="buttonCompDiv">
         <Button>BACK</Button>
         <Button>NEXT</Button>
