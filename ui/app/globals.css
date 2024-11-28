@@ -177,7 +177,7 @@ body {
 
 .instructionsDiv {
   position: absolute;
-  top: 17%;
+  top: 26%;
   left: 17%;
   margin: 0 5rem;
   color: #c2c0c0;
@@ -259,7 +259,7 @@ body {
 .bgSelectedPlayer {
   display: flex;
   width: 5rem;
-  height: 5rem;
+  height: 6.5rem;
 }
 
 .selectionListDiv {
@@ -373,4 +373,12 @@ th {
   color: #e8ba15;
   font-size: 1rem;
   font-weight: bold;
+}
+
+.information-report-container {
+  color: #c2c0c0;
+  font-size: 1.2rem;
+  font-weight: lighter;
+  letter-spacing: 2px;
+  margin-left: -17rem;
 }

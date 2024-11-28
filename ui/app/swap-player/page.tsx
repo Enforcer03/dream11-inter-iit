@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useState } from "react";
 import ButtonComponent from "../components/buttonComp";
 import PageTemplate from "../components/pageTemplate";

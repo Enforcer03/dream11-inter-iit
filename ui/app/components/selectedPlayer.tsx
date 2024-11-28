@@ -1,13 +1,13 @@
 import React from "react";
 
-interface ButtonComponentProps {
+interface SelectedPlayerProps {
   child1: React.ReactNode;
   child2: React.ReactNode;
 }
 
-function ButtonComponent({ child1, child2 }: ButtonComponentProps) {
+function SelectedPlayer({ child1, child2 }: SelectedPlayerProps) {
   return (
-    <div>
+    <div className="flex flex-col flex-wrap w-20">
       <div className="my-1 bgSelectedPlayer">{child1}</div>
 
       <div className="my-1 anonymousPlayerText">{child2}</div>
@@ -15,4 +15,4 @@ function ButtonComponent({ child1, child2 }: ButtonComponentProps) {
   );
 }
 
-export default ButtonComponent;
+export default SelectedPlayer;

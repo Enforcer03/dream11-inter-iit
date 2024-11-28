@@ -8,9 +8,7 @@ function InstructionsPage() {
   return (
     <div>
       <PageTemplate title="instructions">
-        <div className="instructionsDiv">
-          <InstructionSet />
-        </div>
+      <InstructionSet />
       </PageTemplate>
       <div className="buttonCompDiv">
         <Button>BACK</Button>

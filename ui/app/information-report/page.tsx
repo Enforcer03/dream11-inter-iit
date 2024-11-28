@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import ButtonComponent from "../components/selectedPlayer";
+import SelectedPlayer from "../components/selectedPlayer";
 import playersData from "../../public/players.json";
+import PageTemplate from "../components/pageTemplate"
+import Button from "../components/buttonComp"
 
 interface Instruction {
   id: number;
@@ -38,28 +40,38 @@ const PeopleDisplay = () => {
 
   return (
     <div>
+      <PageTemplate title="playing 11">
       <div className="-mb-6 ml-11">
-        <h1 className="text-xl font-bold text-[#FFD700] ">PLAYERS' INFORMATION REPORT</h1>
+        <h1 className="text-2xl text-[#FFD700] ">PLAYERS' INFORMATION REPORT</h1>
       </div>
-      <div className="flex m-16">
-        {selectedPlayers.map((player) => (
-          <div key={player.id} className="m-4">
-            <ButtonComponent
-              child1={<img src={player.image} alt="Player Image" className="" />}
-              child2={player.name
-                .split(" ")
-                .map((word) => word.charAt(0).toUpperCase())
-                .join("")}
-            />
-          </div>
-        ))}
+      <div className="flex m-12">
+        {selectedPlayers.map((player) => {
+          let fullName = player.name.split(" ");
+          let modifiedName = fullName.map((part) => {
+            return part.length > 7 ? part[0] + "." : part;
+          }).join(" ");
+
+          return (
+            <div key={player.id} className="m-2">
+              <SelectedPlayer
+                child1={<img src={player.image} alt="Player Image" className="player-image" />}
+                child2={modifiedName}
+              />
+            </div>
+          );
+        })}
       </div>
-      <div className="instructions-container">
+      <div className="information-report-container">
         <ul>
           {instructions.map((instruction) => (
             <li key={instruction.id}>{instruction.text}</li>
           ))}
         </ul>
+      </div>
+      </PageTemplate>
+      <div className="buttonCompDiv">
+        <Button>BACK</Button>
+        <Button>NEXT</Button>
       </div>
     </div>
   );

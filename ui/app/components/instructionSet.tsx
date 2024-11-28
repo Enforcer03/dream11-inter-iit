@@ -46,7 +46,7 @@ const Instructions: React.FC = () => {
   }
 
   return (
-    <div className="instructions-container">
+    <div className="instructionsDiv">
       <ul>
         {instructions.map((instruction) => (
           <li key={instruction.id}>{instruction.text}</li>
