@@ -48,7 +48,7 @@ const PeopleDisplay = () => {
     <div>
       <div className="playerShortDetails">
         <PlayerInformation
-          child1={"PLAYER SELECTION"}
+          title={"PLAYER SELECTION"}
           child2={details.name}
           child3={details.image}
           child4={details.countryFlag}

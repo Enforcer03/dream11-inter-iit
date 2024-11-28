@@ -8,16 +8,16 @@ import flagPhoto from "../../public/germany.png";
 import React from "react";
 
 interface ButtonComponentProps {
-  child1: React.ReactNode;
-  child2: React.ReactNode;
-  child3: React.ReactNode;
-  child4: React.ReactNode;
+  title: string;
+  child2?: React.ReactNode;
+  child3?: React.ReactNode;
+  child4?: React.ReactNode;
 }
 
-function PlayerInformation({ child1, child2, child3, child4 }: ButtonComponentProps) {
+function PlayerInformation({ title, child2, child3, child4 }: ButtonComponentProps) {
   return (
     <div className="flex flex-col justify-center items-center uppercase w-30 h-full">
-      <h1 className="uppercase text-dream11FontColor font-bold text-3xl tracking-widest mb-8">{child1}</h1>
+      <h1 className="uppercase text-dream11FontColor font-bold text-3xl tracking-widest mb-8">{title}</h1>
       <div className="rounded-full border-dream11FontColor border-2 profilePhoto w-32 h-32 mb-8 flex items-center justify-center">
         <Image src={child3} alt="player" height={50} width={50} className="" />
       </div>
