@@ -62,23 +62,22 @@ function SelectMatchScreen() {
   return (
     <div>
       <PageTemplate title="INPUT DETAILS" />
-        <div className="selectMatchDiv">
+      <div className="selectMatchDiv">
         <MatchDateInput date={date} setDate={setDate} />
         <LeagueSelector setLeague={setLeague} />
         <MatchSelector setMatch={setMatch} />
-        </div>
-        <div className="buttonCompDiv">
-          <ButtonComponent>BACK</ButtonComponent>
-          <ButtonComponent>NEXT</ButtonComponent>
-        </div>
-        <div className="videoCompDiv">
-          <VideoComponent>VIDEO DEMO</VideoComponent>
-        </div>
-        <div className="audioCompDiv">
-          <AudioComponent />
-        </div>
+      </div>
+      <div className="buttonCompDiv">
+        <ButtonComponent>BACK</ButtonComponent>
+        <ButtonComponent>NEXT</ButtonComponent>
+      </div>
+      <div className="videoCompDiv">
+        <VideoComponent>VIDEO DEMO</VideoComponent>
+      </div>
+      <div className="audioCompDiv">
+        <AudioComponent />
+      </div>
     </div>
-
   );
 }
 

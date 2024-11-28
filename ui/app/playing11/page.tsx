@@ -5,13 +5,13 @@ import PageTemplate from "../components/pageTemplate";
 function Playing11() {
   return (
     <div>
-      <PageTemplate title="PLAYING 11"/>
-        <div className="displayBoxDivDiv">
-          <button className="predictedScoreBtn">PREDICTED TOTAL SCORE</button>
+      <PageTemplate title="PLAYING 11" />
+      <div className="displayBoxDivDiv">
+        <button className="predictedScoreBtn">PREDICTED TOTAL SCORE</button>
         <div className="displayBoxDiv">
           <DisplayBox />
         </div>
-        </div>
+      </div>
       <div className="buttonCompDiv">
         <Button>BACK</Button>
         <Button>NEXT</Button>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface ButtonComponentProps {
   child1: React.ReactNode;
@@ -8,7 +8,7 @@ interface ButtonComponentProps {
 function ButtonComponent({ child1, child2 }: ButtonComponentProps) {
   return (
     <div>
-      <div className='my-1 bgSelectedPlayer'>{child1}</div>
+      <div className="my-1 bgSelectedPlayer">{child1}</div>
 
       <div className="my-1 anonymousPlayerText">{child2}</div>
     </div>

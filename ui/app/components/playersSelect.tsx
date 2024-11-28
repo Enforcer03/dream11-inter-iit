@@ -13,11 +13,11 @@ const PeopleDisplay = () => {
 
   const handleSelection = () => {
     setFilledDivs(playersData.players.slice(0, 11));
-  }
+  };
 
-  const handleDetails = (player: (typeof playersData.players)[0])=> {
+  const handleDetails = (player: (typeof playersData.players)[0]) => {
     setDetails(player);
-  }
+  };
 
   const handleOptionClick = (player: (typeof playersData.players)[0]) => {
     handleDetails(player);
@@ -53,7 +53,6 @@ const PeopleDisplay = () => {
           child3={details.image}
           child4={details.countryFlag}
         />
-
       </div>
 
       <div className="selectionListDiv">
@@ -81,8 +80,7 @@ const PeopleDisplay = () => {
               </div>
               <div className="player-bio-container">
                 <h3 className="player-name">
-                  {player.name.split(" ")[0].charAt(0)}.{" "}
-                  {player.name.split(" ").slice(1).join(" ")}
+                  {player.name.split(" ")[0].charAt(0)}. {player.name.split(" ").slice(1).join(" ")}
                 </h3>
                 <hr className="player-hr" />
                 <p className="player-bio">
@@ -96,30 +94,37 @@ const PeopleDisplay = () => {
       </div>
 
       <div className="selectListDiv">
-          <div className="-mb-6 ml-11">
-            <h1 className="text-xl font-bold text-[#FFD700] inline">SELECTED PLAYERS</h1>
-            <button className="autoSelectBtn" onClick={handleSelection}>AUTO SELECT</button>
-          </div>
-        <div className="flex justify-center">
-        <div className="players-list">
-          {filledDivs.map((player, index) => (
-            <div
-              key={index}
-              onClick={() => handleEmptyDivClick(index)}
-              className={`text-center ${player ? "cursor-pointer" : ""} flex flex-col items-center justify-center`}
-              style={{ minHeight: "150px" }}
-            >
-              {player ? (
-                <SelectedPlayer
-                  child1={<img src={player.image} alt="Player Image" className="select-player-image no-repeat center" />}
-                  child2={player.name.split(" ").map(word => word.charAt(0).toUpperCase()).join("")}
-                />
-              ) : (
-                <AnonymousPlayer>PLAYER</AnonymousPlayer>
-              )}
-            </div>
-          ))}
+        <div className="-mb-6 ml-11">
+          <h1 className="text-xl font-bold text-[#FFD700] inline">SELECTED PLAYERS</h1>
+          <button className="autoSelectBtn" onClick={handleSelection}>
+            AUTO SELECT
+          </button>
         </div>
+        <div className="flex justify-center">
+          <div className="players-list">
+            {filledDivs.map((player, index) => (
+              <div
+                key={index}
+                onClick={() => handleEmptyDivClick(index)}
+                className={`text-center ${player ? "cursor-pointer" : ""} flex flex-col items-center justify-center`}
+                style={{ minHeight: "150px" }}
+              >
+                {player ? (
+                  <SelectedPlayer
+                    child1={
+                      <img src={player.image} alt="Player Image" className="select-player-image no-repeat center" />
+                    }
+                    child2={player.name
+                      .split(" ")
+                      .map((word) => word.charAt(0).toUpperCase())
+                      .join("")}
+                  />
+                ) : (
+                  <AnonymousPlayer>PLAYER</AnonymousPlayer>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
