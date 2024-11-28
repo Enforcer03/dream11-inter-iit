@@ -21,7 +21,7 @@ with open(T20_aggregate_points, 'r') as file:
     player_Test_data = json.load(file)
     
 
-@app.route('/', methods=['POST'])
+@app.route('/aggregate_stats', methods=['POST'])
 def get_player_stats():
     stats = {}
     stats["ODI"] = "Not available"
@@ -50,4 +50,4 @@ def get_player_stats():
         return jsonify({"error": "Player name is required"}), 400
 
 if __name__ == '__main__':
-    app.run(debug=True)
+     app.run(host='0.0.0.0', port=8080, debug=True)
