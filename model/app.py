@@ -5,9 +5,11 @@ import os
 from dotenv import load_dotenv
 import plotly.graph_objects as go
 import re
-from heuristic_solver import load_player_fantasy_points_for_optimization, compute_player_stats, compute_covariance_matrix, optimize_team
+from heuristic_solver import load_player_fantasy_points_for_optimization, compute_player_stats, compute_covariance_matrix, optimize_team, optimize_team_sharpe
 import datetime
 from utils import get_optimal_team_llm, get_past_match_performance, best_team_button
+import pandas as pd
+import numpy as np
 # from heuristic_solver import load_player_fantasy_points_for_optimization
 
 @st.cache_data()
@@ -88,155 +90,214 @@ manual_input = st.sidebar.checkbox("Add Players Manually")
 squad_info = st.sidebar.checkbox("Load squads from scheduled matches")
 assess_players = st.sidebar.checkbox("Assess Players from the squads")
 optimize_team_option = st.sidebar.checkbox("Optimize Team Selection")
+st.sidebar.selectbox("Select Format", [])
 
 
-# Load squads and generate optimal team
+
 if squad_info:
-    selected_match = st.selectbox("Select a Match", match_keys)
+  # Initialize assigned_weights_df in session_state if not already present
+  if 'assigned_weights_df' not in st.session_state:
+      st.session_state['assigned_weights_df'] = None
+  if 'stats_df' not in st.session_state:
+      st.session_state['stats_df'] = None
 
-    if selected_match:
-        squads = match_data[selected_match]
-        st.subheader("Squads for the Match")
+  # Select a match
+  selected_match = st.selectbox("Select a Match", match_keys)
 
-        player_info = {}
-        for team_name, players in squads.items():
-            player_info[team_name] = []
-            with st.expander(team_name, expanded=True):
-                st.write("Players:")
-                for player in players:
-                    st.markdown(f"- **{player}**")
-                    player_info[team_name].append(f"{player} : {team_name}")
+  if selected_match:
+      squads = match_data[selected_match]
+      st.subheader("Squads for the Match")
 
-        if st.button("Get Optimal Team"):
-            if len(player_info) < 1:
-                st.error("Please ensure data for at least 22 players is provided.")
-            else:
-                player_input = []
-                for team_name, players in player_info.items():
-                    for player in players:
-                        player_name = player.split(" : ")[0]
-                        stats = aggregate_stats.get(player_name, {})
-                        if stats:
-                            stats_info = (
-                                f"{player_name} (Team: {team_name}) - "
-                                f"Games: {stats.get('Games', 0)}, "
-                                f"Wins: {stats.get('Won', 0)}, "
-                                f"Win %: {stats.get('Win %', 0)}, "
-                                f"Runs: {stats.get('Runs', 0)}, "
-                                f"Fours: {stats.get('Fours', 0)}"
-                            )
-                        else:
-                            stats_info = f"{player_name} (Team: {team_name}) - No statistics available"
-                        player_input.append(stats_info)
+      player_info = {}
+      for team_name, players in squads.items():
+          player_info[team_name] = []
+          with st.expander(team_name, expanded=True):
+              st.write("Players:")
+              for player in players:
+                  st.markdown(f"- **{player}**")
+                  player_info[team_name].append(f"{player} : {team_name}")
 
-                player_input_str = "\n".join(player_input)
-                st.write("Processing your team selection...")
+  # Assess Players Section
+  if assess_players:
+      optim_fantasy_points = get_optim_file()
+      # Store the selected player in session state
+      if 'selected_player' not in st.session_state:
+          st.session_state.selected_player = None
 
-                raw_response = get_optimal_team_llm(player_input_str)
+      # Combine players from all teams
+      all_players = [player for team in player_info.values() for player in team]
+      all_players = list(set(all_players))
 
-                if raw_response:
-                    st.success("Optimal Team Generated Successfully!")
-                    st.subheader("Optimal Team")
-                    st.text(raw_response)
-                else:
-                    st.error("Error generating the optimal team.")
+      selected_player = st.selectbox("Select a Player", sorted(all_players), key="player_select")
+      st.session_state.selected_player = selected_player
+      all_keys = ['total_points', 'batting_points', 'fielding_points', 'bowling_points']
 
-    if assess_players:
-        optim_fantasy_points = get_optim_file()
-    # Store the selected player in session state
-        if 'selected_player' not in st.session_state:
-            st.session_state.selected_player = None
+      if selected_player:
+          selected_key = st.selectbox("Select a Key", all_keys)
+          player_name = selected_player.split(":")[0].strip()
+          st.session_state.selected_key = selected_key
 
-        # Combine players from all teams
-        all_players = [player for team in player_info.values() for player in team]
-        all_players =list(set(all_players))
+          if selected_key:
+              matches, total_points = get_past_match_performance(player_name, fantasy_points, key=selected_key)
 
-        selected_player = st.selectbox("Select a Player", sorted(all_players), key="player_select")
-        st.session_state.selected_player = selected_player
+              if matches and total_points:
+                  fig = go.Figure()
+                  fig.add_trace(go.Bar(x=matches, y=total_points, name='Total Points'))
+                  fig.update_layout(
+                      title=f"Total Points for {selected_player} in Past Matches",
+                      xaxis_title="Matches",
+                      yaxis_title="Total Points",
+                      template="plotly_white"
+                  )
+                  st.plotly_chart(fig)
+              else:
+                  st.error(f"No data available for {player_name}.")
 
-        if selected_player:
-            player_name = selected_player.split(":")[0].strip()
-            # Assume you have a function `get_past_match_performance` defined elsewhere
-            # Import or define get_past_match_performance function
-            #   def get_past_match_performance(player_name, fantasy_points):
-            #       player_data = fantasy_points.get(player_name)
-            #       if not player_data:
-            #           return None, None
-            #       matches = list(player_data.keys())
-            #       total_points = [match_data['total_points'] for match_data in player_data.values()]
-            #       return matches, total_points
+  # Optimize Team Section
+  if optimize_team_option:
+      # Combine players from all teams
+      all_players = [player.split(":")[0].strip() for team in player_info.values() for player in team]
+      all_players = list(set(all_players))
 
-            matches, total_points = get_past_match_performance(player_name, fantasy_points)
+      # Set risk tolerance
+      st.write("Players available for selection:")
+      st.write(all_players)
+      risk_tolerance = st.slider("Set Risk Tolerance", min_value=0.01, max_value=10.0, value=1.0, step=0.01)
 
-            if matches and total_points:
-                fig = go.Figure()
-                fig.add_trace(go.Bar(x=matches, y=total_points, name='Total Points'))
-                fig.update_layout(
-                    title=f"Total Points for {selected_player} in Past Matches",
-                    xaxis_title="Matches",
-                    yaxis_title="Total Points",
-                    template="plotly_white"
-                )
-                st.plotly_chart(fig)
-            else:
-                st.error(f"No data available for {player_name}.")
+      # Perform optimization when the "Optimize Team" button is clicked
+      if st.button("Optimize Team"):
+          # Compute expected points and variances
+          stats_df = compute_player_stats(optim_fantasy_points, list(all_players), num_matches=100)
+          print(f"stats_df {stats_df.shape}")
+          print(f"length of the stats_df {len(stats_df['player'].tolist())}")
 
-    if optimize_team_option:
-        st.title("Optimize Team Selection")
+          if stats_df.empty:
+              st.error("No player statistics available.")
+          else:
+              # Compute covariance matrix
+              cov_matrix = compute_covariance_matrix(
+                  optim_fantasy_points, stats_df['player'].tolist(), num_matches=100
+              )
 
-        # Combine players from all teams
-        all_players = [player.split(":")[0].strip() for team in player_info.values() for player in team]
-        all_players =list(set(all_players))
+              # Optimize team using Sharpe Ratio
+              selected_players, weights_df = optimize_team_sharpe(
+                  stats_df, cov_matrix, risk_aversion=risk_tolerance, boolean=True
+              )
 
-        # Set risk tolerance
-        st.write(all_players)
-        risk_tolerance = st.slider("Set Risk Tolerance", min_value=0.01, max_value=1.0, value=0.1, step=0.01)
+              if weights_df is not None and not weights_df.empty:
+                  # Store the results in session_state
+                  st.session_state['assigned_weights_df'] = weights_df
+                  st.session_state['stats_df'] = stats_df
+                  st.success("Optimization successful!")
 
-        # Perform optimization when the button is clicked
-        if st.button("Optimize Team"):
-            # Compute expected points and variances
-            
+              else:
+                  st.error("Failed to select an optimal team.")
 
-            stats_df = compute_player_stats(optim_fantasy_points, list(all_players), num_matches=100)
-            print(f"stats_df {stats_df.shape}")
-            print(f"length of the stats_df  {len(stats_df['player'].tolist())}")
+      # Display optimization results if available
+      if (
+          'assigned_weights_df' in st.session_state and st.session_state['assigned_weights_df'] is not None and
+          'stats_df' in st.session_state and st.session_state['stats_df'] is not None
+      ):
+          weights_df = st.session_state['assigned_weights_df']
+          stats_df = st.session_state['stats_df']
 
-            if stats_df.empty:
-                st.error("No player statistics available.")
-            else:
-                # Compute covariance matrix
-                
-                cov_matrix = compute_covariance_matrix(optim_fantasy_points, stats_df['player'].tolist(), num_matches=100)
+          # Merge weights_df with stats_df to include expected scores and variances
+          weights_df_display = weights_df.merge(
+              stats_df[['player', 'mean_points', 'variance']],
+              on='player',
+              how='left'
+          )
 
-                # Optimize team
-                selected_players, weights_df = optimize_team(stats_df, cov_matrix, risk_tolerance=risk_tolerance)
+          # Show the dataframe
+          st.success("Optimal Weights assigned:")
+          st.write(weights_df_display)
 
+          # Output the weights, expected scores, and variances as a grouped bar plot
+          weights_df_display = weights_df_display.sort_values(by='weight', ascending=True)
 
-                if weights_df is not None:
-                    st.success("Optimal Weights assigned:")
-                    # st.write(", ".join(selected_players))
+          fig = go.Figure()
+          fig.add_trace(go.Bar(
+              x=weights_df_display['weight'],
+              y=weights_df_display['player'],
+              name='Selection Weight',
+              orientation='h',
+              marker_color='blue'
+          ))
+          fig.add_trace(go.Bar(
+              x=weights_df_display['mean_points'],
+              y=weights_df_display['player'],
+              name='Expected Score',
+              orientation='h',
+              marker_color='green'
+          ))
+          fig.add_trace(go.Bar(
+              x=np.sqrt(weights_df_display['variance']),
+              y=weights_df_display['player'],
+              name='Standard Deviation',
+              orientation='h',
+              marker_color='red'
+          ))
+          fig.update_layout(
+              title="Player Selection Weights, Expected Scores, and Standard Deviations",
+              xaxis_title="Value",
+              yaxis_title="Player",
+              barmode='group',
+              template="plotly_white",
+              height=600  # Adjust the height for better UI
+          )
+          st.plotly_chart(fig)
 
-                    # Output the weights assigned as a horizontal bar plot
-                    weights_df = weights_df.sort_values(by='weight', ascending=True)
-                    st.dataframe(weights_df)
+  # Get Optimal Team Section
+  if st.button("Get Optimal Team"):
+      if len(player_info) < 1:
+          st.error("Please ensure data for at least 22 players is provided.")
+      else:
+          player_input = []
+          for team_name, players in player_info.items():
+              for player in players:
+                  player_name = player.split(" : ")[0]
+                  stats = aggregate_stats.get(player_name, {})
+                  if stats:
+                      stats_info = (
+                          f"{player_name} (Team: {team_name}) - "
+                          f"Games: {stats.get('Games', 0)}, "
+                          f"Wins: {stats.get('Won', 0)}, "
+                          f"Win %: {stats.get('Win %', 0)}, "
+                          f"Runs: {stats.get('Runs', 0)}, "
+                          f"Fours: {stats.get('Fours', 0)}"
+                      )
+                  else:
+                      stats_info = f"{player_name} (Team: {team_name}) - No statistics available"
+                  player_input.append(stats_info)
 
-                    fig = go.Figure(go.Bar(
-                        x=weights_df['weight'],
-                        y=weights_df['player'],
-                        orientation='h'
-                    ))
-                    fig.update_layout(
-                        title="Player Selection Weights",
-                        xaxis_title="Weight",
-                        yaxis_title="Player",
-                        template="plotly_white"
-                    )
-                    st.plotly_chart(fig)
-                else:
-                    st.error("Failed to select an optimal team.")
+          # Convert player information to a single string
+          player_input_str = "\n".join(player_input)
 
-# Manual input or sample data handling
+          # Now, include the assigned_weights_df in the input string
+          if (
+              'assigned_weights_df' in st.session_state and st.session_state['assigned_weights_df'] is not None
+          ):
+              assigned_weights_df = st.session_state['assigned_weights_df']
+              weights_info = []
+              for index, row in assigned_weights_df.iterrows():
+                  weights_info.append(f"{row['player']} - Selection Weight: {row['weight']}")
+              weights_info_str = "\n".join(weights_info)
+              # Append weights information to the player_input_str
+              player_input_str += "\n\nPlayer Weights:\n" + weights_info_str
+          else:
+              st.warning("Weights data not found. Proceeding without weights information.")
 
+          st.write("Processing your team selection...")
+
+          # Pass the updated player_input_str to the LLM
+          raw_response = get_optimal_team_llm(player_input_str)
+
+          if raw_response:
+              st.success("Optimal Team Generated Successfully!")
+              st.subheader("Optimal Team")
+              st.text(raw_response)
+          else:
+              st.error("Error generating the optimal team.")
 
 player_data = []
 if upload_sample:
