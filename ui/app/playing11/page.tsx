@@ -7,7 +7,7 @@ function Playing11() {
     <div>
       <PageTemplate title="PLAYING 11" />
       <div className="displayBoxDivDiv">
-        <button className="predictedScoreBtn">PREDICTED TOTAL SCORE</button>
+        <button className="predictedScoreBtn">PREDICTED TOTAL SCORE 195</button>
         <div className="displayBoxDiv">
           <DisplayBox />
         </div>

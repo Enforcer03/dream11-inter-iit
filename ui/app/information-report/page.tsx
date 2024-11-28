@@ -41,10 +41,10 @@ const PeopleDisplay = () => {
   return (
     <div>
       <PageTemplate title="playing 11">
-      <div className="-mb-6 ml-11">
-        <h1 className="text-2xl text-[#FFD700] ">PLAYERS' INFORMATION REPORT</h1>
+      <div className=" ml-2 -mt-20">
+        <h1 className="text-3xl text-[#FFD700] font-bold tracking-wider">PLAYERS' INFORMATION REPORT</h1>
       </div>
-      <div className="flex m-12">
+      <div className="flex m-4">
         {selectedPlayers.map((player) => {
           let fullName = player.name.split(" ");
           let modifiedName = fullName.map((part) => {
@@ -52,7 +52,7 @@ const PeopleDisplay = () => {
           }).join(" ");
 
           return (
-            <div key={player.id} className="m-2">
+            <div key={player.id} className="m-4">
               <SelectedPlayer
                 child1={<img src={player.image} alt="Player Image" className="player-image" />}
                 child2={modifiedName}

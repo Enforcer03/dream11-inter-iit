@@ -72,7 +72,7 @@ function SelectMatchScreen() {
         <ButtonComponent>NEXT</ButtonComponent>
       </div>
       <div className="videoCompDiv">
-        <VideoComponent>VIDEO DEMO</VideoComponent>
+        <VideoComponent>VIDEO <span className="text-white">DEMO</span></VideoComponent>
       </div>
       <div className="audioCompDiv">
         <AudioComponent />

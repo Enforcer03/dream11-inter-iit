@@ -12,10 +12,15 @@ body {
   justify-content: center;
 }
 
+.text-dream11FontColor {
+  color: #e8ba15;
+}
+
 .displayBoxDivDiv {
   position: absolute;
   bottom: 5rem;
   left: 15%;
+  top: 14%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -43,8 +48,9 @@ body {
   text-align: center;
   margin: 0 0 -1.5rem 0;
   color: #e8ba15;
-  font-size: 1rem;
+  font-size: 1 rem;
   font-weight: bold;
+  letter-spacing: 4px;
 }
 
 .players-list {
@@ -71,7 +77,7 @@ body {
 }
 
 .flag {
-  width: 30px;
+  width: 28px;
   height: 20px;
   object-fit: cover;
 }
@@ -84,7 +90,7 @@ body {
 
 .player-image-container {
   display: flex;
-  margin-top: 32%;
+  margin-top: 40%;
 }
 
 .flag-container {
@@ -111,6 +117,7 @@ body {
 }
 
 .player-bio {
+  font-size: 14px;
   display: flex;
   flex-wrap: wrap;
   overflow: hidden;
@@ -137,32 +144,47 @@ body {
   background-repeat: no-repeat;
 }
 
-.backgroundSVG {
-  background-image: url("../public/Subtract.svg");
-  width: 99rem;
-  height: 52.5rem;
-}
-
 .outer-page {
   background-image: url("../public/image.png");
   background-size: cover;
   background-repeat: no-repeat;
 }
 
+.nextButton {
+  background: url("../public/nextButton.svg") no-repeat center;
+  background-size: contain;
+  width: 30rem;
+  height: 5rem;
+  text-align: center;
+  padding: 0 2rem;
+  margin: 0 9rem;
+  color: #e8ba15;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 5px;
+}
+
+.nextButton:hover {
+  background: url("../public/nextBtnHover.svg") no-repeat center;
+  background-size: contain;
+  color: #000000;
+}
+
 .buttonCompDiv {
   position: absolute;
-  bottom: 0.3rem;
-  left: 25%;
+  bottom: 1.3rem;
+  left: 30%;
+  z-index: 1;
 }
 
 .buttonComp {
   background: url("../public/buttonComp.svg") no-repeat center;
   background-size: contain;
   width: 20rem;
-  height: 7rem;
+  height: 5rem;
   text-align: center;
-  padding: 2rem 2rem;
-  margin: 0 5rem;
+  padding: 0 2rem;
+  margin: 0 2rem;
   color: #e8ba15;
   font-size: 1.5rem;
   font-weight: bold;
@@ -177,32 +199,34 @@ body {
 
 .instructionsDiv {
   position: absolute;
-  top: 26%;
-  left: 17%;
+  top: 20%;
+  left: 4%;
   margin: 0 5rem;
   color: #c2c0c0;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: lighter;
-  letter-spacing: 5px;
+  letter-spacing: 3px;
 }
 
 .videoCompDiv {
   position: absolute;
-  bottom: 7.5%;
-  left: 16%;
+  bottom: 7%;
+  left: 15.6%;
 }
 
 .videoComp {
   display: flex;
   background: url("../public/leftBottomButtonComp.svg") no-repeat center;
   background-size: contain;
-  width: 24rem;
-  height: 5.5rem;
+  width: 27rem;
+  height: 4rem;
   color: #fad0539f;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: lighter;
   align-items: flex-end;
   padding: 0 1rem;
+  letter-spacing: 5px;
+
 }
 
 .videoCam {
@@ -211,7 +235,7 @@ body {
   background-size: contain;
   width: 4rem;
   height: 4rem;
-  margin: 0 1rem -0.5rem 0.5rem;
+  margin: 0 1rem -0.9rem 0.5rem;
 }
 
 .audioCompDiv {
@@ -265,7 +289,7 @@ body {
 .selectionListDiv {
   position: absolute;
   top: 10%;
-  right: 11%;
+  right: 15%;
   width: 50%;
   height: 64%;
   overflow-y: scroll;
@@ -273,14 +297,14 @@ body {
 
 .buttonPlayerSelectionDiv {
   position: absolute;
-  bottom: 5rem;
-  left: 19%;
+  bottom: 4rem;
+  left: 16%;
   width: 10rem;
   padding: 0;
 }
 
 .buttonPlayerSelectionDiv .buttonComp {
-  margin: -0.5rem 0;
+  margin: 0.5rem 1rem;
 }
 
 .selectListDiv {
@@ -356,7 +380,7 @@ th {
 .playerShortDetails {
   position: absolute;
   top: 10%;
-  left: 20%;
+  left: 16%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -366,6 +390,7 @@ th {
 .autoSelectBtn {
   background: url("../public/autoSelectBtn.svg") no-repeat center;
   background-size: contain;
+  cursor: pointer;
   width: 10rem;
   height: 2.5rem;
   text-align: center;
@@ -376,9 +401,11 @@ th {
 }
 
 .information-report-container {
+  display: flex;
+  flex-wrap: wrap;
   color: #c2c0c0;
   font-size: 1.2rem;
   font-weight: lighter;
   letter-spacing: 2px;
-  margin-left: -17rem;
+  width: 85%;
 }

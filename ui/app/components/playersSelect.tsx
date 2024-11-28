@@ -56,7 +56,7 @@ const PeopleDisplay = () => {
       </div>
 
       <div className="selectionListDiv">
-        <div className="players-list w-5/6">
+        <div className="players-list w-[59rem]">
           {selectedPlayers.map((player) => (
             <div
               key={player.id}
@@ -94,7 +94,7 @@ const PeopleDisplay = () => {
       </div>
 
       <div className="selectListDiv">
-        <div className="-mb-6 ml-11">
+        <div className="-mb-10 ml-11">
           <h1 className="text-xl font-bold text-[#FFD700] inline">SELECTED PLAYERS</h1>
           <button className="autoSelectBtn" onClick={handleSelection}>
             AUTO SELECT

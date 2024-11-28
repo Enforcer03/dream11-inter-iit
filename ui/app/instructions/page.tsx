@@ -1,5 +1,5 @@
 import AudioComp from "../components/audioSet";
-import Button from "../components/buttonComp";
+import Button from "../components/nextBtn";
 import InstructionSet from "../components/instructionSet";
 import PageTemplate from "../components/pageTemplate";
 import VideoComp from "../components/videoSet";
@@ -11,11 +11,10 @@ function InstructionsPage() {
       <InstructionSet />
       </PageTemplate>
       <div className="buttonCompDiv">
-        <Button>BACK</Button>
         <Button>NEXT</Button>
       </div>
       <div className="videoCompDiv">
-        <VideoComp>VIDEO DEMO</VideoComp>
+        <VideoComp>VIDEO <span className="text-white">DEMO</span></VideoComp>
       </div>
       <div className="audioCompDiv">
         <AudioComp />
