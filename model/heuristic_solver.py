@@ -6,7 +6,10 @@ import json
 import re
 import datetime
 import cvxpy as cp
-
+from utils import get_optimal_team_llm, get_past_match_performance, best_team_button, extract_date_from_match_key
+import pulp
+import numpy as np
+from scipy.stats import entropy
 
 # Function to load and sort fantasy points data
 def load_player_fantasy_points_for_optimization(json_file):
@@ -38,143 +41,250 @@ def load_player_fantasy_points_for_optimization(json_file):
       return sorted_data
 
 # Function to compute expected points and variance
-def compute_player_stats(fantasy_points, players, num_matches=100):
-  data = []
+def compute_player_stats(fantasy_points, players, num_matches=100, date_of_match=None):
+  # Compute the mean and variance of fantasy points for each player
+  stats_list = []
   for player in players:
-      player_data = fantasy_points.get(player)
-      if player_data is None:
-          # Assign dummy values for expected points and variance
-          expected_points = 0.0
-          variance = 0.0
-      else:
-          # Extract total points
-          matches = list(player_data.values())
+      matches, points = get_past_match_performance(
+          player,
+          fantasy_points,
+          num_matches=num_matches,
+          key='total_points',
+          date_of_match=date_of_match
+      )
+      if points:
+          mean_points = np.mean(points)
+          variance_points = np.var(points)
+          stats_list.append({
+              'player': player,
+              'mean_points': mean_points,
+              'variance': variance_points
+          })
 
-          # Get the last 'num_matches' matches
-          matches = matches[-num_matches:]
-
-          total_points = [match['total_points'] for match in matches]
-
-          expected_points = np.mean(total_points) if total_points else 0.0
-          variance = np.var(total_points) if total_points else 0.0
-
-      data.append({
-          'player': player,
-          'mean_points': expected_points,
-          'variance': variance
-      })
-  stats_df = pd.DataFrame(data)
+  stats_df = pd.DataFrame(stats_list)
   return stats_df
 
 # Function to compute covariance matrix
-def compute_covariance_matrix(fantasy_points, players, num_matches=100):
-  player_point_series = {}
-  max_length = 0
-  print(f"length of players :  {len(players)}")
-  print(players)
-
+def compute_covariance_matrix(fantasy_points, players, num_matches=100, date_of_match=None):
+  # Create a DataFrame of player fantasy points time series
+  time_series_data = {}
   for player in players:
-      player_data = fantasy_points.get(player)
-      if player_data is None:
-          # Assign a dummy series of zeros
-          total_points = [0.0] * num_matches
+      matches, points = get_past_match_performance(
+          player,
+          fantasy_points,
+          num_matches=num_matches,
+          key='total_points',
+          date_of_match=date_of_match
+      )
+      if points:
+          time_series_data[player] = points
       else:
-          # Extract total points
-          matches = list(player_data.values())
+          # If no data available, fill with the mean of existing points
+          time_series_data[player] = [np.mean(points)] * num_matches
 
-          # Get the last 'num_matches' matches
-          matches = matches[-num_matches:]
-          total_points = [match['total_points'] for match in matches]
-
-      # Pad the series if it's shorter than 'num_matches'
-      if len(total_points) < num_matches:
-          total_points = [0.0] * (num_matches - len(total_points)) + total_points
-
-      # Update max_length
-      if len(total_points) > max_length:
-          max_length = len(total_points)
-
-      player_point_series[player] = pd.Series(total_points)
-
-  # Create a DataFrame from the series, align them by index
-  print(f"length of player_points_series:  {len(player_point_series)}")
-
-  points_df = pd.DataFrame(player_point_series)
-  print(f"shape of points_df:  {len(points_df.shape)}")
-
-  # Handle missing values by filling with 0.0
-  points_df = points_df.fillna(0.0)
+  # Create DataFrame
+  df = pd.DataFrame(time_series_data)
 
   # Compute covariance matrix
-  cov_matrix = points_df.cov()
+  cov_matrix = df.cov()
   return cov_matrix
 
-# Function to optimize the team
-def optimize_team(stats_df, cov_matrix, risk_tolerance=0.1):
-  """
-  Optimize the fantasy cricket team using mean-variance optimization.
+def optimize_team_sharpe(stats_df, cov_matrix, num_players=11, risk_aversion=1.0, boolean=True):
+    """
+    Enhanced optimization with DCP-compliant objectives.
+    """
+    n = len(stats_df)
+    w = cp.Variable(n, boolean=boolean)
 
-  Parameters:
-  - stats_df: pandas DataFrame, contains 'player', 'mean_points', 'variance_points'.
-  - cov_matrix: pandas DataFrame, covariance matrix of players.
-  - risk_tolerance: float, hyperparameter for risk tolerance (lambda).
+    # Core parameters
+    mu = stats_df['mean_points'].values
+    Sigma = cov_matrix.values if isinstance(cov_matrix, pd.DataFrame) else cov_matrix
+    
+    # Make sure Sigma is positive semidefinite
+    Sigma = (Sigma + Sigma.T) / 2  # Ensure symmetry
+    min_eig = np.min(np.real(np.linalg.eigvals(Sigma)))
+    if min_eig < 0:
+        Sigma -= 1.1 * min_eig * np.eye(Sigma.shape[0])  # Make positive definite
+    
+    # Objectives that comply with DCP rules
+    expected_points = mu @ w
+    risk_term = cp.quad_form(w, Sigma)  # Now using positive semidefinite matrix
+    
+    # Use DCP-compliant objective
+    objective = cp.Maximize(expected_points - risk_aversion * risk_term)
 
-  Returns:
-  - selected_players: list, names of selected players.
-  """
-  # Number of players
-  n = len(stats_df)
+    # Basic constraint
+    constraints = [cp.sum(w) == num_players]
 
-  # Variable for selection (binary variables)
-  w = cp.Variable(n, boolean=False)
+    # Solve with multiple solver options
+    prob = cp.Problem(objective, constraints)
+    
+    try:
+        prob.solve(solver=cp.GUROBI, verbose=True)
+    except (cp.error.SolverError, cp.error.DCPError):
+        try:
+            prob.solve(solver=cp.CBC, verbose=True)
+        except:
+            prob.solve(solver=cp.SCS, verbose=True)
 
-  # Parameters
-  mu = stats_df['mean_points'].values
-  Sigma = cov_matrix.values
+    if prob.status not in ["optimal", "optimal_inaccurate"]:
+        print(f"Optimization failed: {prob.status}")
+        return [], pd.DataFrame()
 
-  # Objective function
-  print(f"Shape of w: {w.shape}")
-  print(f"Shape of Sigma: {Sigma.shape}")
-  expected_points = mu.T @ w
-  variance = cp.quad_form(w, Sigma)
-  objective = cp.Maximize(expected_points - (1- risk_tolerance) * variance)
+    w_values = w.value
+    selected_indices = [i for i in range(n) if w_values[i] > 0.5]
+    selected_players = stats_df.iloc[selected_indices]['player'].tolist()
 
-  # Constraints
-  constraints = []
+    weights = pd.DataFrame({
+        'player': stats_df['player'],
+        'weight': w_values
+    })
 
-  # Total number of players constraint
-  constraints.append(cp.sum(w) == 2)
+    return selected_players, weights
 
-  # Solve the problem
-  prob = cp.Problem(objective, constraints)
-  try:
-      prob.solve(solver=cp.GUROBI, verbose=True)
-  except cp.error.SolverError:
-      # If GUROBI is not available, try CBC
-      prob.solve(solver=cp.CBC, verbose=True)
-
-  # Check if the problem was solved
-  if prob.status not in ["optimal", "optimal_inaccurate"]:
-      print(f"Optimization failed: {prob.status}")
-      return [], pd.DataFrame()
-
-  # Get the selected players
-  w_values = w.value
-  selected_indices = [i for i in range(n) if w_values[i] > 0.5]
-  selected_players = stats_df.iloc[selected_indices]['player'].tolist()
-
-  # Prepare weights output
-  weights = pd.DataFrame({
-      'player': stats_df['player'],
-      'weight': w_values
-  })
-
-  return None, weights
-
+# def optimize_team_advanced(stats_df, cov_matrix, num_players=11, boolean=True, risk_aversion =1):
+#     """
+#     Advanced optimization using alternative objectives beyond quadratic programming.
+#     """
+#     import pulp
+#     import numpy as np
+#     from scipy.stats import entropy
+    
+#     # Initialize PuLP problem (Linear Programming)
+#     prob = pulp.LpProblem("FantasyTeam", pulp.LpMaximize)
+    
+#     # Decision variables
+#     players = list(range(len(stats_df)))
+#     x = pulp.LpVariable.dicts("select", players, cat='Binary')
+    
+#     # Parameters
+#     mu = stats_df['mean_points'].values
+#     std_dev = np.sqrt(np.diag(cov_matrix))
+    
+#     # Calculate additional metrics
+#     consistency = mu / std_dev  # Sharpe-like ratio for each player
+#     entropy_score = entropy(mu / sum(mu))  # Diversity in scoring
+    
+#     # 1. Expected Points Term
+#     prob += pulp.lpSum([mu[i] * x[i] for i in players])
+    
+#     # 2. Team Size Constraint
+#     prob += pulp.lpSum([x[i] for i in players]) == num_players
+    
+#     # 3. Consistency Constraint 
+#     prob += pulp.lpSum([consistency[i] * x[i] for i in players]) >= np.mean(consistency) * num_players/2
+    
+#     # 4. Entropy-based Diversity
+#     prob += pulp.lpSum([entropy_score * x[i] for i in players]) >= entropy_score * num_players/2
+    
+#     # Additional Constraints based on historical performance patterns
+#     recent_form = np.percentile(mu, 75)  # Top 25% performers
+#     prob += pulp.lpSum([x[i] for i in players if mu[i] >= recent_form]) >= num_players/3
+    
+#     # Solve the problem
+#     prob.solve()
+    
+#     # Extract results
+#     selected_indices = [i for i in players if x[i].value() > 0.5]
+#     selected_players = stats_df.iloc[selected_indices]['player'].tolist()
+    
+#     # Create weights DataFrame
+#     weights = pd.DataFrame({
+#         'player': stats_df['player'],
+#         'weight': [x[i].value() if i in selected_indices else 0 for i in range(len(stats_df))]
+#     })
+    
+#     return selected_players, weights
+def optimize_team_advanced(stats_df, cov_matrix, num_players=11, boolean=True, risk_aversion=1):
+    """
+    Advanced optimization with minimum one player per team constraint and proper handling of NaN/inf values.
+    """
+    # Initialize PuLP problem
+    prob = pulp.LpProblem("FantasyTeam", pulp.LpMaximize)
+    
+    # Decision variables
+    players = list(range(len(stats_df)))
+    x = pulp.LpVariable.dicts("select", players, cat='Binary')
+    
+    # Parameters
+    mu = stats_df['mean_points'].values
+    std_dev = np.sqrt(np.diag(cov_matrix))
+    
+    # Handle division by zero and invalid values in consistency calculation
+    with np.errstate(divide='ignore', invalid='ignore'):
+        consistency = np.where(std_dev > 0, mu / std_dev, 0)
+    
+    # Replace inf and nan values with 0 or appropriate values
+    consistency = np.nan_to_num(consistency, nan=0.0, posinf=np.nanmax(consistency[~np.isinf(consistency)]))
+    
+    # Calculate entropy score safely
+    total_mu = np.sum(mu)
+    if total_mu > 0:
+        prob_dist = mu / total_mu
+        prob_dist = np.nan_to_num(prob_dist, nan=0.0)
+        entropy_score = entropy(prob_dist)
+    else:
+        entropy_score = 0
+    
+    # Get unique teams
+    teams = stats_df['team'].unique()
+    
+    # Print debugging information
+    print("Cleaned consistency values:", consistency)
+    print("Entropy score:", entropy_score)
+    
+    # Objective: Expected Points
+    prob += pulp.lpSum([mu[i] * x[i] for i in players])
+    
+    # Existing constraints with safety checks
+    prob += pulp.lpSum([x[i] for i in players]) == num_players  # Team size
+    
+    # Consistency constraint (only if we have valid consistency values)
+    valid_consistency = consistency[~np.isnan(consistency) & ~np.isinf(consistency)]
+    if len(valid_consistency) > 0:
+        mean_consistency = np.mean(valid_consistency)
+        prob += pulp.lpSum([consistency[i] * x[i] for i in players]) >= mean_consistency * num_players/2
+    
+    # Diversity constraint (only if entropy score is valid)
+    if entropy_score > 0:
+        prob += pulp.lpSum([entropy_score * x[i] for i in players]) >= entropy_score * num_players/2
+    
+    # Recent form constraint with safety check
+    valid_mu = mu[~np.isnan(mu) & ~np.isinf(mu)]
+    if len(valid_mu) > 0:
+        recent_form = np.percentile(valid_mu, 75)
+        high_form_players = [i for i in players if mu[i] >= recent_form]
+        if high_form_players:
+            prob += pulp.lpSum([x[i] for i in high_form_players]) >= num_players/3
+    
+    # Team representation constraint
+    for team in teams:
+        team_players_indices = [i for i, p in enumerate(players) 
+                              if stats_df.iloc[i]['team'] == team]
+        if team_players_indices:  # Only add constraint if team has players
+            prob += pulp.lpSum([x[i] for i in team_players_indices]) >= 1
+    
+    # Solve
+    status = prob.solve()
+    
+    if status != pulp.LpStatusOptimal:
+        print(f"Warning: Optimization status is {pulp.LpStatus[status]}")
+        return [], pd.DataFrame(columns=['player', 'weight'])
+    
+    # Results
+    selected_indices = [i for i in players if x[i].value() > 0.5]
+    selected_players = stats_df.iloc[selected_indices]['player'].tolist()
+    
+    weights = pd.DataFrame({
+        'player': stats_df['player'],
+        'weight': [x[i].value() if i in selected_indices else 0 for i in range(len(stats_df))]
+    })
+    
+    return selected_players, weights
 # Main function to run the optimization
 def main():
   # File paths (modify these paths according to your files)
-  fantasy_points_path = '/Users/ved14/Library/CloudStorage/GoogleDrive-v_umrajkar@ma.iitr.ac.in/My Drive/SEM7/extras/dream11-inter-iit/data/player_fantasy_points_t20.json'
+  fantasy_points_path = '../data/player_fantasy_points_t20.json'
   squad_players_path = 'squad_players.json'       
 
   # Load data
@@ -205,7 +315,7 @@ def main():
   risk_tolerance = 0.1  # Adjust this value as needed
 
   # Optimize team
-  selected_players, weights = optimize_team(stats_df, cov_matrix, risk_tolerance=risk_tolerance)
+  selected_players, weights = optimize_team_sharpe(stats_df, cov_matrix, risk_tolerance=risk_tolerance)
 
 #   if selected_players:
 #       print("Optimal Team Selected:")

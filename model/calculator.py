@@ -1,6 +1,5 @@
 import json
 
-# Function to calculate batting points
 def calculate_batting_points(player_stats):
     points = 0
     runs_scored = player_stats.get("Total Runs Scored", 0)
