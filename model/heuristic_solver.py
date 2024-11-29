@@ -41,7 +41,7 @@ def load_player_fantasy_points_for_optimization(json_file):
       return sorted_data
 
 # Function to compute expected points and variance
-def compute_player_stats(fantasy_points, players, num_matches=100, date_of_match=None):
+def compute_player_stats(fantasy_points, players, num_matches=100, date_of_match=None, key ='total_points'):
   # Compute the mean and variance of fantasy points for each player
   stats_list = []
   for player in players:
@@ -49,7 +49,7 @@ def compute_player_stats(fantasy_points, players, num_matches=100, date_of_match
           player,
           fantasy_points,
           num_matches=num_matches,
-          key='total_points',
+          key=key,
           date_of_match=date_of_match
       )
       if points:

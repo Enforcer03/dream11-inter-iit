@@ -62,21 +62,7 @@ def best_team_button():
                 st.error("Error generating the optimal team.")
 
 
-# def get_past_match_performance(player_name, fantasy_points, num_matches=100, key ='total_points'):
-#   player_data = fantasy_points.get(player_name)
-#   if player_data is None:
-#       print(f"Warning: Player not found in data: {player_name}")
-#       return [], []  # Return empty lists if player data is not found
 
-#   # Since player_data is a list of tuples (match_key, match_data)
-#   # Get the last 'num_matches' matches
-#   last_matches_data = player_data[-num_matches:]
-
-#   # Extract match names and total points
-#   last_matches = [match_key for match_key, _ in last_matches_data]
-#   last_points = [match_data[key] for _, match_data in last_matches_data]
-
-#   return last_matches, last_points
 
 def extract_date_from_match_key(match_key):
   date_pattern = r'(\d{4}-\d{2}-\d{2})'
@@ -220,4 +206,87 @@ def plot_team_distribution(mu, sigma, actual_score, optimal_score):
     
     return fig
 
+
+def calculate_team_metrics(stats_df, weights_df, cov_matrix):
+    """
+    Calculate key performance metrics for a selected team.
+    
+    Parameters:
+    - stats_df: DataFrame with player statistics (mean_points, variance)
+    - weights_df: DataFrame with selected players (weight=1 for selected)
+    - cov_matrix: Covariance matrix for player performances
+    
+    Returns:
+    Dictionary with four key metrics:
+    1. Expected Score: Mean points expected from team
+    2. Team Consistency: Average Sharpe ratio (mean/std) of selected players
+    3. Point Distribution: Entropy of point distribution in team
+    4. Form Score: Average points of top performers in team
+    """
+    try:
+        # Get list of selected players (those with weight = 1)
+        selected_players = weights_df[weights_df['weight'] == 1]['player'].tolist()
+        if not selected_players:
+            raise ValueError("No players selected in weights_df")
+            
+        # Get stats for selected players
+        selected_df = stats_df[stats_df['player'].isin(selected_players)].copy()
+        if selected_df.empty:
+            raise ValueError("No stats found for selected players")
+
+        # 1. Calculate Expected Team Score
+        trend_score = selected_df['mean_points'].sum()
+
+        # 2. Calculate Team Consistency Score (mean Sharpe ratio)
+        consistency_score = (selected_df['mean_points'] / np.sqrt(selected_df['variance'])).mean()
+
+        # 3. Calculate Point Distribution Score
+        if selected_df['mean_points'].sum() > 0:
+            point_shares = selected_df['mean_points'] / selected_df['mean_points'].sum()
+            diversity_score = -(np.sum(point_shares * np.log(point_shares + 1e-10)))/11
+        else:
+            diversity_score = 0
+
+        # 4. Calculate Form Score
+        points_75th = stats_df['mean_points'].quantile(0.75)
+        top_performers = selected_df[selected_df['mean_points'] >= points_75th]
+        form_score = len(top_performers)
+
+        return {
+            'trend_score': round(trend_score, 2),
+            'consistency_score': round(consistency_score, 2),
+            'diversity_score': round(diversity_score, 2),
+            'form_score': round(form_score, 2)
+        }
+        
+    except Exception as e:
+        print(f"Error calculating team metrics: {str(e)}")
+        return {
+            'trend_score': 0,
+            'consistency_score': 0,
+            'diversity_score': 0,
+            'form_score': 0
+        }
 # Call the function with your values
+
+def load_player_fantasy_points(json_file):
+    with open(json_file, "r") as file:
+        data = json.load(file)
+        sorted_data = {}
+        for player, matches in data.items():
+            match_list = list(matches.items())
+            def extract_date_from_match_key(match_key):
+                date_pattern = r'(\d{4}-\d{2}-\d{2})'
+                match = re.search(date_pattern, match_key)
+                if match:
+                    date_str = match.group(1)
+                    try:
+                        date = datetime.datetime.strptime(date_str, '%Y-%m-%d')
+                    except ValueError:
+                        date = datetime.datetime.min
+                else:
+                    date = datetime.datetime.min
+                return date
+            match_list_sorted = sorted(match_list, key=lambda x: extract_date_from_match_key(x[0]))
+            sorted_data[player] = match_list_sorted
+        return sorted_data

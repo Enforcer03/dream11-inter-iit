@@ -54,8 +54,8 @@ def calculate_bowling_points(player_stats):
     points = 0
     wickets = player_stats.get("Wickets", 0)
     overs_bowled = player_stats.get("Overs Bowled", 0)
-    economy_rate = player_stats.get("Economy Rate", 0)
-    bowled_or_lbw = player_stats.get("Bowled", 0) + player_stats.get("LBW", 0)
+    economy_rate = player_stats.get("Avg Economy Rate per inning", 0)
+    bowled_or_lbw = player_stats.get("Bowled", 0) + player_stats.get("LBW", 0) ## the key does not exist in dict
 
     # +25 points per wicket, +8 points for bowled/LBW dismissals
     points += wickets * 25
