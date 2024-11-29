@@ -7,6 +7,10 @@ def calculate_batting_points_test(player_stats):
     boundaries = player_stats.get("Fours", 0)
     sixes = player_stats.get("Sixes", 0)
     balls_faced = player_stats.get("Balls Faced", 0)
+    balls_faced_inning1 = player_stats.get("Balls Faced Inning 1", 0)
+    balls_faced_inning2 = player_stats.get("Balls Faced Inning 2", 0)
+    balls_faced_inning3 = player_stats.get("Balls Faced Inning 3", 0)
+    balls_faced_inning4 = player_stats.get("Balls Faced Inning 4", 0)
     inning1_not_out = player_stats.get("How Out Inning 1 (not out)", 0)
     inning2_not_out = player_stats.get("How Out Inning 2 (not out)", 0)
     inning1_not_played = player_stats.get("How Out Inning 1 (Not Played)", 0)
@@ -51,10 +55,18 @@ def calculate_batting_points_test(player_stats):
         points += 8
     elif inning4_runs >= 50:
         points += 4
+        
+    # DOING THIS DISMISSAL INNING BY INNING
     # TODO: MAKE THIS NOT FOR BOWLERS
     # currently done for all players as we dont have data if a player is bowler or not
-    # Penalty: -4 points if dismissed for a duck (except tailenders)
-    if runs_scored == 0 and ((inning1_not_played==0 and inning1_not_out==0) or (inning2_not_played==0 and inning2_not_out==0) or (inning3_not_played==0 and inning3_not_out==0) or (inning4_not_played==0 and inning4_not_out==0)) and balls_faced > 0:
+    # Penalty: -4 points if dismissed for a duck (except tailenders)  
+    if inning1_runs == 0 and (inning1_not_played==0 and inning1_not_out==0) and balls_faced_inning1 > 0:
+        points -= 4
+    if inning2_runs == 0 and (inning2_not_played==0 and inning2_not_out==0) and balls_faced_inning2 > 0:
+        points -= 4
+    if inning3_runs == 0 and (inning3_not_played==0 and inning3_not_out==0) and balls_faced_inning3 > 0:
+        points -= 4
+    if inning4_runs == 0 and (inning4_not_played==0 and inning4_not_out==0) and balls_faced_inning4 > 0:
         points -= 4
 
 
@@ -167,54 +179,54 @@ def calculate_fantasy_points_test(player_stats):
 
 if __name__== '__main__':
     print(calculate_fantasy_points_test({
-            "Team Name": "Durham",
-            "Batting Innings": 1,
+            "Team Name": "Northamptonshire",
+            "Batting Innings": 2,
             "Bowling Innings": 1,
-            "Total Runs Scored": 0.0,
-            "Avg Runs Per Inning": 0.0,
-            "Boundaries": 0.0,
-            "Sixes": 0.0,
-            "Average Sixes Per Inning": 0.0,
-            "Fours": 0.0,
-            "Average Fours Per Inning": 0.0,
-            "Boundary% Per Inning": 0.0,
-            "Boundary Rate Per Inning": float('inf'),
-            "Wickets": 3.0,
-            "Avg Wickets Per Inning": 3.0,
-            "Opposition Team": "Kent",
+            "Total Runs Scored": 116.0,
+            "Avg Runs Per Inning": 58.0,
+            "Boundaries": 15.0,
+            "Sixes": 2.0,
+            "Average Sixes Per Inning": 1.0,
+            "Fours": 13.0,
+            "Average Fours Per Inning": 6.5,
+            "Boundary% Per Inning": 4.237288135593221,
+            "Boundary Rate Per Inning": 5.9,
+            "Wickets": 0.0,
+            "Avg Wickets Per Inning": 0.0,
+            "Opposition Team": "Derbyshire",
             "Catches Taken": 0,
             "Stumped Outs Made": 0,
             "Run Outs Made": 0,
-            "Match Date": "2024-09-26",
-            "Match ID": "Durham-Kent-2024-09-26-male-MDM",
+            "Match Date": "2024-09-09",
+            "Match ID": "Northamptonshire-Derbyshire-2024-09-09-male-MDM",
             "Match Type": "MDM",
-            "Venue": "Riverside Ground, Chester-le-Street",
+            "Venue": "County Ground, Northampton",
             "Event": "County Championship",
-            "Match Winner": "Not Available",
-            "Balls Faced": 12.0,
-            "Avg Balls Faced Per Inning": 12.0,
-            "Avg Batting S/R Per Inning": 0.0,
-            "Avg Runs/Ball Per Inning": 0.0,
-            "*how Out": "lbw",
-            "Overs Bowled": 18.0,
-            "Bowls Bowled": 108.0,
-            "Average Bowls Bowled Per Inning": 108.0,
-            "Avg Economy Rate per inning": 3.5555555555555554,
-            "Bowling Average": 21.333333333333332,
-            "Average Consecutive Dot Balls": 4.0,
-            "Maiden Overs": 2.0,
-            "Avg Bowling S/R Per Inning": 36.0,
-            "Runs Given": 64.0,
-            "RunsGiven/Ball Per Inning": 0.5925925925925926,
-            "Batting S/R AA(Above Average)": -56.930366451981605,
+            "Match Winner": "Northamptonshire",
+            "Balls Faced": 177.0,
+            "Avg Balls Faced Per Inning": 88.5,
+            "Avg Batting S/R Per Inning": 32.76836158192091,
+            "Avg Runs/Ball Per Inning": 0.327683615819209,
+            "*how Out": "stumped",
+            "Overs Bowled": 1.0,
+            "Bowls Bowled": 6.0,
+            "Average Bowls Bowled Per Inning": 6.0,
+            "Avg Economy Rate per inning": 2.0,
+            "Bowling Average": float('inf'),
+            "Average Consecutive Dot Balls": 2.0,
+            "Maiden Overs": 0.0,
+            "Avg Bowling S/R Per Inning": float('inf'),
+            "Runs Given": 2.0,
+            "RunsGiven/Ball Per Inning": 0.3333333333333333,
+            "Batting S/R AA(Above Average)": 12.41989931652881,
             "How Out Inning 1 (Not Played)": 0,
             "How Out Inning 1 (caught)": 0,
             "How Out Inning 1 (not out)": 0,
-            "How Out Inning 1 (lbw)": 1,
+            "How Out Inning 1 (lbw)": 0,
             "How Out Inning 1 (bowled)": 0,
             "How Out Inning 1 (Run Out)": 0,
             "How Out Inning 1 (caught and bowled)": 0,
-            "How Out Inning 1 (stumped)": 0,
+            "How Out Inning 1 (stumped)": 1,
             "How Out Inning 2 (Not Played)": 1,
             "How Out Inning 2 (caught)": 0,
             "How Out Inning 2 (not out)": 0,
@@ -223,11 +235,11 @@ if __name__== '__main__':
             "How Out Inning 2 (Run Out)": 0,
             "How Out Inning 2 (caught and bowled)": 0,
             "How Out Inning 2 (stumped)": 0,
-            "How Out Inning 3 (Not Played)": 1,
+            "How Out Inning 3 (Not Played)": 0,
             "How Out Inning 3 (caught)": 0,
             "How Out Inning 3 (not out)": 0,
             "How Out Inning 3 (lbw)": 0,
-            "How Out Inning 3 (bowled)": 0,
+            "How Out Inning 3 (bowled)": 1,
             "How Out Inning 3 (Run Out)": 0,
             "How Out Inning 3 (caught and bowled)": 0,
             "How Out Inning 3 (stumped)": 0,
@@ -239,12 +251,16 @@ if __name__== '__main__':
             "How Out Inning 4 (Run Out)": 0,
             "How Out Inning 4 (caught and bowled)": 0,
             "How Out Inning 4 (stumped)": 0,
-            "Innings 1 Runs": 0.0,
-            "Innings 2 Runs": 0,
+            "Innings 1 Runs": 90.0,
+            "Innings 2 Runs": 26.0,
             "Innings 1 Wickets": 0,
-            "Innings 2 Wickets": 3.0,
+            "Innings 2 Wickets": 0.0,
             "Innings 3 Runs": 0,
             "Innings 4 Runs": 0,
             "Innings 3 Wickets": 0,
-            "Innings 4 Wickets": 0
+            "Innings 4 Wickets": 0,
+            "Balls Faced Inning 1": 0,
+            "Balls Faced Inning 2": 0,
+            "Balls Faced Inning 3": 0,
+            "Balls Faced Inning 4": 0,
             }))
