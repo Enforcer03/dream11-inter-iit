@@ -1,6 +1,21 @@
-function VideoComponent({ children }: { children: React.ReactNode }) {
+"use client"
+
+import { useRouter } from 'next/navigation';
+
+interface ButtonProps {
+  children: React.ReactNode;
+  nextPage: string;
+}
+
+function VideoComponent({ children, nextPage }: ButtonProps) {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(nextPage);
+  };
+
   return (
-    <button className="videoComp">
+    <button onClick={handleClick} className="videoComp">
       <div className="videoCam"></div>
       {children}
     </button>

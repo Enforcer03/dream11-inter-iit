@@ -4,7 +4,7 @@ import { useState } from "react";
 import AudioComponent from "../components/audioSet";
 import ButtonComponent from "../components/buttonComp";
 import PageTemplate from "../components/pageTemplate";
-import VideoComponent from "../components/videoSet";
+import VideoComp from "../components/videoSet";
 import LeagueSelector from "../components/leagueSelector";
 import MatchSelector from "../components/matchSelector";
 
@@ -75,10 +75,7 @@ function SelectMatchScreen() {
         <ButtonComponent nextPage={nextPage}>NEXT</ButtonComponent>
       </div>
       <div className="videoCompDiv">
-        <VideoComponent>VIDEO <span className="text-white">DEMO</span></VideoComponent>
-      </div>
-      <div className="audioCompDiv">
-        <AudioComponent />
+        <VideoComp nextPage="/video-instructions">VIDEO <span className="text-white">DEMO</span></VideoComp>
       </div>
     </div>
   );

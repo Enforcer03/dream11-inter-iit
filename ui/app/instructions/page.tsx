@@ -1,4 +1,3 @@
-// pages/instructions.tsx
 import AudioComp from "../components/audioSet";
 import Button from "../components/nextBtn";
 import InstructionSet from "../components/instructionSet";
@@ -17,7 +16,7 @@ function InstructionsPage() {
         <Button nextPage={nextPage}>NEXT</Button>
       </div>
       <div className="videoCompDiv">
-        <VideoComp>
+        <VideoComp nextPage="/video-instructions">
           VIDEO <span className="text-white">DEMO</span>
         </VideoComp>
       </div>

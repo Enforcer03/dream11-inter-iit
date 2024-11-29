@@ -95,7 +95,9 @@ const PeopleDisplay = () => {
 
       <div className="selectListDiv">
         <div className="-mb-10 ml-11">
-          <h1 className="text-xl font-bold text-[#FFD700] inline">SELECTED PLAYERS</h1>
+          <h1 className="text-xl font-bold text-[#FFD700] inline">
+            SELECTED PLAYERS
+          </h1>
           <button className="autoSelectBtn" onClick={handleSelection}>
             AUTO SELECT
           </button>

@@ -42,15 +42,19 @@ body {
 
 .predictedScoreBtn {
   background: url("../public/predictedScoreBtn.svg") no-repeat center;
-  background-size: contain;
+  background-size: 100% 100%;
   width: 30rem;
   height: 2.5rem;
   text-align: center;
   margin: 0 0 -1.5rem 0;
   color: #e8ba15;
-  font-size: 1 rem;
+  font-size: 1rem;
   font-weight: bold;
   letter-spacing: 4px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .players-list {
@@ -398,6 +402,7 @@ th {
   color: #e8ba15;
   font-size: 1rem;
   font-weight: bold;
+  position: relative;
 }
 
 .information-report-container {
@@ -408,4 +413,12 @@ th {
   font-weight: lighter;
   letter-spacing: 2px;
   width: 85%;
+}
+
+.videoDisplayDiv iframe {
+  position: absolute;
+  top: 19%;
+  left: 22.5%;
+  width: 55%;
+  height: 65%;
 }
