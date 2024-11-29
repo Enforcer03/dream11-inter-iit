@@ -26,13 +26,16 @@ def calculate_batting_points(player_stats):
     elif runs_scored >= 50:
         points += 4
 
-
+    
+    
     # TODO: MAKE THIS NOT FOR BOWLERS
+    # currently done for all players as we dont have data if a player is bowler or not
     # -2 points if dismissed for a duck (only if not a bowler)
     if runs_scored == 0 and ((inning1_not_played==0 and inning1_not_out==0) or (inning2_not_played==0 and inning2_not_out==0)) and balls_faced > 0:
         points -= 3
 
     # TODO: MAKE THIS NOT FOR BOWLERS
+    # currently done for all players as we dont have data if a player is bowler or not
     # Strike Rate Bonus (Min 20 balls faced)
     if balls_faced >= 20:
         strike_rate = player_stats.get("Avg Batting S/R Per Inning")
