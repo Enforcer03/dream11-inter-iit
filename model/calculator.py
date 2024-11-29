@@ -6,11 +6,10 @@ def calculate_batting_points(player_stats):
     boundaries = player_stats.get("Fours", 0)
     sixes = player_stats.get("Sixes", 0)
     balls_faced = player_stats.get("Balls Faced", 0)
-    try:
-        how_out = player_stats.get("how Out", "").lower()
-    except AttributeError:
-        print("how out issue ")
-        how_out = "nan"
+    inning1_not_out = player_stats.get("How Out Inning 1 (not out)", 0)
+    inning2_not_out = player_stats.get("How Out Inning 2 (not out)", 0)
+    inning1_not_played = player_stats.get("How Out Inning 1 (Not Played)", 0)
+    inning2_not_played = player_stats.get("How Out Inning 2 (Not Played)", 0)
     
     # +1 point per run
     points += runs_scored * 1
@@ -28,12 +27,12 @@ def calculate_batting_points(player_stats):
         points += 4
 
     # -2 points if dismissed for a duck (only if not a bowler)
-    if runs_scored == 0 and how_out != "not out" and balls_faced > 0:
+    if runs_scored == 0 and ((inning1_not_played==0 and inning1_not_out==0) or (inning2_not_played==0 and inning2_not_out==0)) and balls_faced > 0:
         points -= 2
 
     # Strike Rate Bonus (Min 10 balls faced)
     if balls_faced >= 10:
-        strike_rate = (runs_scored / balls_faced) * 100
+        strike_rate = player_stats.get("Avg Batting S/R Per Inning")
         if strike_rate > 170:
             points += 6
         elif 150 < strike_rate <= 170:
@@ -54,7 +53,9 @@ def calculate_bowling_points(player_stats):
     points = 0
     wickets = player_stats.get("Wickets", 0)
     overs_bowled = player_stats.get("Overs Bowled", 0)
-    economy_rate = player_stats.get("Economy Rate", 0)
+    economy_rate = player_stats.get("Avg Economy Rate per inning", 0)
+    
+    # Bowled and LBW features to be made yet
     bowled_or_lbw = player_stats.get("Bowled", 0) + player_stats.get("LBW", 0)
 
     # +25 points per wicket, +8 points for bowled/LBW dismissals
@@ -95,14 +96,17 @@ def calculate_fielding_points(player_stats):
     points = 0
     catches_taken = player_stats.get("Catches Taken", 0)
     stumped_outs = player_stats.get("Stumped Outs Made", 0)
-    run_outs_direct = player_stats.get("Direct Hit Run Outs Made", 0)
-    run_outs_indirect = player_stats.get("Non-Direct Run Outs Made", 0)
+    # run_outs_direct = player_stats.get("Direct Hit Run Outs Made", 0)
+    # run_outs_indirect = player_stats.get("Non-Direct Run Outs Made", 0)
+    run_outs = player_stats.get("Run Outs Made", 0)
 
     # +8 points per catch, +12 for stumping, +12 for direct run-out, +6 for indirect
     points += catches_taken * 8
     points += stumped_outs * 12
-    points += run_outs_direct * 12
-    points += run_outs_indirect * 6
+    # points += run_outs_direct * 12
+    # points += run_outs_indirect * 6
+    ## considering probability of direct hit is less so -1 than the avg of +12 and +6
+    points += run_outs * 8  
 
     # Bonus for 3 or more catches
     if catches_taken >= 3:
@@ -118,6 +122,8 @@ def calculate_fantasy_points_t20(player_stats):
     
     # Total points
     total_points = batting_points + bowling_points + fielding_points
+    # assuming every player is playing
+    total_points += 4
     return {
         "total_points": total_points,
         "batting_points": batting_points,
@@ -128,48 +134,48 @@ def calculate_fantasy_points_t20(player_stats):
 
 if __name__== '__main__':
     print(calculate_fantasy_points_t20({
-            "Team Name": "Rajasthan Royals",
+            "Team Name": "Kandy Falcons",
             "Batting Innings": 1,
             "Bowling Innings": 1,
-            "Total Runs Scored": 60.0,
-            "Avg Runs Per Inning": 60.0,
-            "Boundaries": 10.0,
-            "Sixes": 5.0,
-            "Average Sixes Per Inning": 5.0,
-            "Fours": 5.0,
-            "Average Fours Per Inning": 5.0,
-            "Boundary% Per Inning": 40.0,
-            "Boundary Rate Per Inning": 2.5,
-            "Wickets": 2.0,
-            "Avg Wickets Per Inning": 2.0,
-            "Opposition Team": "Chennai Super Kings",
+            "Total Runs Scored": 0.0,
+            "Avg Runs Per Inning": 0.0,
+            "Boundaries": 0.0,
+            "Sixes": 0.0,
+            "Average Sixes Per Inning": 0.0,
+            "Fours": 0.0,
+            "Average Fours Per Inning": 0.0,
+            "Boundary% Per Inning": 0.0,
+            "Boundary Rate Per Inning": float('inf'),
+            "Wickets": 1.0,
+            "Avg Wickets Per Inning": 1.0,
+            "Opposition Team": "Colombo Strikers",
             "Catches Taken": 1,
             "Stumped Outs Made": 0,
             "Run Outs Made": 0,
-            "Match Date": "2010-04-03",
-            "Match ID": "Chennai_Super_Kings-Rajasthan_Royals-2010-04-03-male-T20",
+            "Match Date": "2024-07-06",
+            "Match ID": "Colombo_Strikers-Kandy_Falcons-2024-07-06-male-T20",
             "Match Type": "T20",
-            "Venue": "MA Chidambaram Stadium, Chepauk",
-            "Event": "Indian Premier League",
-            "Match Winner": "Chennai Super Kings",
-            "Balls Faced": 25.0,
-            "Avg Balls Faced Per Inning": 25.0,
-            "Avg Batting S/R Per Inning": 240.0,
-            "Avg Runs/Ball Per Inning": 2.4,
+            "Venue": "Rangiri Dambulla International Stadium",
+            "Event": "Lanka Premier League",
+            "Match Winner": "Colombo Strikers",
+            "Balls Faced": 2.0,
+            "Avg Balls Faced Per Inning": 2.0,
+            "Avg Batting S/R Per Inning": 0.0,
+            "Avg Runs/Ball Per Inning": 0.0,
             "*how Out": "Not Played",
-            "Overs Bowled": 4.0,
-            "Bowls Bowled": 24.0,
-            "Average Bowls Bowled Per Inning": 24.0,
-            "Avg Economy Rate per inning": 11.75,
-            "Bowling Average": 23.5,
-            "Average Consecutive Dot Balls": 2.0,
+            "Overs Bowled": 3.0,
+            "Bowls Bowled": 18.0,
+            "Average Bowls Bowled Per Inning": 18.0,
+            "Avg Economy Rate per inning": 6.666666666666667,
+            "Bowling Average": 20.0,
+            "Average Consecutive Dot Balls": 1.0,
             "Maiden Overs": 0.0,
-            "Avg Bowling S/R Per Inning": 12.0,
-            "Runs Given": 47.0,
-            "RunsGiven/Ball Per Inning": 1.9583333333333333,
-            "Batting S/R AA(Above Average)": 134.52502446199924,
-            "How Out Inning 1 (Not Played)": 0,
-            "How Out Inning 1 (caught)": 1,
+            "Avg Bowling S/R Per Inning": 18.0,
+            "Runs Given": 20.0,
+            "RunsGiven/Ball Per Inning": 1.1111111111111112,
+            "Batting S/R AA(Above Average)": -126.73665916714452,
+            "How Out Inning 1 (Not Played)": 1,
+            "How Out Inning 1 (caught)": 0,
             "How Out Inning 1 (not out)": 0,
             "How Out Inning 1 (lbw)": 0,
             "How Out Inning 1 (bowled)": 0,
@@ -177,11 +183,35 @@ if __name__== '__main__':
             "How Out Inning 1 (caught and bowled)": 0,
             "How Out Inning 1 (stumped)": 0,
             "How Out Inning 2 (Not Played)": 0,
-            "How Out Inning 2 (caught)": 0,
+            "How Out Inning 2 (caught)": 1,
             "How Out Inning 2 (not out)": 0,
             "How Out Inning 2 (lbw)": 0,
-            "How Out Inning 2 (bowled)": 1,
+            "How Out Inning 2 (bowled)": 0,
             "How Out Inning 2 (Run Out)": 0,
             "How Out Inning 2 (caught and bowled)": 0,
-            "How Out Inning 2 (stumped)": 0
+            "How Out Inning 2 (stumped)": 0,
+            "How Out Inning 3 (Not Played)": 1,
+            "How Out Inning 3 (caught)": 0,
+            "How Out Inning 3 (not out)": 0,
+            "How Out Inning 3 (lbw)": 0,
+            "How Out Inning 3 (bowled)": 0,
+            "How Out Inning 3 (Run Out)": 0,
+            "How Out Inning 3 (caught and bowled)": 0,
+            "How Out Inning 3 (stumped)": 0,
+            "How Out Inning 4 (Not Played)": 1,
+            "How Out Inning 4 (caught)": 0,
+            "How Out Inning 4 (not out)": 0,
+            "How Out Inning 4 (lbw)": 0,
+            "How Out Inning 4 (bowled)": 0,
+            "How Out Inning 4 (Run Out)": 0,
+            "How Out Inning 4 (caught and bowled)": 0,
+            "How Out Inning 4 (stumped)": 0,
+            "Innings 1 Runs": 0,
+            "Innings 2 Runs": 0.0,
+            "Innings 1 Wickets": 1.0,
+            "Innings 2 Wickets": 0,
+            "Innings 3 Runs": 0,
+            "Innings 4 Runs": 0,
+            "Innings 3 Wickets": 0,
+            "Innings 4 Wickets": 0
         }))

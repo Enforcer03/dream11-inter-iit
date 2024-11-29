@@ -7,11 +7,11 @@ def calculate_batting_points(player_stats):
     boundaries = player_stats.get("Fours", 0)
     sixes = player_stats.get("Sixes", 0)
     balls_faced = player_stats.get("Balls Faced", 0)
-    try:
-        how_out = player_stats.get("how Out", "").lower()
-    except AttributeError:
-        print("how out issue ")
-        how_out = "nan"
+    inning1_not_out = player_stats.get("How Out Inning 1 (not out)", 0)
+    inning2_not_out = player_stats.get("How Out Inning 2 (not out)", 0)
+    inning1_not_played = player_stats.get("How Out Inning 1 (Not Played)", 0)
+    inning2_not_played = player_stats.get("How Out Inning 2 (Not Played)", 0)
+    
     
     # +1 point per run
     points += runs_scored * 1
@@ -29,13 +29,13 @@ def calculate_batting_points(player_stats):
 
     # TODO: MAKE THIS NOT FOR BOWLERS
     # -2 points if dismissed for a duck (only if not a bowler)
-    if runs_scored == 0 and how_out != "not out" and balls_faced > 0:
+    if runs_scored == 0 and ((inning1_not_played==0 and inning1_not_out==0) or (inning2_not_played==0 and inning2_not_out==0)) and balls_faced > 0:
         points -= 3
 
     # TODO: MAKE THIS NOT FOR BOWLERS
     # Strike Rate Bonus (Min 20 balls faced)
     if balls_faced >= 20:
-        strike_rate = (runs_scored / balls_faced) * 100
+        strike_rate = player_stats.get("Avg Batting S/R Per Inning")
         if strike_rate > 140:
             points += 6
         elif 120 < strike_rate <= 140:
@@ -56,7 +56,9 @@ def calculate_bowling_points(player_stats):
     points = 0
     wickets = player_stats.get("Wickets", 0)
     overs_bowled = player_stats.get("Overs Bowled", 0)
-    economy_rate = player_stats.get("Economy Rate", 0)
+    economy_rate = player_stats.get("Avg Economy Rate per inning", 0)
+    
+    # Bowled and LBW features to be made yet
     bowled_or_lbw = player_stats.get("Bowled", 0) + player_stats.get("LBW", 0)
 
     # +25 points per wicket, +8 points for bowled/LBW dismissals
@@ -95,14 +97,18 @@ def calculate_fielding_points(player_stats):
     points = 0
     catches_taken = player_stats.get("Catches Taken", 0)
     stumped_outs = player_stats.get("Stumped Outs Made", 0)
-    run_outs_direct = player_stats.get("Direct Hit Run Outs Made", 0)
-    run_outs_indirect = player_stats.get("Non-Direct Run Outs Made", 0)
+    # run_outs_direct = player_stats.get("Direct Hit Run Outs Made", 0)
+    # run_outs_indirect = player_stats.get("Non-Direct Run Outs Made", 0)
+    run_outs = player_stats.get("Run Outs Made", 0)
+
 
     # +8 points per catch, +12 for stumping, +12 for direct run-out, +6 for indirect
     points += catches_taken * 8
     points += stumped_outs * 12
-    points += run_outs_direct * 12
-    points += run_outs_indirect * 6
+    # points += run_outs_direct * 12
+    # points += run_outs_indirect * 6
+    ## considering probability of direct hit is less so -1 than the avg of +12 and +6
+    points += run_outs * 8  
 
     # Bonus for 3 or more catches
     if catches_taken >= 3:
@@ -118,6 +124,8 @@ def calculate_fantasy_points_odi(player_stats):
     
     # Total points
     total_points = batting_points + bowling_points + fielding_points
+    # assuming every player is playing
+    total_points += 4
     return {
         "total_points": total_points,
         "batting_points": batting_points,
