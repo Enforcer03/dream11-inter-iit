@@ -7,7 +7,7 @@ import playersData from "../../public/players.json";
 import PlayerInformation from "./playerInformation";
 
 const PeopleDisplay = () => {
-  const [selectedPlayers, setSelectedPlayers] = useState(playersData.players.slice(0, 11));
+  const [selectedPlayers, setSelectedPlayers] = useState(playersData.players);
   const [filledDivs, setFilledDivs] = useState<(null | (typeof playersData.players)[0])[]>(Array(11).fill(null));
   const [details, setDetails] = useState(playersData.players[0]);
 

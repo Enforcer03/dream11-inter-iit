@@ -59,6 +59,9 @@ function SelectMatchScreen() {
   const [league, setLeague] = useState("");
   const [match, setMatch] = useState("");
 
+  const prevPage = "/instructions";
+  const nextPage = "/player-selection"
+
   return (
     <div>
       <PageTemplate title="INPUT DETAILS" />
@@ -68,8 +71,8 @@ function SelectMatchScreen() {
         <MatchSelector setMatch={setMatch} />
       </div>
       <div className="buttonCompDiv">
-        <ButtonComponent>BACK</ButtonComponent>
-        <ButtonComponent>NEXT</ButtonComponent>
+        <ButtonComponent nextPage={prevPage}>BACK</ButtonComponent>
+        <ButtonComponent nextPage={nextPage}>NEXT</ButtonComponent>
       </div>
       <div className="videoCompDiv">
         <VideoComponent>VIDEO <span className="text-white">DEMO</span></VideoComponent>

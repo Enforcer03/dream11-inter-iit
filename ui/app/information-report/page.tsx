@@ -15,6 +15,8 @@ const PeopleDisplay = () => {
   const [selectedPlayers, setSelectedPlayers] = useState(playersData.players.slice(0, 11));
   const [instructions, setInstructions] = useState<Instruction[]>([]);
 
+  const prevPage = "/playing11";
+
   useEffect(() => {
     const fetchInstructions = async () => {
       try {
@@ -70,8 +72,8 @@ const PeopleDisplay = () => {
       </div>
       </PageTemplate>
       <div className="buttonCompDiv">
-        <Button>BACK</Button>
-        <Button>NEXT</Button>
+        <Button nextPage={prevPage}>BACK</Button>
+        <Button downloadScreenshot={true}>SAVE</Button>
       </div>
     </div>
   );
