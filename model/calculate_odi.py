@@ -1,5 +1,6 @@
-import json
+# import json
 
+# Function to calculate batting points
 def calculate_batting_points(player_stats):
     points = 0
     runs_scored = player_stats.get("Total Runs Scored", 0)
@@ -11,6 +12,7 @@ def calculate_batting_points(player_stats):
     inning1_not_played = player_stats.get("How Out Inning 1 (Not Played)", 0)
     inning2_not_played = player_stats.get("How Out Inning 2 (Not Played)", 0)
     
+    
     # +1 point per run
     points += runs_scored * 1
 
@@ -18,32 +20,36 @@ def calculate_batting_points(player_stats):
     points += boundaries * 1
     points += sixes * 2
 
-    # +4 for 30 runs, +8 for a half-century, +16 for a century
+    # +4  half-century, +8 for a century
     if runs_scored >= 100:
-        points += 16
-    elif runs_scored >= 50:
         points += 8
-    elif runs_scored >= 30:
+    elif runs_scored >= 50:
         points += 4
 
+    
+    
+    # TODO: MAKE THIS NOT FOR BOWLERS
+    # currently done for all players as we dont have data if a player is bowler or not
     # -2 points if dismissed for a duck (only if not a bowler)
     if runs_scored == 0 and ((inning1_not_played==0 and inning1_not_out==0) or (inning2_not_played==0 and inning2_not_out==0)) and balls_faced > 0:
-        points -= 2
+        points -= 3
 
-    # Strike Rate Bonus (Min 10 balls faced)
-    if balls_faced >= 10:
+    # TODO: MAKE THIS NOT FOR BOWLERS
+    # currently done for all players as we dont have data if a player is bowler or not
+    # Strike Rate Bonus (Min 20 balls faced)
+    if balls_faced >= 20:
         strike_rate = player_stats.get("Avg Batting S/R Per Inning")
-        if strike_rate > 170:
+        if strike_rate > 140:
             points += 6
-        elif 150 < strike_rate <= 170:
+        elif 120 < strike_rate <= 140:
             points += 4
-        elif 130 <= strike_rate <= 150:
+        elif 100 <= strike_rate <= 120:
             points += 2
-        elif 60 <= strike_rate < 70:
+        elif 40 <= strike_rate < 50:
             points -= 2
-        elif 50 <= strike_rate < 60:
+        elif 30 <= strike_rate < 40:
             points -= 4
-        elif strike_rate < 50:
+        elif strike_rate < 30:
             points -= 6
 
     return points
@@ -62,31 +68,29 @@ def calculate_bowling_points(player_stats):
     points += wickets * 25
     points += bowled_or_lbw * 8
 
-    # Bonus for 3, 4, or 5 wickets in a match
+    # Bonus for 4 or >=5 wickets in a match
     if wickets >= 5:
-        points += 16
-    elif wickets == 4:
         points += 8
-    elif wickets == 3:
+    elif wickets == 4:
         points += 4
 
-    # +12 for each maiden over
+    # +4 for each maiden over
     maiden_overs = player_stats.get("Maiden Overs", 0)
-    points += maiden_overs * 12
+    points += maiden_overs * 4
 
-    # Economy Rate Bonus (Min 2 overs bowled)
-    if overs_bowled >= 2:
-        if economy_rate < 5:
+    # Economy Rate Bonus (Min 5 overs bowled)
+    if overs_bowled >= 5:
+        if economy_rate < 2.5:
             points += 6
-        elif 5 <= economy_rate <= 5.99:
+        elif 2.5 <= economy_rate < 3.5:
             points += 4
-        elif 6 <= economy_rate <= 7:
+        elif 3.5 <= economy_rate <= 4.5:
             points += 2
-        elif 10 <= economy_rate <= 11:
+        elif 7 <= economy_rate <= 8:
             points -= 2
-        elif 11.01 <= economy_rate <= 12:
+        elif 8 < economy_rate <= 9:
             points -= 4
-        elif economy_rate > 12:
+        elif economy_rate > 9:
             points -= 6
 
     return points
@@ -99,6 +103,7 @@ def calculate_fielding_points(player_stats):
     # run_outs_direct = player_stats.get("Direct Hit Run Outs Made", 0)
     # run_outs_indirect = player_stats.get("Non-Direct Run Outs Made", 0)
     run_outs = player_stats.get("Run Outs Made", 0)
+
 
     # +8 points per catch, +12 for stumping, +12 for direct run-out, +6 for indirect
     points += catches_taken * 8
@@ -115,7 +120,7 @@ def calculate_fielding_points(player_stats):
     return points
 
 # Wrapper function to calculate total fantasy points
-def calculate_fantasy_points_t20(player_stats):
+def calculate_fantasy_points_odi(player_stats):
     batting_points = calculate_batting_points(player_stats)
     bowling_points = calculate_bowling_points(player_stats)
     fielding_points = calculate_fielding_points(player_stats)
@@ -133,8 +138,9 @@ def calculate_fantasy_points_t20(player_stats):
 
 
 if __name__== '__main__':
-    print(calculate_fantasy_points_t20({
-            "Team Name": "Kandy Falcons",
+    # TODO: REPLACE WITH T20 EXAMPLE
+    print(calculate_fantasy_points_odi({
+             "Team Name": "Kandy Falcons",
             "Batting Innings": 1,
             "Bowling Innings": 1,
             "Total Runs Scored": 0.0,
