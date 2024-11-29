@@ -49,6 +49,18 @@ def load_player_fantasy_points(json_file):
             sorted_data[player] = match_list_sorted
         return sorted_data
 
+def filter_match_keys(match_keys, format_selected):
+    filtered_keys = []
+    for match in match_keys:
+        # Extract the format from match key
+        if format_selected == 'T20' and match.endswith('T20'):
+            filtered_keys.append(match)
+        elif format_selected == 'ODI' and (match.endswith('ODI') or match.endswith('ODM')):
+            filtered_keys.append(match)
+        elif format_selected == 'Test' and (match.endswith('Test') or match.endswith('MDM')):
+            filtered_keys.append(match)
+    return filtered_keys
+
 st.title("Fantasy Cricket Team Selector")
 st.markdown("""
     - Load data from scheduled matches or manually input details.
@@ -67,7 +79,7 @@ optimize_team_option = st.sidebar.checkbox("Optimize Team Selection")
 format_lower = format_selected.lower().replace('-', '').replace(' ', '')
 data_dir = "/Users/ved14/Library/CloudStorage/GoogleDrive-v_umrajkar@ma.iitr.ac.in/My Drive/SEM7/extras/dream11-inter-iit/data"
 fantasy_points_path = f"../data/player_fantasy_points_{format_lower}.json"
-json_file_path = f"../data/{format_selected}_Match_Level_Till_training_date_Players.json"
+json_file_path = f"../data/combined_squad.json"
 aggregate_stats_path = f"../data/aggregate_cricket_stats_{format_lower}.json"
 
 try:
@@ -128,7 +140,13 @@ if squad_info:
     if 'stats_df' not in st.session_state:
         st.session_state['stats_df'] = None
 
-    selected_match = st.selectbox("Select a Match", match_keys)
+    filtered_match_keys = filter_match_keys(match_keys, format_selected)
+
+    # Use filtered keys in selectbox
+    if filtered_match_keys:
+        selected_match = st.selectbox("Select a Match", filtered_match_keys)
+    else:
+        st.warning(f"No matches found for format: {format_selected}")
 
     if selected_match:
         squads = match_data[selected_match]
