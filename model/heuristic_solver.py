@@ -197,10 +197,8 @@ def optimize_team_sharpe(stats_df, cov_matrix, num_players=11, risk_aversion=1.0
 #     return selected_players, weights
 def optimize_team_advanced(stats_df, cov_matrix, num_players=11, boolean=True, risk_aversion=1):
     """
-    Advanced optimization with minimum one player per team constraint.
+    Advanced optimization with minimum one player per team constraint and proper handling of NaN/inf values.
     """
-    
-    
     # Initialize PuLP problem
     prob = pulp.LpProblem("FantasyTeam", pulp.LpMaximize)
     
@@ -212,33 +210,66 @@ def optimize_team_advanced(stats_df, cov_matrix, num_players=11, boolean=True, r
     mu = stats_df['mean_points'].values
     std_dev = np.sqrt(np.diag(cov_matrix))
     
-    # Get unique teams
-    teams = stats_df['team'].unique()  # Assuming 'team' column exists in stats_df
+    # Handle division by zero and invalid values in consistency calculation
+    with np.errstate(divide='ignore', invalid='ignore'):
+        consistency = np.where(std_dev > 0, mu / std_dev, 0)
     
-    # Calculate additional metrics
-    consistency = mu / std_dev
-    entropy_score = entropy(mu / sum(mu))
+    # Replace inf and nan values with 0 or appropriate values
+    consistency = np.nan_to_num(consistency, nan=0.0, posinf=np.nanmax(consistency[~np.isinf(consistency)]))
+    
+    # Calculate entropy score safely
+    total_mu = np.sum(mu)
+    if total_mu > 0:
+        prob_dist = mu / total_mu
+        prob_dist = np.nan_to_num(prob_dist, nan=0.0)
+        entropy_score = entropy(prob_dist)
+    else:
+        entropy_score = 0
+    
+    # Get unique teams
+    teams = stats_df['team'].unique()
+    
+    # Print debugging information
+    print("Cleaned consistency values:", consistency)
+    print("Entropy score:", entropy_score)
     
     # Objective: Expected Points
     prob += pulp.lpSum([mu[i] * x[i] for i in players])
     
-    # Existing constraints
+    # Existing constraints with safety checks
     prob += pulp.lpSum([x[i] for i in players]) == num_players  # Team size
-    prob += pulp.lpSum([consistency[i] * x[i] for i in players]) >= np.mean(consistency) * num_players/2  # Consistency
-    prob += pulp.lpSum([entropy_score * x[i] for i in players]) >= entropy_score * num_players/2  # Diversity
     
-    # Recent form constraint
-    recent_form = np.percentile(mu, 75)
-    prob += pulp.lpSum([x[i] for i in players if mu[i] >= recent_form]) >= num_players/3
+    # Consistency constraint (only if we have valid consistency values)
+    valid_consistency = consistency[~np.isnan(consistency) & ~np.isinf(consistency)]
+    if len(valid_consistency) > 0:
+        mean_consistency = np.mean(valid_consistency)
+        prob += pulp.lpSum([consistency[i] * x[i] for i in players]) >= mean_consistency * num_players/2
     
-    # New constraint: At least one player per team
+    # Diversity constraint (only if entropy score is valid)
+    if entropy_score > 0:
+        prob += pulp.lpSum([entropy_score * x[i] for i in players]) >= entropy_score * num_players/2
+    
+    # Recent form constraint with safety check
+    valid_mu = mu[~np.isnan(mu) & ~np.isinf(mu)]
+    if len(valid_mu) > 0:
+        recent_form = np.percentile(valid_mu, 75)
+        high_form_players = [i for i in players if mu[i] >= recent_form]
+        if high_form_players:
+            prob += pulp.lpSum([x[i] for i in high_form_players]) >= num_players/3
+    
+    # Team representation constraint
     for team in teams:
         team_players_indices = [i for i, p in enumerate(players) 
                               if stats_df.iloc[i]['team'] == team]
-        prob += pulp.lpSum([x[i] for i in team_players_indices]) >= 1
+        if team_players_indices:  # Only add constraint if team has players
+            prob += pulp.lpSum([x[i] for i in team_players_indices]) >= 1
     
     # Solve
-    prob.solve()
+    status = prob.solve()
+    
+    if status != pulp.LpStatusOptimal:
+        print(f"Warning: Optimization status is {pulp.LpStatus[status]}")
+        return [], pd.DataFrame(columns=['player', 'weight'])
     
     # Results
     selected_indices = [i for i in players if x[i].value() > 0.5]
@@ -253,7 +284,7 @@ def optimize_team_advanced(stats_df, cov_matrix, num_players=11, boolean=True, r
 # Main function to run the optimization
 def main():
   # File paths (modify these paths according to your files)
-  fantasy_points_path = '/Users/ved14/Library/CloudStorage/GoogleDrive-v_umrajkar@ma.iitr.ac.in/My Drive/SEM7/extras/dream11-inter-iit/data/player_fantasy_points_t20.json'
+  fantasy_points_path = '../data/player_fantasy_points_t20.json'
   squad_players_path = 'squad_players.json'       
 
   # Load data

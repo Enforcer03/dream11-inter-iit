@@ -90,7 +90,8 @@ def get_past_match_performance(player_name, fantasy_points, num_matches=100, key
     player_data = fantasy_points.get(player_name)
     if player_data is None:
         print(f"Warning: Player not found in data: {player_name}")
-        return [], []  # Return empty lists if player data is not found
+        # Return lists filled with zeros instead of empty lists
+        return ['No Match'] * num_matches, [0] * num_matches
 
     # Handle data structure - check if it's a list or dictionary
     if isinstance(player_data, dict):
@@ -99,14 +100,14 @@ def get_past_match_performance(player_name, fantasy_points, num_matches=100, key
         matches_data = player_data
     else:
         print(f"Unexpected data format for player {player_name}")
-        return [], []
+        return ['No Match'] * num_matches, [0] * num_matches
 
     if date_of_match:
         try:
             date_of_match_dt = datetime.datetime.strptime(date_of_match, '%Y-%m-%d')
         except ValueError:
             print(f"Invalid date_of_match format: {date_of_match}. Expected YYYY-MM-DD.")
-            return [], []
+            return ['No Match'] * num_matches, [0] * num_matches
         
         # Filter matches before date_of_match
         filtered_player_data = []
@@ -122,8 +123,8 @@ def get_past_match_performance(player_name, fantasy_points, num_matches=100, key
         filtered_player_data = matches_data
 
     if not filtered_player_data:
-        print(f"No matches found for {player_name} before {date_of_match}.")
-        return [], []
+        print(f"No matches found for {player_name} before {date_of_match}- IMPUTED WITH ZERO.")
+        return ['No Match'] * num_matches, [0] * num_matches
 
     # Get the last 'num_matches' matches
     last_matches_data = filtered_player_data[-num_matches:]
@@ -148,8 +149,13 @@ def get_past_match_performance(player_name, fantasy_points, num_matches=100, key
             last_matches.append(match_data[0])
             last_points.append(match_data[1].get(key, 0))
 
-    return last_matches, last_points
+    # If we still don't have enough matches (shouldn't happen with duplication above, but just in case)
+    if len(last_matches) < num_matches:
+        remaining_matches = num_matches - len(last_matches)
+        last_matches.extend(['No Match'] * remaining_matches)
+        last_points.extend([0] * remaining_matches)
 
+    return last_matches, last_points
 
 
 # After the metrics display section
