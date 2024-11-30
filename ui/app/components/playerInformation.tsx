@@ -28,7 +28,7 @@ function PlayerInformation({ title, child2, child3, child4 }: ButtonComponentPro
     <div className="flex flex-col justify-center items-center uppercase w-[21rem] h-full">
       <h1 className="uppercase text-dream11FontColor font-bold text-3xl mb-4 ">{title}</h1>
       <div className="rounded-full border-2 profilePhoto w-44 h-44 mb-8 flex items-center justify-center">
-        <Image src={child3} alt="player" height={120} width={120} />
+        <Image src={child3} alt="player" height={180} width={180} />
       </div>
       <div className="flex align-center justify-center">
         <div className="text-left flex flex-col">

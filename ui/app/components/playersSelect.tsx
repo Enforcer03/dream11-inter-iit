@@ -6,6 +6,8 @@ import SelectedPlayer from "./selectedPlayer";
 import Button from "./buttonComp";
 import playersData from "../../public/players.json";
 import playersData2 from "../../public/players2.json";
+import playersImages from "../../public/playerImages.json";
+import countryImages from "../../public/countryImages.json";
 import PlayerInformation from "./playerInformation";
 
 const PeopleDisplay = () => {
@@ -61,6 +63,23 @@ const handleNext = () => {
   }
 };
 
+  const getPlayerImagePath = (playerName: string) => {
+    const matchingPlayer = playersImages.data.find((imageData) => {
+      console.log('Comparing with:', imageData.fullname);
+      const isMatch = imageData.fullname === playerName;
+      if (isMatch) {
+        console.log('Match found! Image path:', imageData.image_path);
+      }
+      return isMatch;
+    });
+
+    if (!matchingPlayer) {
+      console.log('No match found, using default image:', playersImages.data[4].image_path);
+    }
+
+    return matchingPlayer ? matchingPlayer.image_path : playersImages.data[4].image_path;
+  };
+
   const prevPage = "/select-match";
   const nextPage = "/playing11";
 
@@ -77,8 +96,8 @@ const handleNext = () => {
         <PlayerInformation
           title={"PLAYER SELECTION"}
           child2={details.name}
-          child3={details.image}
-          child4={details.countryFlag}
+          child3={getPlayerImagePath(details.name)}
+          child4={countryImages.data[0].image_path}
         />
       </div>
 
@@ -102,7 +121,7 @@ const handleNext = () => {
                   <img src={player.countryFlag} alt="Flag" className="flag" />
                 </div>
                 <div className="image-container">
-                  <img src={player.image} alt="Player Image" className="player-image" />
+                  <img src={getPlayerImagePath(player.name)} alt="Player Image" className="player-image" />
                 </div>
               </div>
               <div className="player-bio-container">
@@ -148,7 +167,7 @@ const handleNext = () => {
                 {player ? (
                   <SelectedPlayer
                     child1={
-                      <img src={player.image} alt="Player Image" className="select-player-image no-repeat center" />
+                      <img src={getPlayerImagePath(player.name)} alt="Player Image" className="select-player-image no-repeat center" />
                     }
                     child2={player.name
                       .split(" ")
