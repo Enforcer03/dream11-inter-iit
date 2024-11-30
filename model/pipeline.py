@@ -27,8 +27,11 @@ def calculate_optimal_team(player_info, num_matches=50, date_of_match=None, risk
         fantasy_points_data,
         player_list,
         num_matches=num_matches,
-        date_of_match=date_of_match
+        date_of_match=date_of_match,
+        key='total_points'
     )
+    print("before_comp")
+    print(stats_df)
 
     if stats_df.empty:
         print("No player statistics available.")
@@ -105,27 +108,12 @@ def evaluate_team(selected_players, stats_df, cov_matrix):
 
 if __name__ == "__main__":
     # Example usage
-    player_info = {
-        "England": [
-            "LS Livingstone : England", "MM Ali : England", "SM Curran : England",
-            "DJ Willey : England", "CJ Jordan : England", "RJ Gleeson : England",
-            "MW Parkinson : England", "JJ Roy : England", "JC Buttler : England",
-            "DJ Malan : England", "HC Brook : England"
-        ],
-        "India": [
-            "RG Sharma : India", "RR Pant : India", "V Kohli : India",
-            "SA Yadav : India", "HH Pandya : India", "RA Jadeja : India",
-            "KD Karthik : India", "HV Patel : India", "B Kumar : India",
-            "JJ Bumrah : India", "YS Chahal : India"
-        ]
-    }
-
-    # Load fantasy points data
-    fantasy_points_path = "../data/player_fantasy_points_t20.json"
+    player_info ={"Nottinghamshire":["BT Slater : Nottinghamshire","FW McCann : Nottinghamshire","JA Haynes : Nottinghamshire","H Hameed : Nottinghamshire","LW James : Nottinghamshire","TJ Moores : Nottinghamshire","LA Patterson-White : Nottinghamshire","CG Harrison : Nottinghamshire","BA Hutton : Nottinghamshire","R Lord : Nottinghamshire","LJ Fletcher : Nottinghamshire","OJ Price : Nottinghamshire"],"Gloucestershire":["James Bracey : Gloucestershire","GL van Buuren : Gloucestershire","AS Dale : Gloucestershire","CT Bancroft : Gloucestershire","Zaman Akhter : Gloucestershire","OJ Price : Gloucestershire","JMR Taylor : Gloucestershire","TMJ Smith : Gloucestershire","DC Goodman : Gloucestershire","Miles Hammond : Gloucestershire","BG Charlesworth : Gloucestershire"]}    # Load fantasy points data
+    fantasy_points_path = "../data/player_fantasy_points_odi.json"
     fantasy_points_data = load_player_fantasy_points(fantasy_points_path)
 
     # Set match date
-    date_of_match = "2022-07-09"
+    date_of_match = "2024-08-09"
 
     # Calculate the optimal team
     selected_players, stats_df, cov_matrix = calculate_optimal_team(

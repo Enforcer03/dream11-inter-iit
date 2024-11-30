@@ -16,9 +16,11 @@ from heuristic_solver import (
 )
 import datetime
 from utils import get_optimal_team_llm, get_past_match_performance, best_team_button, extract_date_from_match_key, plot_team_distribution, calculate_team_metrics
+from get_snapshot import get_team_selection_snapshot
 import pandas as pd
 import numpy as np
 import scipy.stats as stats
+
 
 @st.cache_data()
 def load_sample_players(json_file):
@@ -165,147 +167,6 @@ except FileNotFoundError:
 
 
 # Cache the main computation function using st.cache_data
-@st.cache_data(ttl=3600)  # Cache for 1 hour
-def get_team_selection_snapshot(match_keys, match_data, fantasy_points, optim_fantasy_points, input_date=None):
-    """
-    Generate a CSV snapshot of team selections after a specified date
-    
-    Parameters:
-    match_keys (list): List of match identifiers
-    match_data (dict): Dictionary containing match data
-    fantasy_points (dict): Dictionary containing fantasy points data
-    optim_fantasy_points (dict): Dictionary containing optimized fantasy points
-    input_date (datetime.date, optional): Date to filter matches
-    
-    Returns:
-    pd.DataFrame: DataFrame containing team selections and scores
-    """
-    snapshot_data = []
-    
-    for match_key in stqdm(match_keys):
-        # Extract date string from match key
-        match_date_str = extract_date_from_match_key(match_key)
-        if not match_date_str:
-            continue
-            
-        # Convert string to datetime.date for comparison
-        try:
-            match_date = datetime.datetime.strptime(match_date_str, '%Y-%m-%d').date()
-        except ValueError:
-            continue
-            
-        # Skip matches before input date if specified
-        if input_date and match_date < input_date:
-            continue
-            
-        # Get squads for the match
-        squads = match_data[match_key]
-        all_players = []
-        for team_name, players in squads.items():
-            all_players.extend(players)
-                
-        # Get player stats and optimize team
-        all_players = list(set(all_players))
-        stats_df = compute_player_stats(
-            optim_fantasy_points,
-            all_players,
-            num_matches=50,
-            date_of_match=match_date_str
-        )
-        
-        if not stats_df.empty:
-            cov_matrix = compute_covariance_matrix(
-                optim_fantasy_points,
-                stats_df['player'].tolist(),
-                num_matches=50,
-                date_of_match=match_date_str
-            )
-            
-            # Create team mapping
-            player_team_mapping = {}
-            for team_name, players in squads.items():
-                for player in players:
-                    player_team_mapping[player] = team_name
-            stats_df['team'] = stats_df['player'].map(player_team_mapping)
-            
-            # Optimize team
-            selected_players, weights_df = optimize_team_advanced(
-                stats_df, 
-                cov_matrix,
-                boolean=True
-            )
-            
-            if weights_df is not None and not weights_df.empty:
-                # Get selected players and merge with stats
-                selected_players = weights_df[weights_df['weight'] == 1]['player'].tolist()
-                weights_df_display = weights_df.merge(
-                    stats_df[['player', 'mean_points', 'variance']],
-                    on='player',
-                    how='left'
-                )
-                
-                # Calculate team metrics
-                total_expected_score = (weights_df_display['weight'] * weights_df_display['mean_points']).sum()
-                
-                # Calculate team variance and std
-                selected_indices = [stats_df.index[stats_df['player'] == player].tolist()[0] for player in selected_players]
-                selected_cov = cov_matrix.iloc[selected_indices, selected_indices]
-                weights = np.ones(len(selected_players))
-                team_variance = weights.dot(selected_cov).dot(weights)
-                team_std = np.sqrt(team_variance)
-                
-                # Get actual points for selected team
-                actual_points = sum(
-                    optim_fantasy_points.get(player, {}).get(match_key, {}).get('total_points', 0)
-                    for player in selected_players
-                )
-                
-                # Get top 11 players by actual points
-                top_11_by_actual = pd.DataFrame({
-                    'player': all_players,
-                    'actual_points': [
-                        optim_fantasy_points.get(player, {}).get(match_key, {}).get('total_points', 0) 
-                        for player in all_players
-                    ]
-                }).nlargest(11, 'actual_points')
-                
-                optimal_score = top_11_by_actual['actual_points'].sum()
-                
-                # Create row data
-                row_data = {
-                    'match_name': match_key,
-                    'match_date': match_date_str,
-                    'predicted_score': total_expected_score,
-                    'predicted_std': team_std,
-                    'actual_score': actual_points,
-                    'optimal_score': optimal_score,
-                    'performance_ratio': actual_points / optimal_score if optimal_score > 0 else 0
-                }
-                
-                # Add selected players and their predicted scores
-                for i, player in enumerate(selected_players, 1):
-                    row_data[f'Player{i}'] = player
-                    row_data[f'Predicted_score{i}'] = stats_df[
-                        stats_df['player'] == player
-                    ]['mean_points'].iloc[0]
-                
-                # Add top performers
-                for i, (_, row) in enumerate(top_11_by_actual.iterrows(), 1):
-                    row_data[f'Top_player{i}'] = row['player']
-                    row_data[f'Top_score{i}'] = row['actual_points']
-                
-                snapshot_data.append(row_data)
-    
-    snapshot_df = pd.DataFrame(snapshot_data)
-    if not snapshot_df.empty:
-        snapshot_df = snapshot_df.sort_values(
-            by='match_date',
-            key=lambda x: pd.to_datetime(x)
-        )
-    
-    return snapshot_df
-
-
 
 @st.cache_data(ttl=3600)
 def format_display_dataframe(df):
@@ -402,18 +263,22 @@ if get_team_snapshot:
     
     # Set default date to July 6th, 2024
     default_date = datetime.date(2024, 7, 6)
-    date_filter = st.date_input(
-        "Show selections after date:",
-        value=default_date
-    )
+    date_filter = default_date
+    #     "Show selections after date:",
+    #     value=default_date
+    # )
     
     # Only regenerate snapshot if date filter changes
+    all_paths = [f"../data/player_fantasy_points_{format_lower}.json" for format_lower in ["t20", "odi", "test"]
+]
     if date_filter != st.session_state.last_date_filter:
         st.session_state.snapshot_df = get_team_selection_snapshot(
             match_keys,
             match_data,
             fantasy_points,
-            get_optim_file(fantasy_points_path),
+            get_optim_file(all_paths[0]),
+            get_optim_file(all_paths[1]),
+            get_optim_file(all_paths[2]),
             input_date=date_filter
         )
         st.session_state.last_date_filter = date_filter
@@ -555,7 +420,7 @@ if squad_info:
         "Number of past matches to consider",
         min_value=1,
         max_value=500,
-        value=100,
+        value=50,
         step=1,
         key='num_matches_assess'
     )
@@ -676,7 +541,7 @@ if squad_info:
                 stats_df, cov_matrix, risk_aversion=risk_tolerance, boolean=True
             )
             
-            # st.write(stats_df)
+            
             team_metrics = calculate_team_metrics(stats_df, weights_df, cov_matrix)
 
             # Display metrics
@@ -772,6 +637,7 @@ if squad_info:
 
                 # Create metrics display
                 col1, col2, col3, col4 = st.columns(4)
+                st.write(stats_df)
 
                 with col1:
                     st.metric(
