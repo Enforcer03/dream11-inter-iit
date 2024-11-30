@@ -5,9 +5,13 @@ import { useState, useEffect } from "react";
 export default function LeagueSelector({
   setLeague,
   allLeagues,
+  setAllMatches,
+  allData,
 }: {
   setLeague: (league: any) => void;
   allLeagues: any[];
+  setAllMatches: (matches: any) => void;
+  allData: any;
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -15,13 +19,16 @@ export default function LeagueSelector({
     const newIndex = (selectedIndex - 1 + allLeagues.length) % allLeagues.length;
     setSelectedIndex(newIndex);
     setLeague(allLeagues[newIndex]);
+    setAllMatches(Object.keys(allData[allLeagues[newIndex]]));
   };
 
   const handleNext = () => {
     const newIndex = (selectedIndex + 1) % allLeagues.length;
     setSelectedIndex(newIndex);
     setLeague(allLeagues[newIndex]);
+    setAllMatches(Object.keys(allData[allLeagues[newIndex]]));
   };
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "ArrowLeft") {
@@ -34,7 +41,6 @@ export default function LeagueSelector({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
-
   return (
     <div className="flex flex-col items-center justify-center mt-8">
       <h1 className="text-3xl font-bold mb-16 text-[#FFD700]">SELECT LEAGUE</h1>

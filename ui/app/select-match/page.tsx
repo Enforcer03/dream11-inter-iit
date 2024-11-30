@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import AudioComponent from "../components/audioSet";
+import { getSquadsByDate } from "../api/squads";
 import ButtonComponent from "../components/buttonComp";
-import PageTemplate from "../components/pageTemplate";
-import VideoComp from "../components/videoSet";
 import LeagueSelector from "../components/leagueSelector";
 import MatchSelector from "../components/matchSelector";
-import { getSquadsByDate } from "../api/squads";
+import PageTemplate from "../components/pageTemplate";
+import VideoComp from "../components/videoSet";
 
 function isValidDateFormat(dateString: string) {
   const datePattern = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
@@ -83,6 +82,7 @@ function SelectMatchScreen() {
   const [match, setMatch] = useState("");
   const [allData, setAllData] = useState(null);
   const [allLeagues, setAllLeagues] = useState(null);
+  const [allMatches, setAllMatches] = useState(null);
 
   const prevPage = "/instructions";
   const nextPage = "/player-selection";
@@ -100,8 +100,8 @@ function SelectMatchScreen() {
       <PageTemplate title="INPUT DETAILS" />
       <div className="selectMatchDiv">
         <MatchDateInput date={date} setDate={setDate} setAllData={setAllData} setAllLeagues={setAllLeagues} />
-        <LeagueSelector setLeague={setLeague} allLeagues={allLeagues} />
-        <MatchSelector setMatch={setMatch} league={league} allData={allData} />
+        <LeagueSelector setLeague={setLeague} allLeagues={allLeagues} setAllMatches={setAllMatches} allData={allData} />
+        <MatchSelector setMatch={setMatch} allMatches={allMatches} />
       </div>
       <div className="buttonCompDiv">
         <ButtonComponent nextPage={prevPage}>BACK</ButtonComponent>

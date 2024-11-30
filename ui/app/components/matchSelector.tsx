@@ -1,31 +1,20 @@
 "use client";
 
-import { all } from "axios";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
-export default function MatchSelector({
-  setMatch,
-  league,
-  allData,
-}: {
-  setMatch: (match: any) => void;
-  league: any;
-  allData: any;
-}) {
+export default function MatchSelector({ setMatch, allMatches }: { setMatch: (match: any) => void; allMatches: any[] }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const matches = league ? Object.keys(allData[league]) : [];
-
   const handlePrevious = () => {
-    const newIndex = (selectedIndex - 1 + matches.length) % matches.length;
+    const newIndex = (selectedIndex - 1 + allMatches.length) % allMatches.length;
     setSelectedIndex(newIndex);
-    setMatch(matches[newIndex]);
+    setMatch(allMatches[newIndex]);
   };
 
   const handleNext = () => {
-    const newIndex = (selectedIndex + 1) % matches.length;
+    const newIndex = (selectedIndex + 1) % allMatches.length;
     setSelectedIndex(newIndex);
-    setMatch(matches[newIndex]);
+    setMatch(allMatches[newIndex]);
   };
 
   useEffect(() => {
@@ -46,7 +35,7 @@ export default function MatchSelector({
       <h1 className="text-3xl font-bold mb-16 text-[#FFD700]">SELECT MATCH</h1>
       <div className="w-full px-4 relative">
         <div className="flex justify-center items-center mb-8">
-          {matches.map((match, index) => {
+          {allMatches?.map((match, index) => {
             const distance = Math.abs(selectedIndex - index);
             const isVisible = distance <= 2;
             return (
@@ -57,7 +46,7 @@ export default function MatchSelector({
                 }`}
                 style={{
                   transform: `translateX(${(index - selectedIndex) * 120}px) scale(${1 - distance * 0.2})`,
-                  zIndex: matches.length - distance,
+                  zIndex: allMatches.length - distance,
                 }}
               >
                 <button
