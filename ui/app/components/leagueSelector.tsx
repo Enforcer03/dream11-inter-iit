@@ -2,50 +2,25 @@
 
 import { useState, useEffect } from "react";
 
-export default function LeagueSelector({ setLeague }: { setLeague: (league: any) => void }) {
-  const [selectedIndex, setSelectedIndex] = useState(3);
-
-  const teams = [
-    {
-      name: "Kolkata Knight Riders",
-      logo: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      name: "Sunrisers Hyderabad",
-      logo: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      name: "Mumbai Indians",
-      logo: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      name: "Chennai Super Kings",
-      logo: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      name: "Mumbai Indians",
-      logo: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      name: "Sunrisers Hyderabad",
-      logo: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      name: "Kolkata Knight Riders",
-      logo: "/placeholder.svg?height=200&width=200",
-    },
-  ];
+export default function LeagueSelector({
+  setLeague,
+  allLeagues,
+}: {
+  setLeague: (league: any) => void;
+  allLeagues: any[];
+}) {
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const handlePrevious = () => {
-    const newIndex = (selectedIndex - 1 + teams.length) % teams.length;
+    const newIndex = (selectedIndex - 1 + allLeagues.length) % allLeagues.length;
     setSelectedIndex(newIndex);
-    setLeague(teams[newIndex]);
+    setLeague(allLeagues[newIndex]);
   };
 
   const handleNext = () => {
-    const newIndex = (selectedIndex + 1) % teams.length;
+    const newIndex = (selectedIndex + 1) % allLeagues.length;
     setSelectedIndex(newIndex);
-    setLeague(teams[newIndex]);
+    setLeague(allLeagues[newIndex]);
   };
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -65,31 +40,36 @@ export default function LeagueSelector({ setLeague }: { setLeague: (league: any)
       <h1 className="text-3xl font-bold mb-16 text-[#FFD700]">SELECT LEAGUE</h1>
       <div className="w-full px-4 relative">
         <div className="flex justify-center items-center mb-8">
-          {teams.map((team, index) => {
-            const distance = Math.abs(selectedIndex - index);
-            const isVisible = distance <= 2;
-            return (
-              <div
-                key={index}
-                className={`absolute transition-all duration-300 ${
-                  isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
-                }`}
-                style={{
-                  transform: `translateX(${(index - selectedIndex) * 120}px) scale(${1 - distance * 0.2})`,
-                  zIndex: teams.length - distance,
-                }}
-              >
-                <button
-                  className={`w-32 h-16 relative rounded-lg overflow-hidden border-2 transition-all duration-300 focus:outline-none ${
-                    selectedIndex === index ? "border-white" : "border-transparent hover:border-white/50"
+          {allLeagues ? (
+            allLeagues.map((league, index) => {
+              const distance = Math.abs(selectedIndex - index);
+              const isVisible = distance <= 2;
+              return (
+                <div
+                  key={index}
+                  className={`absolute transition-all duration-300 ${
+                    isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
                   }`}
-                  onClick={() => setSelectedIndex(index)}
+                  style={{
+                    transform: `translateX(${(index - selectedIndex) * 120}px) scale(${1 - distance * 0.2})`,
+                    zIndex: league.length - distance,
+                  }}
                 >
-                  <img src={team.logo} alt={team.name} className="object-cover" />
-                </button>
-              </div>
-            );
-          })}
+                  <button
+                    className={`w-32 h-16 relative rounded-lg overflow-hidden border-2 transition-all duration-300 focus:outline-none ${
+                      selectedIndex === index ? "border-white" : "border-transparent hover:border-white/50"
+                    }`}
+                    onClick={() => setSelectedIndex(index)}
+                  >
+                    <span>{league}</span>
+                    <img src={league.logo} alt={league.name} className="object-cover" />
+                  </button>
+                </div>
+              );
+            })
+          ) : (
+            <div>Please select date first</div>
+          )}
         </div>
         <button
           onClick={handlePrevious}

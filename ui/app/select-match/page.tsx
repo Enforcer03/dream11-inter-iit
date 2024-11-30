@@ -7,8 +7,14 @@ import PageTemplate from "../components/pageTemplate";
 import VideoComp from "../components/videoSet";
 import LeagueSelector from "../components/leagueSelector";
 import MatchSelector from "../components/matchSelector";
+import { getSquadsByDate } from "../api/squads";
 
-function MatchDateInput({ date, setDate }) {
+function isValidDateFormat(dateString: string) {
+  const datePattern = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+  return datePattern.test(dateString);
+}
+
+function MatchDateInput({ date, setDate, setAllData, setAllLeagues }) {
   const formatWithPlaceholder = (value: string) => {
     const parts = value.split("/");
     if (parts.length === 1) {
@@ -33,12 +39,29 @@ function MatchDateInput({ date, setDate }) {
     }
 
     setDate(formattedDate);
+    if (isValidDateFormat(formattedDate)) {
+      handleGetSquads(formattedDate);
+    }
   };
 
   const displayValue = () => {
     const numericDate = date.replace(/[^0-9/]/g, "");
     return formatWithPlaceholder(numericDate);
   };
+
+  async function handleGetSquads(date: string) {
+    try {
+      const [day, month, year] = date.split("/");
+      const formattedDate = `${year}-${month}-${day}`;
+
+      const data = await getSquadsByDate(formattedDate);
+      setAllData(data);
+      console.log(data);
+      setAllLeagues(Object.keys(data));
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <div className="flex flex-col items-center justify-center mt-16">
@@ -58,24 +81,36 @@ function SelectMatchScreen() {
   const [date, setDate] = useState("");
   const [league, setLeague] = useState("");
   const [match, setMatch] = useState("");
+  const [allData, setAllData] = useState(null);
+  const [allLeagues, setAllLeagues] = useState(null);
 
   const prevPage = "/instructions";
-  const nextPage = "/player-selection"
+  const nextPage = "/player-selection";
+
+  const objForNextPage = {
+    pathname: "/player-selection",
+    query: {
+      allData,
+      match,
+    },
+  };
 
   return (
     <div>
       <PageTemplate title="INPUT DETAILS" />
       <div className="selectMatchDiv">
-        <MatchDateInput date={date} setDate={setDate} />
-        <LeagueSelector setLeague={setLeague} />
-        <MatchSelector setMatch={setMatch} />
+        <MatchDateInput date={date} setDate={setDate} setAllData={setAllData} setAllLeagues={setAllLeagues} />
+        <LeagueSelector setLeague={setLeague} allLeagues={allLeagues} />
+        <MatchSelector setMatch={setMatch} league={league} allData={allData} />
       </div>
       <div className="buttonCompDiv">
         <ButtonComponent nextPage={prevPage}>BACK</ButtonComponent>
         <ButtonComponent nextPage={nextPage}>NEXT</ButtonComponent>
       </div>
       <div className="videoCompDiv">
-        <VideoComp nextPage="/video-instructions">VIDEO <span className="text-white">DEMO</span></VideoComp>
+        <VideoComp nextPage="/video-instructions">
+          VIDEO <span className="text-white">DEMO</span>
+        </VideoComp>
       </div>
     </div>
   );

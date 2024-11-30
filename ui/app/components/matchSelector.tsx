@@ -1,51 +1,31 @@
 "use client";
 
+import { all } from "axios";
 import { useState, useEffect } from "react";
 
-export default function MatchSelector({ setMatch }: { setMatch: (match: any) => void }) {
-  const [selectedIndex, setSelectedIndex] = useState(3);
+export default function MatchSelector({
+  setMatch,
+  league,
+  allData,
+}: {
+  setMatch: (match: any) => void;
+  league: any;
+  allData: any;
+}) {
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const teams = [
-    {
-      name: "Kolkata Knight Riders",
-      logo: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      name: "Sunrisers Hyderabad",
-      logo: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      name: "Mumbai Indians",
-      logo: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      name: "Chennai Super Kings",
-      logo: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      name: "Mumbai Indians",
-      logo: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      name: "Sunrisers Hyderabad",
-      logo: "/placeholder.svg?height=200&width=200",
-    },
-    {
-      name: "Kolkata Knight Riders",
-      logo: "/placeholder.svg?height=200&width=200",
-    },
-  ];
+  const matches = league ? Object.keys(allData[league]) : [];
 
   const handlePrevious = () => {
-    const newIndex = (selectedIndex - 1 + teams.length) % teams.length;
+    const newIndex = (selectedIndex - 1 + matches.length) % matches.length;
     setSelectedIndex(newIndex);
-    setMatch(teams[newIndex]);
+    setMatch(matches[newIndex]);
   };
 
   const handleNext = () => {
-    const newIndex = (selectedIndex + 1) % teams.length;
+    const newIndex = (selectedIndex + 1) % matches.length;
     setSelectedIndex(newIndex);
-    setMatch(teams[newIndex]);
+    setMatch(matches[newIndex]);
   };
 
   useEffect(() => {
@@ -66,7 +46,7 @@ export default function MatchSelector({ setMatch }: { setMatch: (match: any) => 
       <h1 className="text-3xl font-bold mb-16 text-[#FFD700]">SELECT MATCH</h1>
       <div className="w-full px-4 relative">
         <div className="flex justify-center items-center mb-8">
-          {teams.map((team, index) => {
+          {matches.map((match, index) => {
             const distance = Math.abs(selectedIndex - index);
             const isVisible = distance <= 2;
             return (
@@ -77,16 +57,26 @@ export default function MatchSelector({ setMatch }: { setMatch: (match: any) => 
                 }`}
                 style={{
                   transform: `translateX(${(index - selectedIndex) * 120}px) scale(${1 - distance * 0.2})`,
-                  zIndex: teams.length - distance,
+                  zIndex: matches.length - distance,
                 }}
               >
                 <button
-                  className={`w-32 h-16 relative rounded-lg overflow-hidden border-2 transition-all duration-300 focus:outline-none ${
+                  className={`w-48 h-20 relative rounded-lg overflow-hidden border-2 transition-all duration-300 focus:outline-none ${
                     selectedIndex === index ? "border-white" : "border-transparent hover:border-white/50"
                   }`}
                   onClick={() => setSelectedIndex(index)}
                 >
-                  <img src={team.logo} alt={team.name} className="object-cover" />
+                  <div className="flex">
+                    <div>
+                      {match.split("_")[0]}
+                      <img src={match.logo} />
+                    </div>
+                    <div>{match.split("_")[3]}</div>
+                    <div>
+                      {match.split("_")[2]}
+                      <img src={match.logo} />
+                    </div>
+                  </div>
                 </button>
               </div>
             );
