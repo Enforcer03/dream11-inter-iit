@@ -14,19 +14,21 @@ function isValidDateFormat(dateString: string) {
 }
 
 function MatchDateInput({ date, setDate, setAllData, setAllLeagues }) {
-  const formatWithPlaceholder = (value: string) => {
+  function formatWithPlaceholder(value: string) {
     const parts = value.split("/");
+
     if (parts.length === 1) {
       return `${parts[0]}${"DD/MM/YYYY".slice(parts[0].length)}`;
     } else if (parts.length === 2) {
-      return `${parts[0]}/${parts[1]}${"YYYY".slice(parts[1].length)}`;
+      return `${parts[0]}/${parts[1]}${"MM/YYYY".slice(parts[1].length)}`;
     } else if (parts.length === 3) {
-      return `${parts[0]}/${parts[1]}/${parts[2]}`;
+      return `${parts[0]}/${parts[1]}/${parts[2]}${"YYYY".slice(parts[2].length)}`;
     }
-    return value;
-  };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    return value;
+  }
+
+  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     let value = e.target.value.replace(/[^0-9]/g, "");
     if (value.length > 8) value = value.slice(0, 8);
 
@@ -41,7 +43,7 @@ function MatchDateInput({ date, setDate, setAllData, setAllLeagues }) {
     if (isValidDateFormat(formattedDate)) {
       handleGetSquads(formattedDate);
     }
-  };
+  }
 
   const displayValue = () => {
     const numericDate = date.replace(/[^0-9/]/g, "");
