@@ -2,11 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --font-quantico: 'Quantico', sans-serif;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-quantico);
+}
+
 body {
   background-color: rgb(92, 70, 29);
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -20,7 +27,7 @@ body {
   position: absolute;
   bottom: 5rem;
   left: 15%;
-  top: 14%;
+  top: 12%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -43,14 +50,13 @@ body {
 .predictedScoreBtn {
   background: url("../public/predictedScoreBtn.svg") no-repeat center;
   background-size: 100% 100%;
-  width: 30rem;
+  width: 22rem;
   height: 2.5rem;
   text-align: center;
-  margin: 0 0 -1.5rem 0;
   color: #e8ba15;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: bold;
-  letter-spacing: 4px;
+  letter-spacing: 3px;
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -61,7 +67,6 @@ body {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  padding: 2rem;
 }
 
 .badge-bg {
@@ -176,8 +181,8 @@ body {
 
 .buttonCompDiv {
   position: absolute;
-  bottom: 1.3rem;
-  left: 30%;
+  bottom: 0.8rem;
+  left: 25%;
   z-index: 1;
 }
 
@@ -214,8 +219,8 @@ body {
 
 .videoCompDiv {
   position: absolute;
-  bottom: 7%;
-  left: 15.6%;
+  bottom: 6%;
+  left: 6.5%;
 }
 
 .videoComp {
@@ -243,8 +248,8 @@ body {
 
 .audioCompDiv {
   position: absolute;
-  bottom: 7.5%;
-  right: 18%;
+  bottom: 4.5%;
+  right: 9%;
 }
 
 .audioComp {
@@ -272,7 +277,7 @@ body {
   text-transform: uppercase;
   color: #fad0539f;
   font-size: 0.8rem;
-  font-weight: lighter;
+  font-weight: bold;
   letter-spacing: 3px;
 }
 
@@ -286,22 +291,22 @@ body {
 .bgSelectedPlayer {
   display: flex;
   width: 5rem;
-  height: 6.5rem;
+  height: 5rem;
 }
 
 .selectionListDiv {
   position: absolute;
-  top: 10%;
-  right: 15%;
-  width: 50%;
-  height: 64%;
+  top: 12%;
+  right: 9%;
+  width: 58%;
+  height: 62%;
   overflow-y: scroll;
 }
 
 .buttonPlayerSelectionDiv {
   position: absolute;
   bottom: 4rem;
-  left: 16%;
+  left: 8%;
   width: 10rem;
   padding: 0;
 }
@@ -312,9 +317,9 @@ body {
 
 .selectListDiv {
   position: absolute;
-  bottom: 0%;
-  right: 15%;
-  width: 50%;
+  bottom: 5%;
+  right: 8%;
+  width: 60%;
 }
 
 .dateInputMatch {
@@ -383,7 +388,7 @@ th {
 .playerShortDetails {
   position: absolute;
   top: 10%;
-  left: 16%;
+  left: 9.5%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -422,6 +427,7 @@ th {
   height: 65%;
 }
 
+<<<<<<< Updated upstream
 .selected {
   background: url("../public/selectedFrame.svg") no-repeat center;
   background-size: 100% 100%;
@@ -431,3 +437,8 @@ th {
   background: url("../public/bgSelectedPlayer.svg") no-repeat center;
   background-size: cover;
 }
+=======
+.borderSmall {
+  margin-bottom: 1rem;
+}
+>>>>>>> Stashed changes

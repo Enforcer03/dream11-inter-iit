@@ -13,6 +13,9 @@ export default {
         foreground: "var(--foreground)",
         dream11FontColor: "#E8BA15",
       },
+      fontFamily: {
+        quantico: ['var(--font-quantico)'],
+      },
     },
   },
   plugins: [],

@@ -26,7 +26,7 @@ const PlayerList = () => {
   };
 
   return (
-    <div className="players-list w-5/6">
+    <div className="players-list">
       {players.map((player) => (
         <div
           key={player.id}

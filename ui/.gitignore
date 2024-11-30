@@ -40,4 +40,4 @@ yarn-error.log*
 next-env.d.ts
 
 #json
-*.json
+players.json
