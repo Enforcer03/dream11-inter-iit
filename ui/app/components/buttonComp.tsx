@@ -6,10 +6,18 @@ import html2canvas from 'html2canvas';
 interface ButtonProps {
   children: React.ReactNode;
   nextPage?: string;
+  onClick?: () => void;
+  disabled?: boolean;
   downloadScreenshot?: boolean;
 }
 
-const ButtonComponent = ({ children, nextPage, downloadScreenshot }: ButtonProps) => {
+const ButtonComponent = ({ 
+  children, 
+  nextPage, 
+  onClick, 
+  disabled, 
+  downloadScreenshot 
+}: ButtonProps) => {
   const router = useRouter();
 
   const downloadScreenshotImage = async () => {
@@ -31,15 +39,25 @@ const ButtonComponent = ({ children, nextPage, downloadScreenshot }: ButtonProps
   };
 
   const handleClick = () => {
+    if (disabled) return;
+    
     if (downloadScreenshot) {
       downloadScreenshotImage();
-    } else {
-      router.push(nextPage)
+    } else if (onClick) {
+      onClick();
+    } else if (nextPage) {
+      router.push(nextPage);
     }
   };
 
   return (
-    <button onClick={handleClick} className="buttonComp backdrop-blur uppercase">
+    <button 
+      onClick={handleClick} 
+      disabled={disabled}
+      className={`buttonComp backdrop-blur uppercase ${
+        disabled ? 'opacity-50 cursor-not-allowed' : ''
+      }`}
+    >
       {children}
     </button>
   );

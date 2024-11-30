@@ -50,10 +50,17 @@ const PlayerList = () => {
               {player.name.split(" ")[0].charAt(0)}. {player.name.split(" ").slice(1).join(" ")}
             </h4>
             <hr className="player-hr" />
-            <p className="player-bio">
-              {player.bio.split(" ").slice(0, 5).join(" ")}
-              {player.bio.split(" ").length > 7 ? "..." : ""}
-            </p>
+            <div className="player-bio">
+              <div className="flex flex-col">
+                <p className="w-full ">🏏: {12}</p>
+                <p className="w-full">WIC: {311}</p>
+              </div>
+              <hr className="badge-hr" />
+              <div className="flex flex-col">
+                <p className="w-full">⚾️: {2}</p>
+                <p className="w-full">AVG: {101}</p>
+              </div>  
+            </div>
           </div>
         </div>
       ))}

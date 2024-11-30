@@ -3,16 +3,20 @@
 import { useState } from "react";
 import AnonymousPlayer from "./anonymousPlayer";
 import SelectedPlayer from "./selectedPlayer";
+import Button from "./buttonComp";
 import playersData from "../../public/players.json";
+import playersData2 from "../../public/players2.json";
 import PlayerInformation from "./playerInformation";
 
 const PeopleDisplay = () => {
+  const [currentDataset, setCurrentDataset] = useState(1);
   const [selectedPlayers, setSelectedPlayers] = useState(playersData.players);
+  const [selectedData, setSelectedData] = useState([]);
   const [filledDivs, setFilledDivs] = useState<(null | (typeof playersData.players)[0])[]>(Array(11).fill(null));
   const [details, setDetails] = useState(playersData.players[0]);
 
   const handleSelection = () => {
-    setFilledDivs(playersData.players.slice(0, 11));
+    setFilledDivs(selectedPlayers.slice(0, 11));
   };
 
   const handleDetails = (player: (typeof playersData.players)[0]) => {
@@ -43,6 +47,29 @@ const PeopleDisplay = () => {
       return newFilledDivs;
     });
   };
+
+  console.log(selectedData.length);
+  
+
+const handleNext = () => {
+  if (currentDataset === 1) {
+    setCurrentDataset(2);
+    setSelectedPlayers(playersData2.players);
+    setDetails(playersData2.players[0]);
+    setSelectedData(filledDivs.filter(player => player !== null));
+    setFilledDivs(Array(11).fill(null));
+  }
+};
+
+  const prevPage = "/select-match";
+  const nextPage = "/playing11";
+
+  // Calculate number of selected players
+  const countTeam1 = selectedData.length;
+  const countTeam2 = filledDivs.filter(player => player !== null).length;
+
+  // Determine if Next button should be active
+  const isNextActive = currentDataset === 1 || (countTeam1 + countTeam2) >= 11;
 
   return (
     <div>
@@ -83,10 +110,17 @@ const PeopleDisplay = () => {
                   {player.name.split(" ")[0].charAt(0)}. {player.name.split(" ").slice(1).join(" ")}
                 </h3>
                 <hr className="player-hr" />
-                <p className="player-bio">
-                  {player.bio.split(" ").slice(0, 5).join(" ")}
-                  {player.bio.split(" ").length > 7 ? "..." : ""}
-                </p>
+                <div className="player-bio">
+                <div className="flex flex-col">
+                  <p className="w-full ">🏏: {12}</p>
+                  <p className="w-full">WIC: {311}</p>
+                </div>
+                <hr className="badge-hr" />
+                <div className="flex flex-col">
+                  <p className="w-full">⚾️: {2}</p>
+                  <p className="w-full">AVG: {101}</p>
+                </div>  
+            </div>
               </div>
             </div>
           ))}
@@ -128,6 +162,18 @@ const PeopleDisplay = () => {
             ))}
           </div>
         </div>
+      </div>
+      <div className="buttonPlayerSelectionDiv">
+        {currentDataset === 1 ? (
+          <Button onClick={handleNext} disabled={!isNextActive}>
+            NEXT
+          </Button>
+        ) : (
+          <Button nextPage={nextPage} disabled={!isNextActive}>
+            NEXT
+          </Button>
+        )}
+        <Button nextPage={prevPage}>BACK</Button>
       </div>
     </div>
   );

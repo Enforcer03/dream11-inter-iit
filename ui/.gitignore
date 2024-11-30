@@ -41,3 +41,5 @@ next-env.d.ts
 
 #json
 players.json
+players2.json
+playerJsonTest.json

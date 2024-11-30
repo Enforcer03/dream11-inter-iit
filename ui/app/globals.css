@@ -93,8 +93,14 @@ body {
 
 .flag-hr {
   width: 30px;
-  border: 1px solid #c0af64;
+  border: 0.5px solid #c0af64;
   margin: 5px 0;
+}
+
+.badge-hr {
+  height: 30px;
+  border: 0.5px solid #c0af64;
+  margin: 5px;
 }
 
 .player-image-container {
@@ -128,9 +134,11 @@ body {
 .player-bio {
   font-size: 14px;
   display: flex;
-  flex-wrap: wrap;
   overflow: hidden;
   justify-content: center;
+  display: flex;
+  width: 100%;
+  text-align: left;
 }
 
 .player-bio-container {
@@ -143,7 +151,7 @@ body {
 
 .player-hr {
   width: 130px;
-  border: 1px solid #c0af64;
+  border: 0.5px solid #c0af64;
 }
 
 .main_window {
@@ -376,6 +384,7 @@ th {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  overflow: hidden;
 }
 
 .pitch {
@@ -388,10 +397,8 @@ th {
 .playerShortDetails {
   position: absolute;
   top: 10%;
-  left: 9.5%;
+  left: 8%;
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
 }
 
