@@ -230,7 +230,6 @@ body {
   align-items: flex-end;
   padding: 0 1rem;
   letter-spacing: 5px;
-
 }
 
 .videoCam {
@@ -421,4 +420,14 @@ th {
   left: 22.5%;
   width: 55%;
   height: 65%;
+}
+
+.selected {
+  background: url("../public/selectedFrame.svg") no-repeat center;
+  background-size: 100% 100%;
+}
+
+.playerCardSwap {
+  background: url("../public/bgSelectedPlayer.svg") no-repeat center;
+  background-size: cover;
 }
