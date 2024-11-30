@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { SquadApiResponse } from "../types/squadApiResponse";
 
 export default function LeagueSelector({
   setLeague,
@@ -8,14 +9,16 @@ export default function LeagueSelector({
   setAllMatches,
   allData,
 }: {
-  setLeague: (league: any) => void;
-  allLeagues: any[];
-  setAllMatches: (matches: any) => void;
-  allData: any;
+  setLeague: (league: string) => void;
+  allLeagues: string[];
+  setAllMatches: (matches: string[]) => void;
+  allData: SquadApiResponse | null;
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const handlePrevious = () => {
+    if (!allData) return;
+
     const newIndex = (selectedIndex - 1 + allLeagues.length) % allLeagues.length;
     setSelectedIndex(newIndex);
     setLeague(allLeagues[newIndex]);
@@ -23,6 +26,8 @@ export default function LeagueSelector({
   };
 
   const handleNext = () => {
+    if (!allData) return;
+
     const newIndex = (selectedIndex + 1) % allLeagues.length;
     setSelectedIndex(newIndex);
     setLeague(allLeagues[newIndex]);

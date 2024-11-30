@@ -7,27 +7,38 @@ import LeagueSelector from "../components/leagueSelector";
 import MatchSelector from "../components/matchSelector";
 import PageTemplate from "../components/pageTemplate";
 import VideoComp from "../components/videoSet";
+import { SquadApiResponse } from "../types/squadApiResponse";
 
 function isValidDateFormat(dateString: string) {
   const datePattern = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
   return datePattern.test(dateString);
 }
 
-function MatchDateInput({ date, setDate, setAllData, setAllLeagues }) {
-  function formatWithPlaceholder(value: string) {
-    const parts = value.split("/");
+function formatWithPlaceholder(value: string) {
+  const parts = value.split("/");
 
-    if (parts.length === 1) {
-      return `${parts[0]}${"DD/MM/YYYY".slice(parts[0].length)}`;
-    } else if (parts.length === 2) {
-      return `${parts[0]}/${parts[1]}${"MM/YYYY".slice(parts[1].length)}`;
-    } else if (parts.length === 3) {
-      return `${parts[0]}/${parts[1]}/${parts[2]}${"YYYY".slice(parts[2].length)}`;
-    }
-
-    return value;
+  if (parts.length === 1) {
+    return `${parts[0]}${"DD/MM/YYYY".slice(parts[0].length)}`;
+  } else if (parts.length === 2) {
+    return `${parts[0]}/${parts[1]}${"MM/YYYY".slice(parts[1].length)}`;
+  } else if (parts.length === 3) {
+    return `${parts[0]}/${parts[1]}/${parts[2]}${"YYYY".slice(parts[2].length)}`;
   }
 
+  return value;
+}
+
+function MatchDateInput({
+  date,
+  setDate,
+  setAllData,
+  setAllLeagues,
+}: {
+  date: string;
+  setDate: (date: string) => void;
+  setAllData: (data: SquadApiResponse) => void;
+  setAllLeagues: (leagues: string[]) => void;
+}) {
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     let value = e.target.value.replace(/[^0-9]/g, "");
     if (value.length > 8) value = value.slice(0, 8);
@@ -57,7 +68,6 @@ function MatchDateInput({ date, setDate, setAllData, setAllLeagues }) {
 
       const data = await getSquadsByDate(formattedDate);
       setAllData(data);
-      console.log(data);
       setAllLeagues(Object.keys(data));
     } catch (error) {
       console.error(error);
@@ -82,20 +92,12 @@ function SelectMatchScreen() {
   const [date, setDate] = useState("");
   const [league, setLeague] = useState("");
   const [match, setMatch] = useState("");
-  const [allData, setAllData] = useState(null);
-  const [allLeagues, setAllLeagues] = useState(null);
-  const [allMatches, setAllMatches] = useState(null);
+  const [allData, setAllData] = useState<SquadApiResponse | null>(null);
+  const [allLeagues, setAllLeagues] = useState<string[]>([]);
+  const [allMatches, setAllMatches] = useState<string[]>([]);
 
   const prevPage = "/instructions";
   const nextPage = "/player-selection";
-
-  const objForNextPage = {
-    pathname: "/player-selection",
-    query: {
-      allData,
-      match,
-    },
-  };
 
   return (
     <div>
