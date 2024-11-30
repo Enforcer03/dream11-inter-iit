@@ -427,7 +427,6 @@ th {
   height: 65%;
 }
 
-<<<<<<< Updated upstream
 .selected {
   background: url("../public/selectedFrame.svg") no-repeat center;
   background-size: 100% 100%;
@@ -437,8 +436,3 @@ th {
   background: url("../public/bgSelectedPlayer.svg") no-repeat center;
   background-size: cover;
 }
-=======
-.borderSmall {
-  margin-bottom: 1rem;
-}
->>>>>>> Stashed changes
