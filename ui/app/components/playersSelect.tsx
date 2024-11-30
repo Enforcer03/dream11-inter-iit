@@ -51,44 +51,43 @@ const PeopleDisplay = () => {
   };
 
   console.log(selectedData.length);
-  
 
-const handleNext = () => {
-  if (currentDataset === 1) {
-    setCurrentDataset(2);
-    setSelectedPlayers(playersData2.players);
-    setDetails(playersData2.players[0]);
-    setSelectedData(filledDivs.filter(player => player !== null));
-    setFilledDivs(Array(11).fill(null));
-  }
-};
+  const handleNext = () => {
+    if (currentDataset === 1) {
+      setCurrentDataset(2);
+      setSelectedPlayers(playersData2.players);
+      setDetails(playersData2.players[0]);
+      setSelectedData(filledDivs.filter((player) => player !== null));
+      setFilledDivs(Array(11).fill(null));
+    }
+  };
 
-  const getPlayerImagePath = (playerName: string) => {
-    const matchingPlayer = playersImages.data.find((imageData) => {
-      console.log('Comparing with:', imageData.fullname);
-      const isMatch = imageData.fullname === playerName;
-      if (isMatch) {
-        console.log('Match found! Image path:', imageData.image_path);
-      }
-      return isMatch;
-    });
+  const getPlayerImagePath = (playerName: string) => {
+    const matchingPlayer = playersImages.data.find((imageData) => {
+      console.log("Comparing with:", imageData.fullname);
+      const isMatch = imageData.fullname === playerName;
+      if (isMatch) {
+        console.log("Match found! Image path:", imageData.image_path);
+      }
+      return isMatch;
+    });
 
-    if (!matchingPlayer) {
-      console.log('No match found, using default image:', playersImages.data[4].image_path);
-    }
+    if (!matchingPlayer) {
+      console.log("No match found, using default image:", playersImages.data[4].image_path);
+    }
 
-    return matchingPlayer ? matchingPlayer.image_path : playersImages.data[4].image_path;
-  };
+    return matchingPlayer ? matchingPlayer.image_path : playersImages.data[4].image_path;
+  };
 
   const prevPage = "/select-match";
   const nextPage = "/playing11";
 
   // Calculate number of selected players
   const countTeam1 = selectedData.length;
-  const countTeam2 = filledDivs.filter(player => player !== null).length;
+  const countTeam2 = filledDivs.filter((player) => player !== null).length;
 
   // Determine if Next button should be active
-  const isNextActive = currentDataset === 1 || (countTeam1 + countTeam2) >= 11;
+  const isNextActive = currentDataset === 1 || countTeam1 + countTeam2 >= 11;
 
   return (
     <div>
@@ -130,16 +129,16 @@ const handleNext = () => {
                 </h3>
                 <hr className="player-hr" />
                 <div className="player-bio">
-                <div className="flex flex-col">
-                  <p className="w-full ">🏏: {12}</p>
-                  <p className="w-full">WIC: {311}</p>
+                  <div className="flex flex-col">
+                    <p className="w-full ">🏏: {12}</p>
+                    <p className="w-full">WIC: {311}</p>
+                  </div>
+                  <hr className="badge-hr" />
+                  <div className="flex flex-col">
+                    <p className="w-full">⚾️: {2}</p>
+                    <p className="w-full">AVG: {101}</p>
+                  </div>
                 </div>
-                <hr className="badge-hr" />
-                <div className="flex flex-col">
-                  <p className="w-full">⚾️: {2}</p>
-                  <p className="w-full">AVG: {101}</p>
-                </div>  
-            </div>
               </div>
             </div>
           ))}
@@ -148,9 +147,7 @@ const handleNext = () => {
 
       <div className="selectListDiv">
         <div className="-mb-2 ml-5">
-          <h1 className="text-xl font-bold text-[#FFD700] inline">
-            SELECTED PLAYERS
-          </h1>
+          <h1 className="text-xl font-bold text-[#FFD700] inline">SELECTED PLAYERS</h1>
           <button className="autoSelectBtn" onClick={handleSelection}>
             AUTO SELECT
           </button>
@@ -167,7 +164,11 @@ const handleNext = () => {
                 {player ? (
                   <SelectedPlayer
                     child1={
-                      <img src={getPlayerImagePath(player.name)} alt="Player Image" className="select-player-image no-repeat center" />
+                      <img
+                        src={getPlayerImagePath(player.name)}
+                        alt="Player Image"
+                        className="select-player-image no-repeat center"
+                      />
                     }
                     child2={player.name
                       .split(" ")

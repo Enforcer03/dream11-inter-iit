@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 interface Player {
   id: number;
@@ -28,11 +28,7 @@ const PlayerList = () => {
   return (
     <div className="players-list">
       {players.map((player) => (
-        <div
-          key={player.id}
-          className="badge-bg"
-          onClick={() => handlePlayerClick(player.id)}
-        >
+        <div key={player.id} className="badge-bg" onClick={() => handlePlayerClick(player.id)}>
           <div className="player-image-container">
             <div className="flag-container">
               <img src={player.countryFlag} alt="Flag" className="flag" />
@@ -59,7 +55,7 @@ const PlayerList = () => {
               <div className="flex flex-col">
                 <p className="w-full">⚾️: {2}</p>
                 <p className="w-full">AVG: {101}</p>
-              </div>  
+              </div>
             </div>
           </div>
         </div>

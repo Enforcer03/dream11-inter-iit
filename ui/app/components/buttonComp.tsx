@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
-import html2canvas from 'html2canvas';
+import { useRouter } from "next/navigation";
+import html2canvas from "html2canvas";
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -11,13 +11,7 @@ interface ButtonProps {
   downloadScreenshot?: boolean;
 }
 
-const ButtonComponent = ({ 
-  children, 
-  nextPage, 
-  onClick, 
-  disabled, 
-  downloadScreenshot 
-}: ButtonProps) => {
+const ButtonComponent = ({ children, nextPage, onClick, disabled, downloadScreenshot }: ButtonProps) => {
   const router = useRouter();
 
   const downloadScreenshotImage = async () => {
@@ -27,20 +21,20 @@ const ButtonComponent = ({
         allowTaint: true,
       });
 
-      const dataUrl = canvas.toDataURL('image/png');
+      const dataUrl = canvas.toDataURL("image/png");
 
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = dataUrl;
-      link.download = 'screenshot.png';
+      link.download = "screenshot.png";
       link.click();
     } catch (error) {
-      console.error('Error capturing screenshot:', error);
+      console.error("Error capturing screenshot:", error);
     }
   };
 
   const handleClick = () => {
     if (disabled) return;
-    
+
     if (downloadScreenshot) {
       downloadScreenshotImage();
     } else if (onClick) {
@@ -51,12 +45,10 @@ const ButtonComponent = ({
   };
 
   return (
-    <button 
-      onClick={handleClick} 
+    <button
+      onClick={handleClick}
       disabled={disabled}
-      className={`buttonComp backdrop-blur uppercase ${
-        disabled ? 'opacity-50 cursor-not-allowed' : ''
-      }`}
+      className={`buttonComp backdrop-blur uppercase ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
     >
       {children}
     </button>

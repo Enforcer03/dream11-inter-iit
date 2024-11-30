@@ -14,8 +14,8 @@ export default {
         dream11FontColor: "#E8BA15",
       },
       fontFamily: {
-        quantico: ['var(--font-quantico)'],
-      },
+        quantico: ["var(--font-quantico)"],
+      },
     },
   },
   plugins: [],

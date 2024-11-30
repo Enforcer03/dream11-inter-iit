@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from "react";
 import SelectedPlayer from "../components/selectedPlayer";
 import playersData from "../../public/players.json";
-import PageTemplate from "../components/pageTemplate"
-import Button from "../components/buttonComp"
+import PageTemplate from "../components/pageTemplate";
+import Button from "../components/buttonComp";
 
 interface Instruction {
   id: number;
@@ -43,33 +43,35 @@ const PeopleDisplay = () => {
   return (
     <div>
       <PageTemplate title="playing 11">
-      <div className=" ml-2 -mt-20">
-        <h1 className="text-3xl text-[#FFD700] font-bold tracking-wider">PLAYERS' INFORMATION REPORT</h1>
-      </div>
-      <div className="flex m-4">
-        {selectedPlayers.map((player) => {
-          let fullName = player.name.split(" ");
-          let modifiedName = fullName.map((part) => {
-            return part.length > 7 ? part[0] + "." : part;
-          }).join(" ");
+        <div className=" ml-2 -mt-20">
+          <h1 className="text-3xl text-[#FFD700] font-bold tracking-wider">PLAYERS' INFORMATION REPORT</h1>
+        </div>
+        <div className="flex m-4">
+          {selectedPlayers.map((player) => {
+            let fullName = player.name.split(" ");
+            let modifiedName = fullName
+              .map((part) => {
+                return part.length > 7 ? part[0] + "." : part;
+              })
+              .join(" ");
 
-          return (
-            <div key={player.id} className="m-4">
-              <SelectedPlayer
-                child1={<img src={player.image} alt="Player Image" className="player-image" />}
-                child2={modifiedName}
-              />
-            </div>
-          );
-        })}
-      </div>
-      <div className="information-report-container">
-        <ul>
-          {instructions.map((instruction) => (
-            <li key={instruction.id}>{instruction.text}</li>
-          ))}
-        </ul>
-      </div>
+            return (
+              <div key={player.id} className="m-4">
+                <SelectedPlayer
+                  child1={<img src={player.image} alt="Player Image" className="player-image" />}
+                  child2={modifiedName}
+                />
+              </div>
+            );
+          })}
+        </div>
+        <div className="information-report-container">
+          <ul>
+            {instructions.map((instruction) => (
+              <li key={instruction.id}>{instruction.text}</li>
+            ))}
+          </ul>
+        </div>
       </PageTemplate>
       <div className="buttonCompDiv">
         <Button nextPage={prevPage}>BACK</Button>

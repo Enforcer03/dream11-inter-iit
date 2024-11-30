@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import Button from "../components/buttonComp";
 import DisplayBox from "../components/displayBox";
 import PageTemplate from "../components/pageTemplate";
@@ -10,17 +10,14 @@ function Playing11() {
   const prevPage = "/player-selection";
 
   const handlePredictedScoreClick = () => {
-    router.push('/information-report');
+    router.push("/information-report");
   };
 
   return (
     <div>
       <PageTemplate title="PLAYING 11" />
       <div className="displayBoxDivDiv">
-        <button
-          className="predictedScoreBtn"
-          onClick={handlePredictedScoreClick}
-        >
+        <button className="predictedScoreBtn" onClick={handlePredictedScoreClick}>
           PREDICTED TOTAL SCORE 195
         </button>
         <div className="displayBoxDiv">
