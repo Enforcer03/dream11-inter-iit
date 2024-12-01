@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import playersData from "../../public/players.json";
 import playersData2 from "../../public/players2.json";
 import playersImages from "../../public/playerImages.json";
@@ -25,39 +25,36 @@ const PlayerList = () => {
       .then((data) => setPlayers(data.players.slice(0, 11)));
   }, []);
 
-  const handlePlayerClick = (id: number, image:string) => {
+  const handlePlayerClick = (id: number, image: string) => {
     router.push(`/player-information?id=${id}&image=${encodeURIComponent(image)}`);
   };
 
   const getPlayerImagePath = (playerName: string) => {
     const matchingPlayer = playersImages.data.find((imageData) => {
-      console.log('Comparing with:', imageData.fullname);
-      const isMatch = imageData.fullname === playerName;
-      if (isMatch) {
-        console.log('Match found! Image path:', imageData.image_path);
-      }
-      return isMatch;
-    });
+      console.log("Comparing with:", imageData.fullname);
+      const isMatch = imageData.fullname === playerName;
+      if (isMatch) {
+        console.log("Match found! Image path:", imageData.image_path);
+      }
+      return isMatch;
+    });
 
-    if (!matchingPlayer) {
-      console.log('No match found, using default image:', playersImages.data[4].image_path);
-    }
+    if (!matchingPlayer) {
+      console.log("No match found, using default image:", playersImages.data[4].image_path);
+    }
 
-    return matchingPlayer ? matchingPlayer.image_path : playersImages.data[4].image_path;
-  };
+    return matchingPlayer ? matchingPlayer.image_path : playersImages.data[4].image_path;
+  };
 
   return (
     <div className="players-list">
       {players.map((player) => (
-<<<<<<< Updated upstream
-        <div key={player.id} className="badge-bg" onClick={() => handlePlayerClick(player.id)}>
-=======
         <div
           key={player.id}
           className="badge-bg"
           onClick={() => handlePlayerClick(player.id, getPlayerImagePath(player.name))}
         >
->>>>>>> Stashed changes
+          {" "}
           <div className="player-image-container">
             <div className="flag-container">
               <img src={countryImages.data[0].image_path} alt="Flag" className="flag" />

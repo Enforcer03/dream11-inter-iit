@@ -139,8 +139,7 @@ function SelectMatchScreen() {
 
       const response = await getAggregateStats(combinePlayerList);
       setAggregateStats(response);
-      console.log(response);
-      // router.push(nextPage);
+      router.push(nextPage);
     } catch (error) {
       console.error(error);
     }
