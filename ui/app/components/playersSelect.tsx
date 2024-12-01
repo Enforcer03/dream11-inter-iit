@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import AnonymousPlayer from "./anonymousPlayer";
 import SelectedPlayer from "./selectedPlayer";
 import Button from "./buttonComp";
 import playersData from "../../public/players.json";
-import playersData2 from "../../public/players.json";
 import playersImages from "../../public/playerImages.json";
 import countryImages from "../../public/countryImages.json";
 import PlayerInformation from "./playerInformation";
@@ -19,25 +19,24 @@ type SimplifiedPlayer = {
 
 function PeopleDisplay() {
   const { aggregateStats, matchData } = useMatchData();
+  const router = useRouter();
 
   if (!aggregateStats) return null;
-  const stats = aggregateStats;
 
-  console.log(Object.keys(stats));
   const playerNames = Object.keys(aggregateStats);
   const format = matchData?.Format;
 
   const [currentDataset, setCurrentDataset] = useState(1);
-  const [selectedPlayers, setSelectedPlayers] = useState(playerNames);
+  const [selectedPlayers, setSelectedPlayers] = useState(matchData[Object.keys(matchData).filter(team => team !== "Format")[currentDataset - 1]]);
   const [selectedData, setSelectedData] = useState([]);
   const [filledDivs, setFilledDivs] = useState<(null | SimplifiedPlayer)[]>(Array(11).fill(null));
-  const [details, setDetails] = useState(playersData.players[0]);
+  const [details, setDetails] = useState({id: 0, name: matchData[Object.keys(matchData).filter(team => team !== "Format")[currentDataset - 1]][0]});
 
-  const handleSelection = () => {
-    const simplifiedPlayers = selectedPlayers.slice(0, 11).map((player) => ({
-      id: player.id,
-      name: player.name,
-      image: "",
+  const handleSelection = () => {playerNames
+    const simplifiedPlayers = selectedPlayers.slice(0, 11).map((player, index) => ({
+      id: index,
+      name: player,
+      image: getPlayerImagePath(player),
     }));
     setFilledDivs(simplifiedPlayers);
   };
@@ -66,6 +65,10 @@ function PeopleDisplay() {
       }
       return prev;
     });
+
+    setSelectedData((prevSelectedDivs) => {
+      return [...prevSelectedDivs, player];
+    });
   };
 
   const handleEmptyDivClick = (index: number) => {
@@ -76,17 +79,29 @@ function PeopleDisplay() {
     });
   };
 
-  console.log(selectedData.length);
-
   const handleNext = () => {
     if (currentDataset === 1) {
       setCurrentDataset(2);
-      setSelectedPlayers(playersData2.players);
-      setDetails(playersData2.players[0]);
+      setSelectedPlayers(matchData[Object.keys(matchData).filter(team => team !== "Format")[1]]);
+      setDetails({id: 0, name: matchData[Object.keys(matchData).filter(team => team !== "Format")[1]][0]});
       setSelectedData(filledDivs.filter((player) => player !== null));
       setFilledDivs(Array(11).fill(null));
     }
   };
+
+  const displaySelected = () => {
+    setSelectedData((prevSelectedData) => {
+      const updatedSelectedData = [
+        ...prevSelectedData,
+        ...filledDivs.filter((player) => player !== null)
+      ];
+      return updatedSelectedData;
+    });
+
+    setFilledDivs(Array(11).fill(null));
+
+    router.push(nextPage);
+  }
 
   const getPlayerImagePath = (playerName: string) => {
     let nameParts = playerName.split(' ');
@@ -94,13 +109,12 @@ function PeopleDisplay() {
     const matchingPlayer = playersImages.data.find((imageData) => {
       const isMatch = imageData.lastname === lastName;
       if (isMatch) {
-        console.log("Match found! Image path:", imageData.image_path);
         return isMatch;
       }
     });
 
     if (!matchingPlayer) {
-      console.log("No match found, using default image:", playersImages.data[4].image_path);
+      playersImages.data[4].image_path;
     }
 
     return matchingPlayer ? matchingPlayer.image_path : playersImages.data[4].image_path;
@@ -117,81 +131,126 @@ function PeopleDisplay() {
   return (
     <div>
       <div className="playerShortDetails">
-  {/* Ensure you have a format defined, e.g., 'ODI', 'T20', or 'Test' */}
-  {format && ['ODI', 'T20', 'Test'].includes(format) && details.name && (
-    <PlayerInformation
-      title={"PLAYER SELECTION"}
-      child2={details.name}
-      child3={getPlayerImagePath(details.name)}
-      child4={countryImages.data[0].image_path}
-      child5={aggregateStats[details.name]?.[format]?.["Batting S/R"] || "No data"}
-      child6={aggregateStats[details.name]?.[format]?.["Runs"] || "No data"}
-      child7={aggregateStats[details.name]?.[format]?.["Batting Avg"] || "No data"}
-      child8={aggregateStats[details.name]?.[format]?.["Wickets"] || "-"}
-      child9={aggregateStats[details.name]?.[format]?.["Economy Rate"] || "No data"}
-      child10={aggregateStats[details.name]?.[format]?.["Bowling S/R"] || "No data"}
-    />
-  )}
-</div>
+        {format && ['ODI', 'T20', 'Test'].includes(format) && details.name && (() => {
 
+          let battingSR = aggregateStats[details.name]?.[format]?.["Batting S/R"];
+          let runs = aggregateStats[details.name]?.[format]?.["Runs"];
+          let battingAvg = aggregateStats[details.name]?.[format]?.["Batting Avg"];
+          let wickets = aggregateStats[details.name]?.[format]?.["Wickets"];
+          let economyRate = aggregateStats[details.name]?.[format]?.["Economy Rate"];
+          let bowlingSR = aggregateStats[details.name]?.[format]?.["Bowling S/R"];
 
-    <div className="selectionListDiv">
-      <div className="players-list ">
-        {playerNames.map((playerName, index) => {
-          const playerStats = aggregateStats[playerName];
-          const battingAvg = format && ['ODI', 'T20', 'Test'].includes(format)
-            ? playerStats[format]["Batting Avg"]
-            : "No data";
-
-          const wickets = playerStats[format]?.["Wickets"] || "-";
-          const bowling = playerStats[format]?.["Bowling S/R"] || "-";
-          const battingSR = playerStats[format]["Batting S/R"] || "-";
+          if (battingSR == null || battingSR === Infinity || battingSR < 0) {
+            battingSR = "-";
+          }
+          if (runs == null || runs === Infinity || runs < 0) {
+            runs = "-";
+          }
+          if (battingAvg == null || battingAvg === Infinity || battingAvg < 0) {
+            battingAvg = "-";
+          }
+          if (wickets == null || wickets === Infinity || wickets < 0) {
+            wickets = "-";
+          }
+          if (economyRate == null || economyRate === Infinity || economyRate < 0) {
+            economyRate = "-";
+          }
+          if (bowlingSR == null || bowlingSR === Infinity || bowlingSR < 0) {
+            bowlingSR = "-";
+          }
 
           return (
-            <div
-              key={index}
-              onClick={() => handleOptionClick({id:index, name:playerName})}
-              className={`text-center cursor-pointer badge-bg ${
-                filledDivs.some((filledPlayer) => filledPlayer?.id === playerName.id) ? "cursor-not-allowed" : ""
-              }`}
-              style={{ minHeight: "150px" }}
-            >
-              <div className="player-image-container">
-                <div className="flag-container">
-                  <img src={countryImages.data[0].image_path} alt="Flag" className="flag" />
-                  <hr className="flag-hr" />
-                  <img src={countryImages.data[0].image_path} alt="Flag" className="flag" />
-                  <hr className="flag-hr" />
-                  <img src={countryImages.data[0].image_path} alt="Flag" className="flag" />
-                </div>
-                <div className="image-container">
-                  <img src={getPlayerImagePath(playerName)} alt="Player Image" className="player-image" />
-                </div>
-              </div>
-              <div className="player-bio-container">
-                <h3 className="player-name">
-                  {playerName.split(" ")[0].charAt(0)}. {playerName.split(" ").slice(1).join(" ")}
-                </h3>
-                <hr className="player-hr" />
-                <div className="player-bio">
-                  <div className="flex flex-col">
-                    <p className="w-full ">🏏: {battingSR}</p>
-                    <p className="w-full">WIC: {wickets}</p>
-                  </div>
-                  <hr className="badge-hr" />
-                  <div className="flex flex-col">
-                    <p className="w-full">⚾️: {bowling}</p>
-                    <p className="w-full">AVG: {battingAvg}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <PlayerInformation
+              title={"PLAYER SELECTION"}
+              child2={details.name}
+              child3={getPlayerImagePath(details.name)}
+              child4={countryImages.data[0].image_path}
+              child5={battingSR}
+              child6={runs}
+              child7={battingAvg}
+              child8={wickets}
+              child9={economyRate}
+              child10={bowlingSR}
+            />
           );
-        })}
+        })()}
       </div>
-    </div>
 
+      <div className="selectionListDiv">
+        <div className="players-list ">
+          {(() => {
+            const firstTeam = Object.keys(matchData).filter(team => team !== "Format")[currentDataset - 1];
+            const teamPlayers = matchData[firstTeam];
 
+            return teamPlayers.map((playerName, playerIndex) => {
+              const playerStats = aggregateStats[playerName];
+              let battingAvg = format && ['ODI', 'T20', 'Test'].includes(format)
+                ? playerStats[format]["Batting Avg"]
+                : "No data";
+
+              let wickets = playerStats[format]?.["Wickets"];
+              let bowling = playerStats[format]?.["Bowling S/R"];
+              let battingSR = playerStats[format]["Batting S/R"];
+
+              if (battingAvg == null || battingAvg === Infinity || battingAvg < 0) {
+                battingAvg = "-";
+              }
+              if (wickets == null || wickets === Infinity || wickets < 0) {
+                wickets = "-";
+              }
+              if (bowling == null || bowling === Infinity || bowling < 0) {
+                bowling = "-";
+              }
+              if (battingSR == null || battingSR === Infinity || battingSR < 0) {
+                battingSR = "-";
+              }
+
+              return (
+                <div
+                  key={`${firstTeam}-${playerIndex}`}
+                  onClick={() => handleOptionClick({ id: playerIndex, name: playerName })}
+                  className={`text-center cursor-pointer badge-bg ${
+                    filledDivs.some((filledPlayer) => filledPlayer?.id === playerName.id)
+                      ? "cursor-not-allowed"
+                      : ""
+                  }`}
+                  style={{ minHeight: "150px" }}
+                >
+                  <div className="player-image-container">
+                    <div className="flag-container">
+                      <img src={countryImages.data[0].image_path} alt="Flag" className="flag" />
+                      <hr className="flag-hr" />
+                      <img src={countryImages.data[0].image_path} alt="Flag" className="flag" />
+                      <hr className="flag-hr" />
+                      <img src={countryImages.data[0].image_path} alt="Flag" className="flag" />
+                    </div>
+                    <div className="image-container">
+                      <img src={getPlayerImagePath(playerName)} alt="Player Image" className="player-image" />
+                    </div>
+                  </div>
+                  <div className="player-bio-container">
+                    <h3 className="player-name">
+                      {playerName.split(" ")[0].charAt(0)}. {playerName.split(" ").slice(1).join(" ")}
+                    </h3>
+                    <hr className="player-hr" />
+                    <div className="player-bio">
+                      <div className="flex flex-col">
+                        <p className="w-full ">🏏: {battingSR}</p>
+                        <p className="w-full">WIC: {wickets}</p>
+                      </div>
+                      <hr className="badge-hr" />
+                      <div className="flex flex-col">
+                        <p className="w-full">⚾️: {bowling}</p>
+                        <p className="w-full">AVG: {battingAvg}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            });
+          })()}
+        </div>
+      </div>
       <div className="selectListDiv">
         <div className="-mb-2 ml-5">
           <h1 className="text-xl font-bold text-[#FFD700] inline">SELECTED PLAYERS</h1>
@@ -232,7 +291,7 @@ function PeopleDisplay() {
             NEXT
           </Button>
         ) : (
-          <Button nextPage={nextPage} disabled={!isNextActive}>
+          <Button onClick={displaySelected} nextPage={nextPage} disabled={!isNextActive}>
             PREDICT 11
           </Button>
         )}
