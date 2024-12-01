@@ -1,25 +1,36 @@
-import playerJsonTest from "../../public/playerJsonTest.json";
-import profilePhoto from "../../public/photo.png";
 import Image from "next/image";
+import profilePhoto from "../../public/photo.png";
+import { MatchDetails } from "../types/squadApiResponse";
 
-function PlayerCard({ player, setHoveredPlayer, setFinalPlayers, selectedPlayer, finalPlayers }) {
+type PlayerOptionsProps = {
+  setHoveredPlayer: (player: number | null) => void;
+  selectedPlayer: number | null;
+  predictedTeam: string[];
+  setPredictedTeam: (predictedTeam: string[] | ((prev: string[]) => string[])) => void;
+  matchData: MatchDetails;
+};
+
+type PlayerCardProps = {
+  player: string;
+  selectedPlayer: number | null;
+  setPredictedTeam: (predictedTeam: string[] | ((prev: string[]) => string[])) => void;
+  setHoveredPlayer: (player: number | null) => void;
+  index: number;
+};
+
+function PlayerCard({ player, setHoveredPlayer, selectedPlayer, setPredictedTeam, index }: PlayerCardProps) {
   function handleSwapPlayer() {
-    if (selectedPlayer.playNumber === player.playNumber) return;
-
-    const indexSelected = playerJsonTest.findIndex((p) => p.playNumber === player.playNumber);
-
-    const indexFinal = finalPlayers.findIndex((p) => playerJsonTest[p].playNumber === selectedPlayer.playNumber);
-
-    const newFinalPlayers = [...finalPlayers];
-
-    newFinalPlayers[indexFinal] = indexSelected;
-
-    setFinalPlayers(newFinalPlayers);
+    if (selectedPlayer === null) return;
+    setPredictedTeam((prev: string[]) => {
+      const newTeam = [...prev];
+      newTeam[selectedPlayer] = player;
+      return newTeam;
+    });
   }
 
   return (
     <div
-      onMouseEnter={() => setHoveredPlayer(player)}
+      onMouseEnter={() => setHoveredPlayer(index)}
       onMouseLeave={() => setHoveredPlayer(null)}
       onClick={handleSwapPlayer}
     >
@@ -28,33 +39,42 @@ function PlayerCard({ player, setHoveredPlayer, setFinalPlayers, selectedPlayer,
           <Image src={profilePhoto} alt="player" width={100} height={100} />
         </div>
       </div>
-      <p className="anonymousPlayerText ml-1">{player.name
-                    .split(" ")
-                    .map((word) => word.charAt(0).toUpperCase())
-                    .join("")}
+      <p className="anonymousPlayerText ml-1">
+        {player
+          .split(" ")
+          .map((word) => word.charAt(0).toUpperCase())
+          .join("")}
       </p>
     </div>
   );
 }
 
-export default function PlayerOptions({ setFinalPlayers, setHoveredPlayer, selectedPlayer, finalPlayers }) {
+export default function PlayerOptions({
+  setHoveredPlayer,
+  selectedPlayer,
+  predictedTeam,
+  setPredictedTeam,
+  matchData,
+}: PlayerOptionsProps) {
+  const leftOutPlayers: string[] = [];
+  // const leftOutPlayers = // players not in predicted team but in the player selection done by the user.
   return (
     <div className="playerOptionsDiv">
-        <div className="players-list">
-          {playerJsonTest.map((player, index) => {
+      <div className="players-list">
+        {leftOutPlayers.map((player, index) => {
           if (index < 10) return null;
           return (
             <PlayerCard
-              setHoveredPlayer={setHoveredPlayer}
               key={index}
+              setHoveredPlayer={setHoveredPlayer}
               player={player}
-              setFinalPlayers={setFinalPlayers}
               selectedPlayer={selectedPlayer}
-              finalPlayers={finalPlayers}
+              index={index}
+              setPredictedTeam={setPredictedTeam}
             />
           );
-          })}
-        </div>
+        })}
+      </div>
     </div>
   );
 }

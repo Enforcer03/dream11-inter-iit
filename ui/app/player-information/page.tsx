@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams } from "next/navigation";
 import ButtonComponent from "../components/buttonComp";
 import PageTemplate from "../components/pageTemplate";
 import PlayerInformation from "../components/playerInformation";
@@ -9,12 +9,12 @@ import playersData from "../../public/players.json";
 import countryImages from "../../public/countryImages.json";
 
 export default function SwapPlayer() {
-    const searchParams = useSearchParams();
-    const id = searchParams.get('id');
-    const image = searchParams.get('image');
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+  const image = searchParams.get("image");
 
-    const prevPage = "/playing11";
-    const nextPage = "/swap-player";
+  const prevPage = "/playing11";
+  const nextPage = "/swap-player";
 
   useEffect(() => {}, []);
   return (
@@ -22,9 +22,9 @@ export default function SwapPlayer() {
       <PageTemplate title="Playing 11">
         <div className="flex">
           <div className="playerShortDetails -ml-10 mt-12">
-            <PlayerInformation 
-              title="Player Information" 
-              child2={playersData.players[id-1].name}
+            <PlayerInformation
+              title="Player Information"
+              child2={playersData.players[id - 1].name}
               child3={image}
               child4={countryImages.data[0].image_path}
             />

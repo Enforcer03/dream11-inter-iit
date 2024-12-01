@@ -17,7 +17,18 @@ interface ButtonComponentProps {
   child11?: React.ReactNode;
 }
 
-function PlayerInformation({ title, child2, child3, child4, child5, child6, child7, child8, child9, child10 }: ButtonComponentProps) {
+function PlayerInformation({
+  title,
+  child2,
+  child3,
+  child4,
+  child5,
+  child6,
+  child7,
+  child8,
+  child9,
+  child10,
+}: ButtonComponentProps) {
   const formatName = (name: string) => {
     if (name.length > 13) {
       const words = name.split(" ");

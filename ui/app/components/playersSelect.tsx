@@ -104,8 +104,8 @@ function PeopleDisplay() {
   }
 
   const getPlayerImagePath = (playerName: string) => {
-    let nameParts = playerName.split(' ');
-    let lastName = nameParts[nameParts.length - 1]
+    let nameParts = playerName.split(" ");
+    let lastName = nameParts[nameParts.length - 1];
     const matchingPlayer = playersImages.data.find((imageData) => {
       const isMatch = imageData.lastname === lastName;
       if (isMatch) {
@@ -270,7 +270,11 @@ function PeopleDisplay() {
                 {player ? (
                   <SelectedPlayer
                     child1={
-                      <img src={getPlayerImagePath(player.name)} alt="Player Image" className="select-player-image no-repeat center" />
+                      <img
+                        src={getPlayerImagePath(player.name)}
+                        alt="Player Image"
+                        className="select-player-image no-repeat center"
+                      />
                     }
                     child2={player.name
                       .split(" ")
