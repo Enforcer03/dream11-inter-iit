@@ -11,7 +11,23 @@ interface MatchDataContextProps {
   setDate: React.Dispatch<React.SetStateAction<string>>;
   aggregateStats: AggregateApiResponse | null;
   setAggregateStats: React.Dispatch<React.SetStateAction<AggregateApiResponse | null>>;
+  covMatrix: string;
+  setCovMatrix: React.Dispatch<React.SetStateAction<string>>;
+  predictedTeam: string[];
+  setPredictedTeam: React.Dispatch<React.SetStateAction<string[]>>;
+  playerStats: PlayerStats[];
+  setPlayerStats: React.Dispatch<React.SetStateAction<PlayerStats[]>>;
 }
+
+export type PlayerStats = {
+  player: string;
+  mean_points: number;
+  variance: number;
+  batting_points: number;
+  bowling_points: number;
+  fielding_points: number;
+  team: string;
+};
 
 const MatchDataContext = createContext<MatchDataContextProps | undefined>(undefined);
 
@@ -19,9 +35,27 @@ export const MatchDataProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [matchData, setMatchData] = useState<MatchDetails | null>(null);
   const [date, setDate] = useState<string>("");
   const [aggregateStats, setAggregateStats] = useState<AggregateApiResponse | null>(null);
+  const [covMatrix, setCovMatrix] = useState<string>("");
+  const [predictedTeam, setPredictedTeam] = useState<string[]>([]);
+  const [playerStats, setPlayerStats] = useState<PlayerStats[]>([]);
 
   return (
-    <MatchDataContext.Provider value={{ matchData, setMatchData, date, setDate, aggregateStats, setAggregateStats }}>
+    <MatchDataContext.Provider
+      value={{
+        matchData,
+        setMatchData,
+        date,
+        setDate,
+        aggregateStats,
+        setAggregateStats,
+        covMatrix,
+        setCovMatrix,
+        predictedTeam,
+        setPredictedTeam,
+        playerStats,
+        setPlayerStats,
+      }}
+    >
       {children}
     </MatchDataContext.Provider>
   );

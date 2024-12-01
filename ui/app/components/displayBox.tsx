@@ -1,35 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import playersData from "../../public/players.json";
-import playersData2 from "../../public/players2.json";
-import playersImages from "../../public/playerImages.json";
 import countryImages from "../../public/countryImages.json";
+import playersImages from "../../public/playerImages.json";
+import { PlayerStats } from "../contexts/matchDataContext";
 
-interface Player {
-  id: number;
-  name: string;
-  image: string;
-  countryFlag: string;
-  bio: string;
-}
-
-const PlayerList = () => {
-  const [players, setPlayers] = useState<Player[]>([]);
+function PlayerList({ predictedTeam, playerStats }: { predictedTeam: string[]; playerStats: PlayerStats[] }) {
   const router = useRouter();
 
-  useEffect(() => {
-    fetch("/players.json")
-      .then((response) => response.json())
-      .then((data) => setPlayers(data.players.slice(0, 11)));
-  }, []);
+  const playerStatsLookup = playerStats.reduce(
+    (map, playerStat) => {
+      map[playerStat.player] = playerStat;
+      return map;
+    },
+    {} as Record<string, PlayerStats>
+  );
 
-  const handlePlayerClick = (id: number, image: string) => {
+  function handlePlayerClick(id: number, image: string) {
     router.push(`/player-information?id=${id}&image=${encodeURIComponent(image)}`);
-  };
+  }
 
-  const getPlayerImagePath = (playerName: string) => {
+  function getPlayerImagePath(playerName: string) {
     const matchingPlayer = playersImages.data.find((imageData) => {
       console.log('Comparing with:', imageData.fullname);
       const isMatch = imageData.fullname === playerName;
@@ -44,17 +35,12 @@ const PlayerList = () => {
     }
 
     return matchingPlayer ? matchingPlayer.image_path : playersImages.data[4].image_path;
-  };
+  }
 
   return (
     <div className="players-list">
-      {players.map((player) => (
-        <div
-          key={player.id}
-          className="badge-bg"
-          onClick={() => handlePlayerClick(player.id, getPlayerImagePath(player.name))}
-        >
-          {" "}
+      {predictedTeam.map((player, index) => (
+        <div key={index} className="badge-bg" onClick={() => handlePlayerClick(index, getPlayerImagePath(player))}>
           <div className="player-image-container">
             <div className="flag-container">
               <img src={countryImages.data[0].image_path} alt="Flag" className="flag" />
@@ -64,23 +50,23 @@ const PlayerList = () => {
               <img src={countryImages.data[0].image_path} alt="Flag" className="flag" />
             </div>
             <div className="image-container">
-              <img src={getPlayerImagePath(player.name)} alt="Player Image" className="player-image" />
+              <img src={getPlayerImagePath(player)} alt="Player Image" className="player-image" />
             </div>
           </div>
           <div className="player-bio-container">
             <h4 className="player-name">
-              {player.name.split(" ")[0].charAt(0)}. {player.name.split(" ").slice(1).join(" ")}
+              {player.split(" ")[0].charAt(0)}. {player.split(" ").slice(1).join(" ")}
             </h4>
             <hr className="player-hr" />
             <div className="player-bio">
               <div className="flex flex-col">
-                <p className="w-full ">🏏: {12}</p>
-                <p className="w-full">WIC: {311}</p>
+                <p className="w-full ">🏏: {playerStats[index].batting_points}</p>
+                <p className="w-full">WIC: {playerStats[index].fielding_points}</p>
               </div>
               <hr className="badge-hr" />
               <div className="flex flex-col">
-                <p className="w-full">⚾️: {2}</p>
-                <p className="w-full">AVG: {101}</p>
+                <p className="w-full">⚾️: {playerStatsLookup[player].bowling_points}</p>
+                <p className="w-full">AVG: {playerStats[index].mean_points}</p>
               </div>
             </div>
           </div>
@@ -88,6 +74,6 @@ const PlayerList = () => {
       ))}
     </div>
   );
-};
+}
 
 export default PlayerList;
