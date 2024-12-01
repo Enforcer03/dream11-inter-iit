@@ -8,9 +8,16 @@ interface ButtonComponentProps {
   child2?: React.ReactNode;
   child3?: React.ReactNode;
   child4?: React.ReactNode;
+  child5?: React.ReactNode;
+  child6?: React.ReactNode;
+  child7?: React.ReactNode;
+  child8?: React.ReactNode;
+  child9?: React.ReactNode;
+  child10?: React.ReactNode;
+  child11?: React.ReactNode;
 }
 
-function PlayerInformation({ title, child2, child3, child4 }: ButtonComponentProps) {
+function PlayerInformation({ title, child2, child3, child4, child5, child6, child7, child8, child9, child10 }: ButtonComponentProps) {
   const formatName = (name: string) => {
     if (name.length > 13) {
       const words = name.split(" ");
@@ -42,31 +49,31 @@ function PlayerInformation({ title, child2, child3, child4 }: ButtonComponentPro
             </div>
             <div className="flex mb-2 text-white">
               <div className="w-1/2">{formattedChild2}</div>
-              <div className="w-1/2">19</div>
+              <div className="w-1/2">PLAYER</div>
             </div>
             <div className="flex text-dream11FontColor">
               <div className="font-bold w-1/2">Batting S/R:</div>
               <div className="font-bold w-1/2">Runs:</div>
             </div>
             <div className="flex mb-2 text-white">
-              <div className="w-1/2">88</div>
-              <div className="w-1/2">25</div>
+              <div className="w-1/2">{child5}</div>
+              <div className="w-1/2">{child6}</div>
             </div>
             <div className="flex text-dream11FontColor">
               <div className="font-bold w-1/2">Batting Avg.:</div>
               <div className="font-bold w-1/2">Wickets:</div>
             </div>
             <div className="flex mb-2 text-white">
-              <div className="w-1/2">88</div>
-              <div className="w-1/2">25</div>
+              <div className="w-1/2">{child7}</div>
+              <div className="w-1/2">{child8}</div>
             </div>
             <div className="flex text-dream11FontColor">
               <div className="font-bold w-1/2">Economy Rate:</div>
               <div className="font-bold w-1/2">Bowling S/R:</div>
             </div>
             <div className="flex text-white">
-              <div className="w-1/2">88</div>
-              <div className="w-1/2">25</div>
+              <div className="w-1/2">{child9}</div>
+              <div className="w-1/2">{child10}</div>
             </div>
           </div>
         </div>

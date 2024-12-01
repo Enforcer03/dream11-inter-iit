@@ -31,16 +31,16 @@ const PlayerList = () => {
 
   const getPlayerImagePath = (playerName: string) => {
     const matchingPlayer = playersImages.data.find((imageData) => {
-      console.log("Comparing with:", imageData.fullname);
+      console.log('Comparing with:', imageData.fullname);
       const isMatch = imageData.fullname === playerName;
       if (isMatch) {
-        console.log("Match found! Image path:", imageData.image_path);
+      console.log('Match found! Image path:', imageData.image_path);
       }
       return isMatch;
     });
 
     if (!matchingPlayer) {
-      console.log("No match found, using default image:", playersImages.data[4].image_path);
+      console.log('No match found, using default image:', playersImages.data[4].image_path);
     }
 
     return matchingPlayer ? matchingPlayer.image_path : playersImages.data[4].image_path;
