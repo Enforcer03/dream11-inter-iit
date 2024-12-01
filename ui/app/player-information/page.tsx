@@ -1,22 +1,35 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useSearchParams } from 'next/navigation';
 import ButtonComponent from "../components/buttonComp";
 import PageTemplate from "../components/pageTemplate";
 import PlayerInformation from "../components/playerInformation";
+import playersData from "../../public/players.json";
+import countryImages from "../../public/countryImages.json";
 
 export default function SwapPlayer() {
-  const [playerInfo, setPlayerInfo] = useState("");
+    const searchParams = useSearchParams();
+    const id = searchParams.get('id');
+    const image = searchParams.get('image');
+
+    const prevPage = "/playing11";
+    const nextPage = "/swap-player";
 
   useEffect(() => {}, []);
   return (
     <>
       <PageTemplate title="Playing 11">
-        <div className="flex w-full px-20">
-          <div className="w-30">
-            <PlayerInformation title="Player Information" />
+        <div className="flex">
+          <div className="playerShortDetails -ml-10 mt-12">
+            <PlayerInformation 
+              title="Player Information" 
+              child2={playersData.players[id-1].name}
+              child3={image}
+              child4={countryImages.data[0].image_path}
+            />
           </div>
-          <div className="flex flex-col w-16 basis-3/5 text-white font-semibold tracking-wider p-4 px-24  text-xl leading-relaxed">
+          <div className="flex flex-col text-slate-300 w-[50rem] tracking-wider text-lg ml-[24rem] mb-[18rem] leading-relaxed overflow-scroll">
             <p>
               1. Learn about our loan products. We offer a wide range of loan products to choose from, so make sure you
               find one that meets your needs. Pay particular attention to loans with low interest rates.
@@ -33,8 +46,8 @@ export default function SwapPlayer() {
         </div>
       </PageTemplate>
       <div className="buttonCompDiv">
-        <ButtonComponent>BACK</ButtonComponent>
-        <ButtonComponent>SWAP</ButtonComponent>
+        <ButtonComponent nextPage={prevPage}>BACK</ButtonComponent>
+        <ButtonComponent nextPage={nextPage}>SWAP</ButtonComponent>
       </div>
     </>
   );

@@ -33,18 +33,14 @@ export default function PitchComponent({
   setHoveredPlayer: (hoveredPlayer: number) => void;
 }) {
   return (
-    <div className="w-full flex flex-col">
-      <div className="w-full pitch my-8">
+    <div className="w-[55.5rem] flex flex-col ml-[26rem] mb-12">
+      <div className="w-full h-[35rem] pitch">
         <PlayerComponent
           player={playerJsonTest[finalPlayers[0]]}
           selectedPlayer={selectedPlayer}
           setSelectedPlayer={setSelectedPlayer}
         />
-        <PlayerComponent
-          player={playerJsonTest[finalPlayers[1]]}
-          selectedPlayer={selectedPlayer}
-          setSelectedPlayer={setSelectedPlayer}
-        />
+
       </div>
       <PlayerOptions
         setFinalPlayers={setFinalPlayers}

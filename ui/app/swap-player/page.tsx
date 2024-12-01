@@ -5,7 +5,7 @@ import ButtonComponent from "../components/buttonComp";
 import PageTemplateWithoutTop from "../components/pageTemplateNoTop";
 import PitchComponent from "../components/pitchPlayer";
 import PlayerInformation from "../components/playerInformation";
-
+import playersData from "../../public/players.json";
 import playerJsonTest from "../../public/playerJsonTest.json";
 
 export default function SwapPlayer() {
@@ -16,10 +16,15 @@ export default function SwapPlayer() {
   useEffect(() => {}, []);
   return (
     <>
-      <div className="">
+      <div>
         <PageTemplateWithoutTop>
           <div className="flex w-full">
-            <PlayerInformation title="Swap Player" selectedPlayer={selectedPlayer} hoveredPlayer={hoveredPlayer} />
+            <div className="playerShortDetails -ml-16">
+              <PlayerInformation 
+                title="Swap Player" 
+                selectedPlayer={selectedPlayer} 
+                hoveredPlayer={hoveredPlayer} />
+            </div>
             <PitchComponent
               setFinalPlayers={setFinalPlayers}
               finalPlayers={finalPlayers}

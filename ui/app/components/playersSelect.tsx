@@ -10,37 +10,54 @@ import playersImages from "../../public/playerImages.json";
 import countryImages from "../../public/countryImages.json";
 import PlayerInformation from "./playerInformation";
 
+type SimplifiedPlayer = {
+  id: number;
+  name: string;
+  image: string;
+};
+
 const PeopleDisplay = () => {
   const [currentDataset, setCurrentDataset] = useState(1);
   const [selectedPlayers, setSelectedPlayers] = useState(playersData.players);
   const [selectedData, setSelectedData] = useState([]);
-  const [filledDivs, setFilledDivs] = useState<(null | (typeof playersData.players)[0])[]>(Array(11).fill(null));
+  const [filledDivs, setFilledDivs] = useState<(null | SimplifiedPlayer)[]>(Array(11).fill(null));
   const [details, setDetails] = useState(playersData.players[0]);
 
   const handleSelection = () => {
-    setFilledDivs(selectedPlayers.slice(0, 11));
-  };
+    const simplifiedPlayers = selectedPlayers.slice(0, 11).map(player => ({
+      id: player.id,
+      name: player.name,
+      image: getPlayerImagePath(player.name)
+    }));
+    setFilledDivs(simplifiedPlayers);
+  };
 
   const handleDetails = (player: (typeof playersData.players)[0]) => {
     setDetails(player);
   };
 
   const handleOptionClick = (player: (typeof playersData.players)[0]) => {
-    handleDetails(player);
-    if (filledDivs.some((filledPlayer) => filledPlayer?.id === player.id)) {
-      return;
-    }
+    handleDetails(player);
+    if (filledDivs.some((filledPlayer) => filledPlayer?.id === player.id)) {
+      return;
+    }
 
-    setFilledDivs((prev) => {
-      const emptyIndex = prev.findIndex((p) => p === null);
-      if (emptyIndex !== -1) {
-        const newFilledDivs = [...prev];
-        newFilledDivs[emptyIndex] = player;
-        return newFilledDivs;
-      }
-      return prev;
-    });
-  };
+    setFilledDivs((prev) => {
+      const emptyIndex = prev.findIndex((p) => p === null);
+      if (emptyIndex !== -1) {
+        const newFilledDivs = [...prev];
+        // Create simplified player object
+        const simplifiedPlayer: SimplifiedPlayer = {
+          id: player.id,
+          name: player.name,
+          image: getPlayerImagePath(player.name)
+        };
+        newFilledDivs[emptyIndex] = simplifiedPlayer;
+        return newFilledDivs;
+      }
+      return prev;
+    });
+  };
 
   const handleEmptyDivClick = (index: number) => {
     setFilledDivs((prev) => {
@@ -113,11 +130,11 @@ const PeopleDisplay = () => {
             >
               <div className="player-image-container">
                 <div className="flag-container">
-                  <img src={player.countryFlag} alt="Flag" className="flag" />
+                  <img src={countryImages.data[0].image_path} alt="Flag" className="flag" />
                   <hr className="flag-hr" />
-                  <img src={player.countryFlag} alt="Flag" className="flag" />
+                  <img src={countryImages.data[0].image_path} alt="Flag" className="flag" />
                   <hr className="flag-hr" />
-                  <img src={player.countryFlag} alt="Flag" className="flag" />
+                  <img src={countryImages.data[0].image_path} alt="Flag" className="flag" />
                 </div>
                 <div className="image-container">
                   <img src={getPlayerImagePath(player.name)} alt="Player Image" className="player-image" />
@@ -154,33 +171,33 @@ const PeopleDisplay = () => {
         </div>
         <div className="flex justify-center">
           <div className="players-list">
-            {filledDivs.map((player, index) => (
-              <div
-                key={index}
-                onClick={() => handleEmptyDivClick(index)}
-                className={`text-center ${player ? "cursor-pointer" : ""} flex flex-col items-center justify-center`}
-                style={{ minHeight: "150px" }}
-              >
-                {player ? (
-                  <SelectedPlayer
-                    child1={
-                      <img
-                        src={getPlayerImagePath(player.name)}
-                        alt="Player Image"
-                        className="select-player-image no-repeat center"
-                      />
-                    }
-                    child2={player.name
-                      .split(" ")
-                      .map((word) => word.charAt(0).toUpperCase())
-                      .join("")}
-                  />
-                ) : (
-                  <AnonymousPlayer>PLAYER</AnonymousPlayer>
-                )}
-              </div>
-            ))}
+          {filledDivs.map((player, index) => (
+            <div
+              key={index}
+              onClick={() => handleEmptyDivClick(index)}
+              className={`text-center ${player ? "cursor-pointer" : ""} flex flex-col items-center justify-center`}
+              style={{ minHeight: "150px" }}
+            >
+            {player ? (
+            <SelectedPlayer
+             child1={
+              <img
+                 src={player.image}
+                  alt="Player Image"
+                 className="select-player-image no-repeat center"
+            />
+              }
+           child2={player.name
+            .split(" ")
+         .map((word) => word.charAt(0).toUpperCase())
+                .join("")}
+              />
+              ) : (
+              <AnonymousPlayer>PLAYER</AnonymousPlayer>
+            )}
           </div>
+          ))}
+        </div>
         </div>
       </div>
       <div className="buttonPlayerSelectionDiv">
@@ -190,7 +207,7 @@ const PeopleDisplay = () => {
           </Button>
         ) : (
           <Button nextPage={nextPage} disabled={!isNextActive}>
-            NEXT
+            PREDICT 11
           </Button>
         )}
         <Button nextPage={prevPage}>BACK</Button>

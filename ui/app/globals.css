@@ -327,7 +327,7 @@ body {
 
 .selectListDiv {
   position: absolute;
-  bottom: 5%;
+  bottom: 1%;
   right: 8%;
   width: 60%;
 }
@@ -393,7 +393,7 @@ th {
   background: url("../public/Grass.svg");
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
+  background-repeat: repeat;
 }
 
 .playerShortDetails {
@@ -444,4 +444,24 @@ th {
 .playerCardSwap {
   background: url("../public/bgSelectedPlayer.svg") no-repeat center;
   background-size: cover;
+  width: 4.8rem;
+  height: 5rem;
+}
+
+.playerOptionsDiv {
+    position: absolute;
+    bottom: 4%;
+    right: 2%;
+    width: 69%;
+}
+
+.playerInformationDiv {
+  position: absolute;
+  top: 20%;
+  left: 4%;
+  margin: 0 5rem;
+  color: #c2c0c0;
+  font-size: 1.2rem;
+  font-weight: lighter;
+  letter-spacing: 3px;
 }
