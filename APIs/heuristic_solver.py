@@ -164,30 +164,13 @@ def optimize_team_sharpe(stats_df: pd.DataFrame, cov_matrix: Union[pd.DataFrame,
 
 def optimize_team_advanced(stats_df: pd.DataFrame, cov_matrix: np.ndarray, 
                          num_players: int = 11, boolean: bool = True, 
-                         risk_aversion: float = 1) -> Tuple[List[str], pd.DataFrame]:
+                         risk_aversion: float = 1,
+                         consistency_threshold: float = 0.5,
+                         diversity_threshold: float = 0.5,
+                         form_threshold: float = 0.333) -> Tuple[List[str], pd.DataFrame]:
     """
-    Advanced team optimization with multiple constraints using PuLP.
-    
-    Logic:
-    1. Sets up PuLP optimization problem with multiple objectives
-    2. Implements constraints for:
-       - Team size
-       - Team representation
-       - Player consistency
-       - Team diversity
-       - Recent form
-    3. Handles numerical instabilities and edge cases
-    4. Returns optimal selection with weights
-    
-    Args:
-        stats_df (pd.DataFrame): Player statistics with team information
-        cov_matrix (np.ndarray): Covariance matrix
-        num_players (int): Target team size
-        boolean (bool): Whether to use binary variables
-        risk_aversion (float): Risk aversion parameter
-    
-    Returns:
-        Tuple[List[str], pd.DataFrame]: Selected players and weights
+    Advanced team optimization with configurable constraints using PuLP.
+    Falls back to selecting top players by expected score if optimization fails.
     """
     prob = pulp.LpProblem("FantasyTeam", pulp.LpMaximize)
     players = list(range(len(stats_df)))
@@ -204,35 +187,79 @@ def optimize_team_advanced(stats_df: pd.DataFrame, cov_matrix: np.ndarray,
     total_mu = np.sum(mu)
     entropy_score = entropy(mu / total_mu) if total_mu > 0 else 0
     
+    # Objective: maximize expected points
     prob += pulp.lpSum([mu[i] * x[i] for i in players])
+    
+    # Constraint 1: Team size
     prob += pulp.lpSum([x[i] for i in players]) == num_players
     
+    # Constraint 2: Consistency
     valid_consistency = consistency[~np.isnan(consistency) & ~np.isinf(consistency)]
     if len(valid_consistency) > 0:
         mean_consistency = np.mean(valid_consistency)
-        prob += pulp.lpSum([consistency[i] * x[i] for i in players]) >= mean_consistency * num_players/2
+        prob += pulp.lpSum([consistency[i] * x[i] for i in players]) >= (
+            consistency_threshold * num_players * mean_consistency
+        )
     
+    # Constraint 3: Diversity
     if entropy_score > 0:
-        prob += pulp.lpSum([entropy_score * x[i] for i in players]) >= entropy_score * num_players/2
+        prob += pulp.lpSum([entropy_score * x[i] for i in players]) >= (
+            diversity_threshold * num_players * entropy_score
+        )
     
+    # Constraint 4: Form
     valid_mu = mu[~np.isnan(mu) & ~np.isinf(mu)]
     if len(valid_mu) > 0:
-        recent_form = np.percentile(valid_mu, 75)
+        recent_form = np.percentile(valid_mu, 75)  # Q₇₅
         high_form_players = [i for i in players if mu[i] >= recent_form]
         if high_form_players:
-            prob += pulp.lpSum([x[i] for i in high_form_players]) >= num_players/3
+            prob += pulp.lpSum([x[i] for i in high_form_players]) >= (
+                form_threshold * num_players
+            )
     
+    # Constraint 5: Team representation
     for team in stats_df['team'].unique():
         team_players_indices = [i for i, p in enumerate(players) 
                               if stats_df.iloc[i]['team'] == team]
         if team_players_indices:
             prob += pulp.lpSum([x[i] for i in team_players_indices]) >= 1
     
-    prob.solve()
+    # Solve with suppressed output
+    prob.solve(pulp.PULP_CBC_CMD(msg=False))
     
+    # If optimization fails, fall back to top players by expected score
     if prob.status != pulp.LpStatusOptimal:
-        return [], pd.DataFrame(columns=['player', 'weight'])
+        print(f"Warning: Optimization failed with status {pulp.LpStatus[prob.status]} Falling back to top players by expected score")
+        team_players = {}
+        remaining_slots = num_players
+        selected_indices = []
+        
+        # First, get the best player from each team
+        for team in stats_df['team'].unique():
+            team_df = stats_df[stats_df['team'] == team]
+            if not team_df.empty:
+                best_player_idx = team_df['mean_points'].idxmax()
+                selected_indices.append(best_player_idx)
+                team_players[team] = [best_player_idx]
+                remaining_slots -= 1
+        
+        # Then fill remaining slots with best remaining players
+        if remaining_slots > 0:
+            remaining_players_df = stats_df.drop(selected_indices)
+            top_remaining = remaining_players_df.nlargest(remaining_slots, 'mean_points')
+            selected_indices.extend(top_remaining.index)
+        
+        selected_players = stats_df.loc[selected_indices, 'player'].tolist()
+        
+        # Create weights DataFrame
+        weights = pd.DataFrame({
+            'player': stats_df['player'],
+            'weight': [1 if i in selected_indices else 0 for i in range(len(stats_df))]
+        })
+        
+        return selected_players, weights
     
+    # If optimization succeeded, return original results
     selected_indices = [i for i in players if x[i].value() > 0.5]
     selected_players = stats_df.iloc[selected_indices]['player'].tolist()
     
