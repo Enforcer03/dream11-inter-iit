@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 import json
 
 
@@ -9,6 +10,7 @@ Test_MDM_aggregate_points = "../../Test_MDM_aggregate_data.json"
 
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 # Load the data from your JSON file
 with open(T20_aggregate_points, "r") as file:

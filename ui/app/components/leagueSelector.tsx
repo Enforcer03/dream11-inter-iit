@@ -34,6 +34,14 @@ export default function LeagueSelector({
     setAllMatches(Object.keys(allData[allLeagues[newIndex]]));
   };
 
+  function handleDirectClick(index: number) {
+    if (!allData) return;
+
+    setSelectedIndex(index);
+    setLeague(allLeagues[index]);
+    setAllMatches(Object.keys(allData[allLeagues[index]]));
+  }
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "ArrowLeft") {
@@ -70,7 +78,7 @@ export default function LeagueSelector({
                     className={`w-32 h-16 relative rounded-lg overflow-hidden border-2 transition-all duration-300 focus:outline-none ${
                       selectedIndex === index ? "border-white" : "border-transparent hover:border-white/50"
                     }`}
-                    onClick={() => setSelectedIndex(index)}
+                    onClick={() => handleDirectClick(index)}
                   >
                     <span>{league}</span>
                     <img src={league.logo} alt={league.name} className="object-cover" />

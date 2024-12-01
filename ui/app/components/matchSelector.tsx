@@ -1,34 +1,47 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { MatchDetails, SquadApiResponse } from "../types/squadApiResponse";
 
-export default function MatchSelector({ setMatch, allMatches }: { setMatch: (match: any) => void; allMatches: any[] }) {
+type MatchSelectorProps = {
+  setMatchData: (matchData: MatchDetails) => void;
+  allMatches: string[];
+  allData: SquadApiResponse | null;
+  league: string;
+};
+
+export default function MatchSelector({ setMatchData, allMatches, allData, league }: MatchSelectorProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const handlePrevious = () => {
+  function handlePrevious() {
+    if (!allData) return;
     const newIndex = (selectedIndex - 1 + allMatches.length) % allMatches.length;
     setSelectedIndex(newIndex);
-    setMatch(allMatches[newIndex]);
-  };
+    console.log(allData[league]);
+    console.log(allMatches[newIndex]);
+    console.log(allData[league][allMatches[newIndex]]);
+    setMatchData(allData[league][allMatches[newIndex]]);
+  }
 
-  const handleNext = () => {
+  function handleNext() {
+    if (!allData) return;
     const newIndex = (selectedIndex + 1) % allMatches.length;
     setSelectedIndex(newIndex);
-    setMatch(allMatches[newIndex]);
-  };
+    setMatchData(allData[league][allMatches[newIndex]]);
+  }
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowLeft") {
-        handlePrevious();
-      } else if (event.key === "ArrowRight") {
-        handleNext();
-      }
-    };
+  // useEffect(() => {
+  //   const handleKeyDown = (event: KeyboardEvent) => {
+  //     if (event.key === "ArrowLeft") {
+  //       handlePrevious();
+  //     } else if (event.key === "ArrowRight") {
+  //       handleNext();
+  //     }
+  //   };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  //   window.addEventListener("keydown", handleKeyDown);
+  //   return () => window.removeEventListener("keydown", handleKeyDown);
+  // }, []);
 
   return (
     <div className="flex flex-col items-center justify-center mt-8">

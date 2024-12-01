@@ -7,7 +7,19 @@ import LeagueSelector from "../components/leagueSelector";
 import MatchSelector from "../components/matchSelector";
 import PageTemplate from "../components/pageTemplate";
 import VideoComp from "../components/videoSet";
+import { useMatchData } from "../contexts/matchDataContext";
 import { SquadApiResponse } from "../types/squadApiResponse";
+import { getAggregateStats } from "../api/aggregateSquad";
+import { useRouter } from "next/navigation";
+
+type MatchDateInputProps = {
+  date: string;
+  setDate: (date: string) => void;
+  setAllData: (data: SquadApiResponse) => void;
+  setAllLeagues: (leagues: string[]) => void;
+  setLeague: (league: string) => void;
+  setAllMatches: (matches: string[]) => void;
+};
 
 function isValidDateFormat(dateString: string) {
   const datePattern = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
@@ -28,17 +40,7 @@ function formatWithPlaceholder(value: string) {
   return value;
 }
 
-function MatchDateInput({
-  date,
-  setDate,
-  setAllData,
-  setAllLeagues,
-}: {
-  date: string;
-  setDate: (date: string) => void;
-  setAllData: (data: SquadApiResponse) => void;
-  setAllLeagues: (leagues: string[]) => void;
-}) {
+function MatchDateInput({ date, setDate, setAllData, setAllLeagues, setLeague, setAllMatches }: MatchDateInputProps) {
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     let value = e.target.value.replace(/[^0-9]/g, "");
     if (value.length > 8) value = value.slice(0, 8);
@@ -67,8 +69,13 @@ function MatchDateInput({
       const formattedDate = `${year}-${month}-${day}`;
 
       const data = await getSquadsByDate(formattedDate);
+
+      const newAllLeagues = Object.keys(data);
+
       setAllData(data);
-      setAllLeagues(Object.keys(data));
+      setAllLeagues(newAllLeagues);
+      setLeague(newAllLeagues[0]);
+      setAllMatches(Object.keys(data[newAllLeagues[0]]));
     } catch (error) {
       console.error(error);
     }
@@ -89,27 +96,61 @@ function MatchDateInput({
 }
 
 function SelectMatchScreen() {
-  const [date, setDate] = useState("");
-  const [league, setLeague] = useState("");
-  const [match, setMatch] = useState("");
+  const { date, setDate, matchData, setMatchData, setAggregateStats } = useMatchData();
+  const [league, setLeague] = useState<string>("");
   const [allData, setAllData] = useState<SquadApiResponse | null>(null);
   const [allLeagues, setAllLeagues] = useState<string[]>([]);
   const [allMatches, setAllMatches] = useState<string[]>([]);
 
-  const prevPage = "/instructions";
+  const router = useRouter();
+
   const nextPage = "/player-selection";
+  const prevPage = "/instructions";
+
+  async function handleNextButton() {
+    try {
+      if (matchData === null) return;
+
+      const teams = Object.keys(matchData).filter((team) => team != "Format");
+
+      const teamPlayers = teams.map((team) => ({
+        team,
+        players: matchData[team],
+      }));
+
+      // teamPlayers.forEach(({ team, players }) => {
+      //   console.log(`Team: ${team}, Players:`, players);
+      // });
+
+      const combinePlayerList = teamPlayers.map((team) => team.players).flat();
+
+      const response = await getAggregateStats(combinePlayerList);
+      setAggregateStats(response);
+      console.log(response);
+      router.push(nextPage);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <div>
       <PageTemplate title="INPUT DETAILS" />
       <div className="selectMatchDiv">
-        <MatchDateInput date={date} setDate={setDate} setAllData={setAllData} setAllLeagues={setAllLeagues} />
+        <MatchDateInput
+          date={date}
+          setDate={setDate}
+          setAllData={setAllData}
+          setAllLeagues={setAllLeagues}
+          setLeague={setLeague}
+          setAllMatches={setAllMatches}
+        />
         <LeagueSelector setLeague={setLeague} allLeagues={allLeagues} setAllMatches={setAllMatches} allData={allData} />
-        <MatchSelector setMatch={setMatch} allMatches={allMatches} />
+        <MatchSelector allMatches={allMatches} setMatchData={setMatchData} allData={allData} league={league} />
       </div>
       <div className="buttonCompDiv">
         <ButtonComponent nextPage={prevPage}>BACK</ButtonComponent>
-        <ButtonComponent nextPage={nextPage}>NEXT</ButtonComponent>
+        <ButtonComponent onClick={handleNextButton}>NEXT</ButtonComponent>
       </div>
       <div className="videoCompDiv">
         <VideoComp nextPage="/video-instructions">

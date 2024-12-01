@@ -6,7 +6,7 @@ type DynamicMatchDetails = {
   [teamName: string]: string[];
 };
 
-type MatchDetails = FixedMatchDetails & DynamicMatchDetails;
+export type MatchDetails = FixedMatchDetails & DynamicMatchDetails;
 
 export type SquadApiResponse = {
   [seriesName: string]: {

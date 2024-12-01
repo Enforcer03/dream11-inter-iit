@@ -5,7 +5,7 @@ import AnonymousPlayer from "./anonymousPlayer";
 import SelectedPlayer from "./selectedPlayer";
 import Button from "./buttonComp";
 import playersData from "../../public/players.json";
-import playersData2 from "../../public/players2.json";
+import playersData2 from "../../public/players.json";
 import playersImages from "../../public/playerImages.json";
 import countryImages from "../../public/countryImages.json";
 import PlayerInformation from "./playerInformation";

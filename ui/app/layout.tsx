@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import { Quantico } from "next/font/google";
+import { MatchDataProvider } from "./contexts/matchDataContext";
 
 const quantico = Quantico({ weight: "400", subsets: ["latin"] });
 
@@ -17,7 +18,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${quantico.className} antialiased`}>{children}</body>
+      <body className={`${quantico.className} antialiased`}>
+        <MatchDataProvider>{children}</MatchDataProvider>
+      </body>
     </html>
   );
 }
