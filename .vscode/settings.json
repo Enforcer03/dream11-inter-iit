@@ -1,0 +1,6 @@
+{
+  "python.analysis.extraPaths": [
+    "/Users/ayush_arya/Downloads/BTP_1/Multiview-3D-Reconstruction-main/venv/lib/python3.10/site-packages/tomlkit/__init__.py",
+    "./model"
+  ]
+}
