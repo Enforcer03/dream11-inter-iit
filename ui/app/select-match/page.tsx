@@ -1,6 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { getAggregateStats } from "../api/aggregateSquad";
 import { getSquadsByDate } from "../api/squads";
 import ButtonComponent from "../components/buttonComp";
 import LeagueSelector from "../components/leagueSelector";
@@ -8,9 +10,7 @@ import MatchSelector from "../components/matchSelector";
 import PageTemplate from "../components/pageTemplate";
 import VideoComp from "../components/videoSet";
 import { useMatchData } from "../contexts/matchDataContext";
-import { SquadApiResponse } from "../types/squadApiResponse";
-import { getAggregateStats } from "../api/aggregateSquad";
-import { useRouter } from "next/navigation";
+import { MatchDetails, SquadApiResponse } from "../types/squadApiResponse";
 
 type MatchDateInputProps = {
   date: string;
@@ -19,6 +19,7 @@ type MatchDateInputProps = {
   setAllLeagues: (leagues: string[]) => void;
   setLeague: (league: string) => void;
   setAllMatches: (matches: string[]) => void;
+  setMatchData: React.Dispatch<React.SetStateAction<MatchDetails | null>>;
 };
 
 function isValidDateFormat(dateString: string) {
@@ -40,7 +41,15 @@ function formatWithPlaceholder(value: string) {
   return value;
 }
 
-function MatchDateInput({ date, setDate, setAllData, setAllLeagues, setLeague, setAllMatches }: MatchDateInputProps) {
+function MatchDateInput({
+  date,
+  setDate,
+  setAllData,
+  setAllLeagues,
+  setLeague,
+  setAllMatches,
+  setMatchData,
+}: MatchDateInputProps) {
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     let value = e.target.value.replace(/[^0-9]/g, "");
     if (value.length > 8) value = value.slice(0, 8);
@@ -71,11 +80,15 @@ function MatchDateInput({ date, setDate, setAllData, setAllLeagues, setLeague, s
       const data = await getSquadsByDate(formattedDate);
 
       const newAllLeagues = Object.keys(data);
+      const newSelectedLeague = newAllLeagues[0];
+      const newAllMatches = Object.keys(data[newSelectedLeague]);
+      const newMatchData = data[newSelectedLeague][newAllMatches[0]];
 
       setAllData(data);
       setAllLeagues(newAllLeagues);
-      setLeague(newAllLeagues[0]);
-      setAllMatches(Object.keys(data[newAllLeagues[0]]));
+      setLeague(newSelectedLeague);
+      setAllMatches(newAllMatches);
+      setMatchData(newMatchData);
     } catch (error) {
       console.error(error);
     }
@@ -127,7 +140,7 @@ function SelectMatchScreen() {
       const response = await getAggregateStats(combinePlayerList);
       setAggregateStats(response);
       console.log(response);
-      router.push(nextPage);
+      // router.push(nextPage);
     } catch (error) {
       console.error(error);
     }
@@ -144,6 +157,7 @@ function SelectMatchScreen() {
           setAllLeagues={setAllLeagues}
           setLeague={setLeague}
           setAllMatches={setAllMatches}
+          setMatchData={setMatchData}
         />
         <LeagueSelector setLeague={setLeague} allLeagues={allLeagues} setAllMatches={setAllMatches} allData={allData} />
         <MatchSelector allMatches={allMatches} setMatchData={setMatchData} allData={allData} league={league} />

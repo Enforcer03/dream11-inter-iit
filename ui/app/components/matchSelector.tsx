@@ -17,9 +17,6 @@ export default function MatchSelector({ setMatchData, allMatches, allData, leagu
     if (!allData) return;
     const newIndex = (selectedIndex - 1 + allMatches.length) % allMatches.length;
     setSelectedIndex(newIndex);
-    console.log(allData[league]);
-    console.log(allMatches[newIndex]);
-    console.log(allData[league][allMatches[newIndex]]);
     setMatchData(allData[league][allMatches[newIndex]]);
   }
 
@@ -28,6 +25,13 @@ export default function MatchSelector({ setMatchData, allMatches, allData, leagu
     const newIndex = (selectedIndex + 1) % allMatches.length;
     setSelectedIndex(newIndex);
     setMatchData(allData[league][allMatches[newIndex]]);
+  }
+
+  function handleDirectClick(index: number) {
+    if (!allData) return;
+
+    setSelectedIndex(index);
+    setMatchData(allData[league][allMatches[index]]);
   }
 
   // useEffect(() => {
@@ -66,7 +70,7 @@ export default function MatchSelector({ setMatchData, allMatches, allData, leagu
                   className={`w-48 h-20 relative rounded-lg overflow-hidden border-2 transition-all duration-300 focus:outline-none ${
                     selectedIndex === index ? "border-white" : "border-transparent hover:border-white/50"
                   }`}
-                  onClick={() => setSelectedIndex(index)}
+                  onClick={() => handleDirectClick(index)}
                 >
                   <div className="flex">
                     <div>
