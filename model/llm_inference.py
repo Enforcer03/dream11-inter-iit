@@ -115,9 +115,6 @@ def analyze_team_selection(stats_df, selected_players, format_lower='t20'):
         # Create player stat summary
         player_summary = {
             'name': player,
-            'batting_style': player_aggregate_stats.get('Batting', 'N/A'),
-            'bowling_style': player_aggregate_stats.get('Bowling', 'N/A'),
-            'mean_fantasy_points': player_fantasy_stats.get('mean_points', 'N/A'),
             'batting_stats': {
                 'average': player_aggregate_stats.get('Batting Avg', 'N/A'),
                 'strike_rate': player_aggregate_stats.get('Batting S/R', 'N/A'),
@@ -145,22 +142,17 @@ def analyze_team_selection(stats_df, selected_players, format_lower='t20'):
     # Calculate team aggregate statistics
     team_summary = {
         'total_mean_points': sum(p.get('mean_fantasy_points', 0) for p in team_stats),
-        'batting_styles': [p['batting_style'] for p in team_stats],
-        'bowling_styles': [p['bowling_style'] for p in team_stats if p['bowling_style'] != 'N/A'],
         'avg_win_percentage': sum(float(p['overall_stats']['win_percentage']) for p in team_stats if p['overall_stats']['win_percentage'] != 'N/A') / len(team_stats),
         'total_experience': sum(int(p['overall_stats']['games']) for p in team_stats if p['overall_stats']['games'] != 'N/A')
     }
     
     # Create prompt for LLM
     prompt = f"""
-        As a cricket analytics expert, provide a detailed analysis of why this team selection represents the optimal combination of players. Here's the team composition and their statistics:
+        As a cricket analytics expert, provide a SHORT analysis of why this team selection represents the optimal combination of players. Here's the team composition and their statistics:
 
         Team Overview:
-        - Total Mean Fantasy Points: {team_summary['total_mean_points']:.2f}
         - Average Win Percentage: {team_summary['avg_win_percentage']:.2f}%
         - Total Combined Experience: {team_summary['total_experience']} matches
-        - Batting Styles Distribution: {', '.join(str(team_summary['batting_styles']))}
-        - Bowling Styles Distribution: {', '.join(str(team_summary['bowling_styles']))}
 
         Detailed Player Analysis:
 
@@ -170,8 +162,6 @@ def analyze_team_selection(stats_df, selected_players, format_lower='t20'):
     for player in team_stats:
         prompt += f"""
             {player['name']}:
-            - Fantasy Points: {player['mean_fantasy_points']}
-            - Role: {player['bowling_style']} bowler, {player['batting_style']} batsman
             - Batting: Avg {player['batting_stats']['average']}, SR {player['batting_stats']['strike_rate']}, Consistency {player['batting_stats']['consistency']}
             - Bowling: {player['bowling_stats']['wickets']} wickets, Econ {player['bowling_stats']['economy']}, Avg {player['bowling_stats']['average']}
             - Fielding: {player['fielding_stats']['catches']} catches, {player['fielding_stats']['runouts']} runouts
@@ -179,18 +169,17 @@ def analyze_team_selection(stats_df, selected_players, format_lower='t20'):
             """
 
     prompt += """
-        Please provide a comprehensive analysis of this team selection, addressing:
+        Please provide a SHORT analysis of this team selection, addressing:
         1. Overall team balance and composition
         2. Batting lineup strength and depth
         3. Bowling attack variety and effectiveness
-        4. Fielding capabilities
-        5. Experience and win-rate contribution
-        6. Key player roles and their specific importance
-        7. How the players complement each other
-        8. Any potential weaknesses or risks
-        9. Why this combination maximizes fantasy points while maintaining team balance
+        4. Experience and win-rate contribution
+        5. Key player roles and their specific importance
+        6. Why this combination maximizes fantasy points while maintaining team balance
 
-        Focus on why this specific combination of players forms the optimal team, considering both individual strengths and team synergy."""
+        Focus on KEY STATISTICS of players from the optimal team.
+        Make sure that you output for each player only his most dominant statistic. For example if batting statistics are better than the bowling statistics output only the batting statistics. Try to determine before whether a player is a batsman bowler or an all-rounder.
+        """
 
     url = "https://8001-01jdya9bpnhj5dqyfzh17zdghv.cloudspaces.litng.ai/predict"
     headers = {"Content-Type": "application/json"}

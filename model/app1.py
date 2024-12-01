@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 import re
 import plotly.express as px
 from stqdm import stqdm
+from llm_inference import analyze_team_selection
 from heuristic_solver import (
     load_player_fantasy_points_for_optimization,
     compute_player_stats,
@@ -804,51 +805,56 @@ if squad_info:
     #         st.experimental_rerun()
     
     if st.button("Get Optimal Team"):
-        if len(player_info) < 1:
-            st.error("Please ensure data for at least 22 players is provided.")
-        else:
-            player_input = []
-            for team_name, players in player_info.items():
-                for player in players:
-                    player_name = player.split(" : ")[0]
-                    stats = aggregate_stats.get(player_name, {})
-                    if stats:
-                        stats_info = (
-                            f"{player_name} (Team: {team_name}) - "
-                            f"Games: {stats.get('Games', 0)}, "
-                            f"Wins: {stats.get('Won', 0)}, "
-                            f"Win %: {stats.get('Win %', 0)}, "
-                            f"Runs: {stats.get('Runs', 0)}, "
-                            f"Fours: {stats.get('Fours', 0)}"
-                        )
-                    else:
-                        stats_info = f"{player_name} (Team: {team_name}) - No statistics available"
-                    player_input.append(stats_info)
-
-            player_input_str = "\n".join(player_input)
-
-            if ('assigned_weights_df' in st.session_state and 
-                st.session_state['assigned_weights_df'] is not None):
-                assigned_weights_df = st.session_state['assigned_weights_df']
-                weights_info = []
-                for index, row in assigned_weights_df.iterrows():
-                    weights_info.append(f"{row['player']} - Selection Weight: {row['weight']}")
-                weights_info_str = "\n".join(weights_info)
-                player_input_str += "\n\nPlayer Weights:\n" + weights_info_str
-            else:
-                st.warning("Weights data not found. Proceeding without weights information.")
-
-            st.write("Processing your team selection...")
-            raw_response = get_optimal_team_llm(player_input_str)
-
-            if raw_response:
-                st.success("Optimal Team Generated Successfully!")
-                st.subheader("Optimal Team")
-                st.text(raw_response)
-            else:
-                st.error("Error generating the optimal team.")
-
+            # More robust session state checking
+            if ('stats_df' not in st.session_state) or ('assigned_weights_df' not in st.session_state):
+                st.error("Please run team optimization first!")
             
+            if st.session_state.stats_df is None or st.session_state.assigned_weights_df is None:
+                st.error("No optimization data found. Please run team optimization first!")
 
+            try:
+                # Get selected players from weights dataframe
+                weights_df = st.session_state.assigned_weights_df
+                if weights_df.empty:
+                    st.error("No player weights found. Please run optimization again.")
+        
+
+                selected_players = weights_df[weights_df['weight'] == 1]['player'].tolist()
+                if not selected_players:
+                    st.error("No players were selected in the optimization.")
+
+                # Get full stats dataframe
+                stats_df = st.session_state.stats_df
+                if stats_df.empty:
+                    st.error("No player statistics found. Please run optimization again.")
+
+                st.write("### Team Analysis Report")
+                
+                with st.spinner("Generating comprehensive team analysis using AI..."):
+                    # Get the cricket format from session state or use default
+                    format_type = st.session_state.get('format_type', 'odi').lower() 
+                    
+                    # Get team analysis
+                    analysis = analyze_team_selection(
+                        stats_df=stats_df,
+                        selected_players=selected_players,
+                        format_lower=format_type
+                    )
+                    
+                    if analysis:
+                        st.markdown("## Analysis Results")
+                        st.write(analysis)
+                    else:
+                        st.warning("No analysis was generated. Please check the data and try again.")
+
+            except Exception as e:
+                st.error(f"An error occurred during analysis: {str(e)}")
+                st.error("Please check the data and try again.")
+                # Optionally log the full error for debugging
+                st.write("Debug information:")
+                st.write(f"Error type: {type(e).__name__}")
+                st.write(f"Error details: {str(e)}")
+                import traceback
+                st.code(traceback.format_exc())
 st.markdown("---")
-st.caption("Powered by OpenAI")
+st.caption("Team-62")
