@@ -167,14 +167,19 @@ def optimize_team_advanced(stats_df: pd.DataFrame, cov_matrix: np.ndarray,
                          risk_aversion: float = 1,
                          consistency_threshold: float = 0.5,
                          diversity_threshold: float = 0.5,
-                         form_threshold: float = 0.333) -> Tuple[List[str], pd.DataFrame]:
+                         form_threshold: float = 0.333,
+                         quantile_form = 75
+                         ) -> Tuple[List[str], pd.DataFrame]:
     """
     Advanced team optimization with configurable constraints using PuLP.
     Falls back to selecting top players by expected score if optimization fails.
+    
     """
+    
     prob = pulp.LpProblem("FantasyTeam", pulp.LpMaximize)
     players = list(range(len(stats_df)))
     x = pulp.LpVariable.dicts("select", players, cat='Binary')
+    
     
     mu = stats_df['mean_points'].values
     std_dev = np.sqrt(np.diag(cov_matrix))
@@ -210,7 +215,7 @@ def optimize_team_advanced(stats_df: pd.DataFrame, cov_matrix: np.ndarray,
     # Constraint 4: Form
     valid_mu = mu[~np.isnan(mu) & ~np.isinf(mu)]
     if len(valid_mu) > 0:
-        recent_form = np.percentile(valid_mu, 75)  # Q₇₅
+        recent_form = np.percentile(valid_mu, quantile_form)  # Q₇₅
         high_form_players = [i for i in players if mu[i] >= recent_form]
         if high_form_players:
             prob += pulp.lpSum([x[i] for i in high_form_players]) >= (
@@ -262,6 +267,8 @@ def optimize_team_advanced(stats_df: pd.DataFrame, cov_matrix: np.ndarray,
     # If optimization succeeded, return original results
     selected_indices = [i for i in players if x[i].value() > 0.5]
     selected_players = stats_df.iloc[selected_indices]['player'].tolist()
+
+
     
     return selected_players, pd.DataFrame({
         'player': stats_df['player'],

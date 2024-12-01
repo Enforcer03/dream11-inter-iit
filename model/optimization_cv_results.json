@@ -1,0 +1,302 @@
+{
+    "nm20_c0.50_q40.000_d0.50": {
+        "parameters": {
+            "num_matches": 20,
+            "consistency_threshold": 0.5,
+            "quantile_form": 40.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7103523147260821,
+            "performance_ratio_std": 0.12133484507900841,
+            "optimal_mae": 216.70353982300884,
+            "expected_mae": 124.27632743362832,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm20_c0.50_q50.000_d0.50": {
+        "parameters": {
+            "num_matches": 20,
+            "consistency_threshold": 0.5,
+            "quantile_form": 50.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7103523147260821,
+            "performance_ratio_std": 0.12133484507900841,
+            "optimal_mae": 216.70353982300884,
+            "expected_mae": 124.27632743362832,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm20_c0.50_q60.000_d0.50": {
+        "parameters": {
+            "num_matches": 20,
+            "consistency_threshold": 0.5,
+            "quantile_form": 60.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7103523147260821,
+            "performance_ratio_std": 0.12133484507900841,
+            "optimal_mae": 216.70353982300884,
+            "expected_mae": 124.27632743362832,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm20_c0.50_q70.000_d0.50": {
+        "parameters": {
+            "num_matches": 20,
+            "consistency_threshold": 0.5,
+            "quantile_form": 70.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7103523147260821,
+            "performance_ratio_std": 0.12133484507900841,
+            "optimal_mae": 216.70353982300884,
+            "expected_mae": 124.27632743362832,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm20_c0.50_q80.000_d0.50": {
+        "parameters": {
+            "num_matches": 20,
+            "consistency_threshold": 0.5,
+            "quantile_form": 80.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7103523147260821,
+            "performance_ratio_std": 0.12133484507900841,
+            "optimal_mae": 216.70353982300884,
+            "expected_mae": 124.27632743362832,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm40_c0.50_q40.000_d0.50": {
+        "parameters": {
+            "num_matches": 40,
+            "consistency_threshold": 0.5,
+            "quantile_form": 40.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7111867165874367,
+            "performance_ratio_std": 0.12274662206069077,
+            "optimal_mae": 216.09646017699114,
+            "expected_mae": 128.7499778761062,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm40_c0.50_q50.000_d0.50": {
+        "parameters": {
+            "num_matches": 40,
+            "consistency_threshold": 0.5,
+            "quantile_form": 50.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7111867165874367,
+            "performance_ratio_std": 0.12274662206069077,
+            "optimal_mae": 216.09646017699114,
+            "expected_mae": 128.7499778761062,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm40_c0.50_q60.000_d0.50": {
+        "parameters": {
+            "num_matches": 40,
+            "consistency_threshold": 0.5,
+            "quantile_form": 60.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7111867165874367,
+            "performance_ratio_std": 0.12274662206069077,
+            "optimal_mae": 216.09646017699114,
+            "expected_mae": 128.7499778761062,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm40_c0.50_q70.000_d0.50": {
+        "parameters": {
+            "num_matches": 40,
+            "consistency_threshold": 0.5,
+            "quantile_form": 70.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7111867165874367,
+            "performance_ratio_std": 0.12274662206069077,
+            "optimal_mae": 216.09646017699114,
+            "expected_mae": 128.7499778761062,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm40_c0.50_q80.000_d0.50": {
+        "parameters": {
+            "num_matches": 40,
+            "consistency_threshold": 0.5,
+            "quantile_form": 80.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7111867165874367,
+            "performance_ratio_std": 0.12274662206069077,
+            "optimal_mae": 216.09646017699114,
+            "expected_mae": 128.7499778761062,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm60_c0.50_q40.000_d0.50": {
+        "parameters": {
+            "num_matches": 60,
+            "consistency_threshold": 0.5,
+            "quantile_form": 40.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7076699691340852,
+            "performance_ratio_std": 0.11937153199691324,
+            "optimal_mae": 218.770796460177,
+            "expected_mae": 134.63067846607672,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm60_c0.50_q50.000_d0.50": {
+        "parameters": {
+            "num_matches": 60,
+            "consistency_threshold": 0.5,
+            "quantile_form": 50.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7076699691340852,
+            "performance_ratio_std": 0.11937153199691324,
+            "optimal_mae": 218.770796460177,
+            "expected_mae": 134.63067846607672,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm60_c0.50_q60.000_d0.50": {
+        "parameters": {
+            "num_matches": 60,
+            "consistency_threshold": 0.5,
+            "quantile_form": 60.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7076699691340852,
+            "performance_ratio_std": 0.11937153199691324,
+            "optimal_mae": 218.770796460177,
+            "expected_mae": 134.63067846607672,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm60_c0.50_q70.000_d0.50": {
+        "parameters": {
+            "num_matches": 60,
+            "consistency_threshold": 0.5,
+            "quantile_form": 70.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7076699691340852,
+            "performance_ratio_std": 0.11937153199691324,
+            "optimal_mae": 218.770796460177,
+            "expected_mae": 134.63067846607672,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm60_c0.50_q80.000_d0.50": {
+        "parameters": {
+            "num_matches": 60,
+            "consistency_threshold": 0.5,
+            "quantile_form": 80.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7076699691340852,
+            "performance_ratio_std": 0.11937153199691324,
+            "optimal_mae": 218.770796460177,
+            "expected_mae": 134.63067846607672,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm80_c0.50_q40.000_d0.50": {
+        "parameters": {
+            "num_matches": 80,
+            "consistency_threshold": 0.5,
+            "quantile_form": 40.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7044644341984606,
+            "performance_ratio_std": 0.12011071406989517,
+            "optimal_mae": 222.02477876106195,
+            "expected_mae": 142.62192477876107,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm80_c0.50_q50.000_d0.50": {
+        "parameters": {
+            "num_matches": 80,
+            "consistency_threshold": 0.5,
+            "quantile_form": 50.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7044644341984606,
+            "performance_ratio_std": 0.12011071406989517,
+            "optimal_mae": 222.02477876106195,
+            "expected_mae": 142.62192477876107,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm80_c0.50_q60.000_d0.50": {
+        "parameters": {
+            "num_matches": 80,
+            "consistency_threshold": 0.5,
+            "quantile_form": 60.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7044644341984606,
+            "performance_ratio_std": 0.12011071406989517,
+            "optimal_mae": 222.02477876106195,
+            "expected_mae": 142.62192477876107,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm80_c0.50_q70.000_d0.50": {
+        "parameters": {
+            "num_matches": 80,
+            "consistency_threshold": 0.5,
+            "quantile_form": 70.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7044644341984606,
+            "performance_ratio_std": 0.12011071406989517,
+            "optimal_mae": 222.02477876106195,
+            "expected_mae": 142.62192477876107,
+            "num_matches_processed": 1130
+        }
+    },
+    "nm80_c0.50_q80.000_d0.50": {
+        "parameters": {
+            "num_matches": 80,
+            "consistency_threshold": 0.5,
+            "quantile_form": 80.0,
+            "diversity_threshold": 0.5
+        },
+        "metrics": {
+            "performance_ratio_mean": 0.7044644341984606,
+            "performance_ratio_std": 0.12011071406989517,
+            "optimal_mae": 222.02477876106195,
+            "expected_mae": 142.62192477876107,
+            "num_matches_processed": 1130
+        }
+    }
+}

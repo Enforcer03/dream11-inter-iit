@@ -31,7 +31,7 @@ def extract_date_from_match_key(match_key):
 def get_team_selection_snapshot(match_keys, match_data, fantasy_points, 
                            optim_fantasy_points_t20, optim_fantasy_points_odi, 
                            optim_fantasy_points_test, num_matches=50,
-                           from_date=None, to_date=None, consistency_threshold= 0.5, diversity_threshold =0.5, form_threshold =0.3333):
+                           from_date=None, to_date=None, consistency_threshold= 0.5, diversity_threshold =0.5, form_threshold =0.3333, quantile_form =75):
     """
     Generate a CSV snapshot of team selections for a specified date range and match count
     
@@ -66,6 +66,8 @@ def get_team_selection_snapshot(match_keys, match_data, fantasy_points,
             to_date_dt = datetime.datetime.strptime(to_date, '%Y-%m-%d').date()
         except ValueError:
             print(f"Invalid to_date format: {to_date}. Using no end date filter.")
+        print(len(match_keys))
+        print(len(list(set(match_keys))))
     
     for match_key in tqdm(match_keys):
         # Extract date string from match key
@@ -235,10 +237,10 @@ def run_optimization_cv(match_keys: List[str],
         output_file: Path to store results JSON
     """
     # Define parameter ranges
-    num_matches_range = range(10,80,20)
+    num_matches_range = range(20,81,20)
     consistency_range = [0.5]
-    form_range = [ 0.20, 0.33, 0.5, 0.625]
-    diversity_range = [0.333, 0.5, 0.75]
+    quantile_range = [ 40,50, 60, 70, 80]
+    diversity_range = [0.5]
     
     # Initialize results storage
     try:
@@ -272,17 +274,17 @@ def run_optimization_cv(match_keys: List[str],
     # Total iterations for progress bar
     total_iterations = (len(num_matches_range) * 
                        len(consistency_range) * 
-                       len(form_range) * 
+                       len(quantile_range) * 
                        len(diversity_range))
     print(f"Total experiments to run: {total_iterations}")
     
     # Run optimization for each parameter combination
     for nm in tqdm(num_matches_range, desc="Num Matches"):
         for cons in consistency_range:
-            for form in form_range:
+            for quantile in quantile_range:
                 for div in diversity_range:
                     # Generate experiment key
-                    exp_key = f"nm{nm}_c{cons:.2f}_f{form:.3f}_d{div:.2f}"
+                    exp_key = f"nm{nm}_c{cons:.2f}_q{quantile:.3f}_d{div:.2f}"
                     
                     # Skip if already processed
                     if exp_key in results:
@@ -301,11 +303,11 @@ def run_optimization_cv(match_keys: List[str],
                             optim_fantasy_points_odi=optim_fantasy_points_odi,
                             optim_fantasy_points_test=optim_fantasy_points_test,
                             num_matches=nm,
-                            from_date='2020-01-01',
+                            from_date='2024-01-01',
                             to_date='2024-07-06',
                             consistency_threshold=cons,
                             diversity_threshold= div,
-                            form_threshold=form
+                            quantile_form=quantile
                         )
                         
                         # Calculate metrics
@@ -316,7 +318,7 @@ def run_optimization_cv(match_keys: List[str],
                             'parameters': {
                                 'num_matches': nm,
                                 'consistency_threshold': float(cons),
-                                'form_threshold': float(form),
+                                'quantile_form': float(quantile),
                                 'diversity_threshold': float(div)
                             },
                             'metrics': metrics,
@@ -393,6 +395,9 @@ if __name__ == "__main__":
 
     match_data = load_sample_players(squads_path)
     match_keys = list(match_data.keys())
+    print(len(match_keys))
+    # print (match_keys)
+
 
     results = run_optimization_cv(
         match_keys=match_keys,
