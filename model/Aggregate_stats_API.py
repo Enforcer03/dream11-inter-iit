@@ -5,9 +5,9 @@ import pandas as pd
 
 
 # Path to the JSON file
-T20_aggregate_points = "/Users/ayush_arya/Downloads/Inter_IIT_Tech_13/dream11-inter-iit/data/Aggregate_till_training_date_data/T20_aggregate_data.json"
-ODI_ODM_aggregate_points = "/Users/ayush_arya/Downloads/Inter_IIT_Tech_13/dream11-inter-iit/data/Aggregate_till_training_date_data/ODI_ODM_aggregate_data.json"
-Test_MDM_aggregate_points = "/Users/ayush_arya/Downloads/Inter_IIT_Tech_13/dream11-inter-iit/data/Aggregate_till_training_date_data/Test_MDM_aggregate_data.json"
+T20_aggregate_points = "../data/Aggregate_till_training_date_data/T20_aggregate_data.json"
+ODI_ODM_aggregate_points = "../data/Aggregate_till_training_date_data/ODI_ODM_aggregate_data.json"
+Test_MDM_aggregate_points = "../data/Aggregate_till_training_date_data/Test_MDM_aggregate_data.json"
 
 
 app = Flask(__name__)

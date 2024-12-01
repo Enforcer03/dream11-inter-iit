@@ -3,7 +3,7 @@ import json
 
 
 # Path to the JSON file
-squads = "/Users/ayush_arya/Downloads/Inter_IIT_Tech_13/dream11-inter-iit/data/Match_Level_players/Final_datewise_squad.json"
+squads = "../data/Match_Level_players/Final_datewise_squad.json"
 
 app = Flask(__name__)
 
