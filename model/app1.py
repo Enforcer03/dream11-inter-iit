@@ -188,23 +188,23 @@ def create_performance_plots(df):
     dist_fig = go.Figure()
     dist_fig.add_trace(go.Histogram(
         x=df['performance_ratio'],
-        nbinsx=20,
+        nbinsx=30,
         name='Distribution',
         histnorm='probability'
     ))
     
     # Add KDE plot
-    kde_points = np.linspace(df['performance_ratio'].min(), df['performance_ratio'].max(), 100)
-    kde = stats.gaussian_kde(df['performance_ratio'].dropna())
-    kde_values = kde(kde_points)
+    # kde_points = np.linspace(df['performance_ratio'].min(), df['performance_ratio'].max(), 100)
+    # kde = stats.gaussian_kde(df['performance_ratio'].dropna())
+    # kde_values = kde(kde_points)
     
-    dist_fig.add_trace(go.Scatter(
-        x=kde_points,
-        y=kde_values,
-        mode='lines',
-        name='KDE',
-        line=dict(color='red')
-    ))
+    # dist_fig.add_trace(go.Scatter(
+    #     x=kde_points,
+    #     y=kde_values,
+    #     mode='lines',
+    #     name='KDE',
+    #     line=dict(color='red')
+    # ))
     
     # Add mean and median lines
     mean_ratio = df['performance_ratio'].mean()
@@ -396,7 +396,7 @@ if squad_info:
             player_info[team_name] = []
             # Use col1 for first team, col2 for second team
             with (col1 if i == 0 else col2):
-                with st.expander(team_name, expanded=True):
+                with st.expander(team_name, expanded=False):
                     st.write("Players:")
                     for player in players:
                         st.markdown(f"- **{player}**")
@@ -457,7 +457,9 @@ if squad_info:
                             'point_type': key
                         })
                         df_list.append(df_temp)
+                    
                     df_combined = pd.concat(df_list).drop_duplicates(subset=['match', 'point_type', 'points'])
+                    st.markdown(f"### Past scores for {selected_player}")
                     st.write(df_combined)
                     
                 else:
@@ -467,7 +469,7 @@ if squad_info:
     st.markdown("## SOLVER AND OPTIMIZER CONFIG")
     all_players = [player.split(":")[0].strip() for team in player_info.values() for player in team]
     all_players = list(set(all_players))
-    st.write(all_players)
+    # st.write(all_players)
 
     # Initialize session state variables if they don't exist
     if 'solver' not in st.session_state:
@@ -527,7 +529,7 @@ if squad_info:
                 date_of_match=date_of_match
             )
             player_team_mapping = {}
-            st.write(player_info)
+            # st.write(player_info)
             for team_name, players in player_info.items():
                 for player in players:
                     player_name = player.split(" : ")[0].strip()
@@ -637,7 +639,7 @@ if squad_info:
 
                 # Create metrics display
                 col1, col2, col3, col4 = st.columns(4)
-                st.write(stats_df)
+                # st.write(stats_df)
 
                 with col1:
                     st.metric(
