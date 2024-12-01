@@ -131,10 +131,6 @@ function SelectMatchScreen() {
         players: matchData[team],
       }));
 
-      // teamPlayers.forEach(({ team, players }) => {
-      //   console.log(`Team: ${team}, Players:`, players);
-      // });
-
       const combinePlayerList = teamPlayers.map((team) => team.players).flat();
 
       const response = await getAggregateStats(combinePlayerList);
@@ -158,12 +154,12 @@ function SelectMatchScreen() {
           setAllMatches={setAllMatches}
           setMatchData={setMatchData}
         />
-        <LeagueSelector setLeague={setLeague} allLeagues={allLeagues} setAllMatches={setAllMatches} allData={allData} />
-        <MatchSelector allMatches={allMatches} setMatchData={setMatchData} allData={allData} league={league} />
+        <LeagueSelector setLeague={setLeague} allLeagues={allLeagues} setAllMatches={setAllMatches} allData={allData} dateLength= {date.length}/>
+        <MatchSelector allMatches={allMatches} setMatchData={setMatchData} allData={allData} league={league} date= {date}/>
       </div>
       <div className="buttonCompDiv">
         <ButtonComponent nextPage={prevPage}>BACK</ButtonComponent>
-        <ButtonComponent onClick={handleNextButton}>NEXT</ButtonComponent>
+        <ButtonComponent onClick={handleNextButton} disabled={!matchData}>NEXT</ButtonComponent>
       </div>
       <div className="videoCompDiv">
         <VideoComp nextPage="/video-instructions">

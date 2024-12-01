@@ -348,7 +348,7 @@ body {
 
 .leftArrowBtn {
   position: absolute;
-  right: 0%;
+  left: -5rem;
   background: url("../public/leftArrow.svg") no-repeat center;
   background-size: contain;
   width: 2rem;
@@ -356,6 +356,8 @@ body {
 }
 
 .rightArrowBtn {
+  position: absolute;
+  right: -5rem;
   background: url("../public/rightArrow.svg") no-repeat center;
   background-size: contain;
   width: 2rem;
@@ -364,7 +366,7 @@ body {
 
 .selectMatchDiv {
   position: absolute;
-  top: 17%;
+  top: 14%;
   left: 25%;
   font-size: 1rem;
   font-weight: lighter;
@@ -464,4 +466,36 @@ th {
   font-size: 1.2rem;
   font-weight: lighter;
   letter-spacing: 3px;
+}
+
+.emptyLeague {
+  background: url("../public/emptyLeague.svg") no-repeat center;
+  background-size: cover;
+  border: 1px solid #e8ba153a;
+}
+
+.emptyMatch {
+  background: url("../public/emptyMatch.svg") no-repeat center;
+  background-size: cover;
+
+  border: 1px solid #e8ba153a;
+}
+
+.emptyText {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 3px;
+}
+
+.filledLeague {
+  background: url("../public/filledLeague.svg") no-repeat center;
+  background-size: cover;
+  padding: 2px;
+}
+
+.filledMatch {
+  background: url("../public/filledMatch.svg") no-repeat center;
+  background-size: cover;
+  padding: 2px;
 }

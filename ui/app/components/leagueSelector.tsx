@@ -8,11 +8,13 @@ export default function LeagueSelector({
   allLeagues,
   setAllMatches,
   allData,
+  dateLength,
 }: {
   setLeague: (league: string) => void;
   allLeagues: string[];
   setAllMatches: (matches: string[]) => void;
   allData: SquadApiResponse | null;
+  dateLength: number;
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -42,62 +44,111 @@ export default function LeagueSelector({
     setAllMatches(Object.keys(allData[allLeagues[index]]));
   }
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowLeft") {
-        handlePrevious();
-      } else if (event.key === "ArrowRight") {
-        handleNext();
-      }
-    };
+  const shortenWord = (word) => {
+    if (word.length > 15) {
+      return word.slice(0, 14) + "...";
+    }
+    return word;
+  };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  const shortenLeague = (league) => {
+    const words = league.split(" ");
+    const shortenedWords = words.map(shortenWord);
+
+    let shortenedLeague = shortenedWords.join(" ");
+    if (shortenedLeague.length > 35) {
+      shortenedLeague = shortenedLeague.slice(0, 35) + "...";
+    }
+
+    return shortenedLeague;
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center mt-8">
+    <div className="flex flex-col items-center justify-center mt-14">
       <h1 className="text-3xl font-bold mb-16 text-[#FFD700]">SELECT LEAGUE</h1>
-      <div className="w-full px-4 relative">
-        <div className="flex justify-center items-center mb-8">
-          {allLeagues ? (
-            allLeagues.map((league, index) => {
-              const distance = Math.abs(selectedIndex - index);
-              const isVisible = distance <= 2;
-              return (
-                <div
-                  key={index}
-                  className={`absolute transition-all duration-300 ${
-                    isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+      <div className="w-full relative">
+      <div className="flex justify-center items-center mb-8">
+        {allLeagues.length && dateLength == 10 ? (
+          allLeagues.map((league, index) => {
+            const distance = Math.abs(selectedIndex - index);
+            const isVisible = distance <= 2;
+            return (
+              <div
+                key={index}
+                className={`flex justify-center items-center mb-8 mt-8 absolute transition-all duration-300 ${
+                  isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+                }`}
+                style={{
+                  transform: `translateX(${(index - selectedIndex) * 200}px) scale(${1 - distance * 0.14})`,
+                  zIndex: league.length - distance,
+                }}
+              >
+                <button
+                  className={`w-40 h-20 filledLeague relative overflow-hidden transition-all duration-300 ${
+                    selectedIndex === index ? "" : "border-2 border-transparent hover:border-white/50"
                   }`}
-                  style={{
-                    transform: `translateX(${(index - selectedIndex) * 120}px) scale(${1 - distance * 0.2})`,
-                    zIndex: league.length - distance,
-                  }}
+                  onClick={() => handleDirectClick(index)}
                 >
-                  <button
-                    className={`w-32 h-16 relative rounded-lg overflow-hidden border-2 transition-all duration-300 focus:outline-none ${
-                      selectedIndex === index ? "border-white" : "border-transparent hover:border-white/50"
-                    }`}
-                    onClick={() => handleDirectClick(index)}
-                  >
-                    <span>{league}</span>
-                    <img src={league.logo} alt={league.name} className="object-cover" />
-                  </button>
-                </div>
-              );
-            })
-          ) : (
-            <div>Please select date first</div>
-          )}
-        </div>
+                  <span className="text-yellow-100 relative z-10 text-white uppercase">{shortenLeague(league)}</span>
+                </button>
+              </div>
+            );
+          })
+        ) : (
+          <div>
+            {dateLength === 10 ? (
+              <div className="emptyText">NO LEAGUES FOUND</div>
+            ) : (
+              <div className="flex justify-center items-center mb-8">
+                {Array(3).fill().map((_, index) => {
+                  const distance = Math.abs(selectedIndex + index);
+                  const isVisible = distance <= 2;
+                  return (
+                    <div
+                      key={index}
+                      className={`absolute`}
+                      style={{
+                        transform: `translateX(${(index) * -200}px) scale(${1 - distance * 0.14})`,
+
+                      }}
+                    >
+                      <div className={`w-40 h-20 emptyLeague`} />
+                    </div>
+                  );
+                })}
+                {Array(3).fill().map((_, index) => {
+                  const distance = Math.abs(selectedIndex + index);
+                  const isVisible = distance <= 2;
+                  return (
+                    <div
+                      key={index}
+                      className={`absolute`}
+                      style={{
+                        transform: `translateX(${(index) * 200}px) scale(${1 - distance * 0.14})`
+                      }}
+                    >
+                      <div className={`w-40 h-20 emptyLeague`} />
+                    </div>
+                  );
+                })}
+
+              </div>
+            )}
+          </div>
+        )}
+      </div>
         <button
           onClick={handlePrevious}
-          className="leftArrowBtn absolute left-0 top-1/2 transform -translate-y-1/2 p-2"
+          className={`leftArrowBtn -mt-8 absolute left-0 top-1/2 transform -translate-y-1/2 p-2 ${
+            allLeagues.length != 0 && dateLength == 10 ? '' : 'hidden'
+          }`}
           aria-label="Previous team"
         />
         <button
           onClick={handleNext}
-          className="rightArrowBtn absolute right-0 top-1/2 transform -translate-y-1/2 p-2"
+          className={`rightArrowBtn -mt-8 absolute right-0 top-1/2 transform -translate-y-1/2 p-2 ${
+            allLeagues.length != 0 && dateLength == 10 ? '' : 'hidden'
+          }`}
           aria-label="Next team"
         />
       </div>

@@ -19,6 +19,7 @@ type SimplifiedPlayer = {
 
 function PeopleDisplay() {
   const { aggregateStats, matchData } = useMatchData();
+
   const router = useRouter();
 
   if (!aggregateStats) return null;
