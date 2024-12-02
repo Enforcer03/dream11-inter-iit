@@ -1,16 +1,18 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 import json
 import requests
 import pandas as pd
 
 
 # Path to the JSON file
-T20_aggregate_points = "../data/Aggregate_till_training_date_data/T20_aggregate_data.json"
-ODI_ODM_aggregate_points = "../data/Aggregate_till_training_date_data/ODI_ODM_aggregate_data.json"
-Test_MDM_aggregate_points = "../data/Aggregate_till_training_date_data/Test_MDM_aggregate_data.json"
+T20_aggregate_points = "../data/processed/T20_aggregate_data.json"
+ODI_ODM_aggregate_points = "../data/processed/ODI_ODM_aggregate_data.json"
+Test_MDM_aggregate_points = "../data/processed/Test_MDM_aggregate_data.json"
 
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 # Load the data from your JSON file
 with open(T20_aggregate_points, "r") as file:
@@ -25,29 +27,36 @@ with open(T20_aggregate_points, "r") as file:
 
 @app.route("/aggregate_stats", methods=["POST"])
 def get_player_stats():
-    stats = {}
-    stats["ODI"] = "Not available"
-    stats["Test"] = "Not available"
-    stats["T20"] = "Not available"
-    # Get the player name from the query string
     data = request.get_json()
-    if "Player" not in data:
-        return jsonify({"error": "Missing query parameter"}), 400
-    player_name = data["Player"]
+    player_names = data["Players"]
+    format = data["Format"]
 
-    if player_name:
-        # Check if the player exists in the data
-        player_T20_stats = player_T20_data.get(player_name)
-        player_ODI_stats = player_ODI_data.get(player_name)
-        player_Test_stats = player_Test_data.get(player_name)
-        stats["ODI"] = player_ODI_stats
-        stats["T20"] = player_T20_stats
-        stats["Test"] = player_Test_stats
-        if stats["ODI"] or stats["Test"] or stats["T20"]:
-            return jsonify(stats)
-        else:
-            return jsonify({"error": "Player not found"}), 404
+    stats = {}
+    for player_name in player_names:
+        stats[player_name] = {}
+        stats[player_name][format] = "Not available"
+        # Get the player name from the query string
+        if player_name:
+            # Check if the player exists in the data
+            player_stats = []
+            if format == "ODI":
+                player_stats = player_ODI_data.get(player_name)
+            elif format == "T20":
+                player_stats = player_T20_data.get(player_name)
+            elif format == "Test":
+                player_stats = player_Test_data.get(player_name)
 
+            stats[player_name] = player_stats
+    if stats:
+
+        for player, player_stats in stats.items():
+            if player_stats:
+                for key, value in player_stats.items():
+                    if value == float("inf"):
+                        player_stats[key] = "Infinity"
+
+        print(stats)
+        return jsonify(stats)
     else:
         return jsonify({"error": "Player name is required"}), 400
     
