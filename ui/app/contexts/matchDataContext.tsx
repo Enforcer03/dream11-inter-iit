@@ -3,7 +3,6 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
 import { AggregateApiResponse } from "../types/aggregateApiResponse";
 import { MatchDetails } from "../types/squadApiResponse";
-import { RevaluateTeamApiResponse } from "../types/modelApiResponse";
 
 interface MatchDataContextProps {
   matchData: MatchDetails | null;
@@ -22,8 +21,6 @@ interface MatchDataContextProps {
   setSelectedPlayersTeamA: React.Dispatch<React.SetStateAction<string[]>>;
   selectedPlayersTeamB: string[];
   setSelectedPlayersTeamB: React.Dispatch<React.SetStateAction<string[]>>;
-  teamStats: RevaluateTeamApiResponse;
-  setTeamStats: React.Dispatch<React.SetStateAction<RevaluateTeamApiResponse>>;
 }
 
 export type PlayerStats = {
@@ -47,11 +44,6 @@ export const MatchDataProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [playerStats, setPlayerStats] = useState<PlayerStats[]>([]);
   const [selectedPlayersTeamA, setSelectedPlayersTeamA] = useState<string[]>([]);
   const [selectedPlayersTeamB, setSelectedPlayersTeamB] = useState<string[]>([]);
-  const [teamStats, setTeamStats] = useState<RevaluateTeamApiResponse>({
-    team_consistency_score: 0,
-    team_diversity_score: 0,
-    form_score: 0,
-  });
 
   return (
     <MatchDataContext.Provider
@@ -72,8 +64,6 @@ export const MatchDataProvider: React.FC<{ children: ReactNode }> = ({ children 
         setSelectedPlayersTeamA,
         selectedPlayersTeamB,
         setSelectedPlayersTeamB,
-        teamStats,
-        setTeamStats,
       }}
     >
       {children}

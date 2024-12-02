@@ -1,4 +1,4 @@
-export type AggregateStats = {
+type AggregateStats = {
   Batting: string;
   "Batting Avg": number;
   "Batting S/R": number;

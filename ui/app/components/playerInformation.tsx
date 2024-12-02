@@ -14,7 +14,6 @@ interface ButtonComponentProps {
   child8?: React.ReactNode;
   child9?: React.ReactNode;
   child10?: React.ReactNode;
-  child11?: React.ReactNode;
 }
 
 function PlayerInformation({
@@ -50,17 +49,14 @@ function PlayerInformation({
       </div>
       <div className="flex align-center justify-center">
         <div className="text-left flex flex-col">
-          <div className="flex justify-center mb-4">
-            <Image src={child4} alt="player" width={60} height={50} />
-          </div>
           <div className="flex flex-col w-[21rem] ml-24">
             <div className="flex text-dream11FontColor">
               <div className="font-bold w-1/2">Name:</div>
-              <div className="font-bold">Role:</div>
+              <div className="font-bold"></div>
             </div>
             <div className="flex mb-2 text-white">
               <div className="w-1/2">{formattedChild2}</div>
-              <div className="w-1/2">PLAYER</div>
+              <div className="w-1/2"></div>
             </div>
             <div className="flex text-dream11FontColor">
               <div className="font-bold w-1/2">Batting S/R:</div>

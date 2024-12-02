@@ -1,8 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import countryImages from "../../public/countryImages.json";
+import { useRef, useEffect, useState } from "react";
 import playersImages from "../../public/playerImages.json";
 import { useMatchData } from "../contexts/matchDataContext";
 import AnonymousPlayer from "./anonymousPlayer";
@@ -17,7 +16,7 @@ type SimplifiedPlayer = {
 };
 
 function PeopleDisplay() {
-  const { aggregateStats, matchData, setSelectedPlayersTeamA, setSelectedPlayersTeamB } = useMatchData();
+  const { aggregateStats, matchData, setSelectedPlayersTeamA, setSelectedPlayersTeamB, selectedPlayersTeamA, selectedPlayersTeamB } = useMatchData();
   const router = useRouter();
 
   // if (!aggregateStats) return null;
@@ -95,7 +94,7 @@ function PeopleDisplay() {
     }
   }
 
-  function displaySelected() {
+  function displaySelected() {    
     setSelectedData((prevSelectedData) => {
       const updatedSelectedData = [...prevSelectedData, ...filledDivs.filter((player) => player !== null)];
       return updatedSelectedData;
@@ -104,6 +103,7 @@ function PeopleDisplay() {
     setSelectedPlayersTeamB(filledDivs.filter((player) => player !== null));
 
     setFilledDivs(Array(11).fill(null));
+      console.log(selectedPlayersTeamA, selectedPlayersTeamB);
 
     router.push(nextPage);
   }
@@ -111,15 +111,24 @@ function PeopleDisplay() {
   function getPlayerImagePath(playerName: string) {
     let nameParts = playerName.split(" ");
     let lastName = nameParts[nameParts.length - 1];
-    const matchingPlayer = playersImages.data.find((imageData) => {
-      const isMatch = imageData.lastname === lastName;
+    let inital = nameParts[0][0];
+    let matchingPlayer = playersImages.data.find((imageData) => {
+      const isMatch = imageData.lastname === lastName && imageData.firstname[0] === inital;
       if (isMatch) {
         return isMatch;
       }
     });
 
     if (!matchingPlayer) {
-      playersImages.data[4].image_path;
+      matchingPlayer= playersImages.data.find((imageData) => {
+        const isMatch = imageData.lastname === lastName ;
+        if (isMatch) {
+          return isMatch;
+        }
+      });
+      if (!matchingPlayer) {
+        return playersImages.data[2790].image_path;
+      }
     }
 
     return matchingPlayer ? matchingPlayer.image_path : playersImages.data[4].image_path;
@@ -173,7 +182,7 @@ function PeopleDisplay() {
                 title={"PLAYER SELECTION"}
                 child2={details.name}
                 child3={getPlayerImagePath(details.name)}
-                child4={countryImages.data[0].image_path}
+                child4={""}
                 child5={battingSR}
                 child6={runs}
                 child7={battingAvg}
@@ -185,7 +194,7 @@ function PeopleDisplay() {
           })()}
       </div>
 
-      <div className="selectionListDiv">
+      <div className={`selectionListDiv`}>
         <div className="players-list ">
           {(() => {
             const firstTeam = Object.keys(matchData).filter((team) => team !== "Format")[currentDataset - 1];
@@ -223,13 +232,6 @@ function PeopleDisplay() {
                   style={{ minHeight: "150px" }}
                 >
                   <div className="player-image-container">
-                    <div className="flag-container">
-                      <img src={countryImages.data[0].image_path} alt="Flag" className="flag" />
-                      <hr className="flag-hr" />
-                      <img src={countryImages.data[0].image_path} alt="Flag" className="flag" />
-                      <hr className="flag-hr" />
-                      <img src={countryImages.data[0].image_path} alt="Flag" className="flag" />
-                    </div>
                     <div className="image-container">
                       <img src={getPlayerImagePath(playerName)} alt="Player Image" className="player-image" />
                     </div>
@@ -242,12 +244,12 @@ function PeopleDisplay() {
                     <div className="player-bio">
                       <div className="flex flex-col">
                         <p className="w-full ">🏏: {battingSR}</p>
-                        <p className="w-full">WIC: {wickets}</p>
+                        <p className="w-full">Wic: {wickets}</p>
                       </div>
                       <hr className="badge-hr" />
                       <div className="flex flex-col">
                         <p className="w-full">⚾️: {bowling}</p>
-                        <p className="w-full">AVG: {battingAvg}</p>
+                        <p className="w-full">Av: {battingAvg}</p>
                       </div>
                     </div>
                   </div>

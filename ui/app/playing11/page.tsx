@@ -2,7 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getPredicted11, revaluateTeamSwap } from "../api/predictedSquad";
+import Image from "next/image";
+import { getPredicted11 } from "../api/predictedSquad";
 import Button from "../components/buttonComp";
 import DisplayBox from "../components/displayBox";
 import PageTemplate from "../components/pageTemplate";
@@ -20,10 +21,10 @@ function Playing11() {
     setPredictedTeam,
     selectedPlayersTeamA,
     selectedPlayersTeamB,
-    setTeamStats,
   } = useMatchData();
 
   const [totalScore, setTotalScore] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const prevPage = "/player-selection";
 
@@ -34,6 +35,7 @@ function Playing11() {
   useEffect(() => {
     async function handleFetchPredictedPlayers() {
       try {
+        setIsLoading(true);
         const teams = Object.keys(matchData).filter((team) => team != "Format");
         const player_info: PlayerInfo = {
           [teams[0]]: selectedPlayersTeamA.map((player) => player.name),
@@ -53,38 +55,40 @@ function Playing11() {
         }
 
         setTotalScore(total_score);
-
         setPredictedTeam(response.best_team);
         setCovMatrix(response.cov_matrix);
         setPlayerStats(player_stats);
-
-        const resp = await revaluateTeamSwap(response.cov_matrix, response.player_stats, response.best_team);
-        setTeamStats(resp);
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     }
     handleFetchPredictedPlayers();
-  }, [
-    date,
-    matchData,
-    setCovMatrix,
-    setPlayerStats,
-    setPredictedTeam,
-    selectedPlayersTeamA,
-    selectedPlayersTeamB,
-    setTeamStats,
-  ]);
+  }, [date, matchData, setCovMatrix, setPlayerStats, setPredictedTeam, selectedPlayersTeamA, selectedPlayersTeamB]);
+
+  if (isLoading) {
+    return (
+      <div className="loader-container">
+        <Image src="/loading.gif" alt="Loading..." width={100} height={100} priority />
+      </div>
+    );
+  }
 
   return (
     <div>
       <PageTemplate title="PLAYING 11" />
       <div className="displayBoxDivDiv">
         <button className="predictedScoreBtn" onClick={handlePredictedScoreClick}>
-          PREDICTED TOTAL SCORE {totalScore.toFixed(2)}
+          PREDICTED TOTAL SCORE {totalScore}
         </button>
         <div className="displayBoxDiv">
-          <DisplayBox predictedTeam={predictedTeam} playerStats={playerStats} />
+          <DisplayBox
+            predictedTeam={predictedTeam}
+            playerStats={playerStats}
+            selectedPlayersTeamA={selectedPlayersTeamA}
+            selectedPlayersTeamB={selectedPlayersTeamB}
+          />
         </div>
       </div>
       <div className="buttonCompDiv">

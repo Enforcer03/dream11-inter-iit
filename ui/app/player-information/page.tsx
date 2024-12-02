@@ -5,10 +5,16 @@ import { useSearchParams } from "next/navigation";
 import ButtonComponent from "../components/buttonComp";
 import PageTemplate from "../components/pageTemplate";
 import PlayerInformation from "../components/playerInformation";
-import playersData from "../../public/players.json";
-import countryImages from "../../public/countryImages.json";
+import { PlayerStats, useMatchData } from "../contexts/matchDataContext";
 
 export default function SwapPlayer() {
+
+    const {
+      aggregateStats,
+      matchData,
+    } = useMatchData();
+
+  const {predictedTeam} = useMatchData();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const image = searchParams.get("image");
@@ -16,18 +22,59 @@ export default function SwapPlayer() {
   const prevPage = "/playing11";
   const nextPage = "/swap-player";
 
+  const format = matchData?.Format;
+
   useEffect(() => {}, []);
   return (
     <>
       <PageTemplate title="Playing 11">
         <div className="flex">
           <div className="playerShortDetails -ml-10 mt-12">
-            <PlayerInformation
-              title="Player Information"
-              child2={playersData.players[id - 1].name}
-              child3={image}
-              child4={countryImages.data[0].image_path}
-            />
+            {format &&
+              ["ODI", "T20", "Test"].includes(format) &&
+              predictedTeam[id] &&
+              (() => {
+                let battingSR = aggregateStats[predictedTeam[id]]?.["Batting S/R"];
+                let runs = aggregateStats[predictedTeam[id]]?.["Runs"];
+                let battingAvg = aggregateStats[predictedTeam[id]]?.["Batting Avg"];
+                let wickets = aggregateStats[predictedTeam[id]]?.["Wickets"];
+                let economyRate = aggregateStats[predictedTeam[id]]?.["Economy Rate"];
+                let bowlingSR = aggregateStats[predictedTeam[id]]?.["Bowling S/R"];
+
+                if (battingSR == null || battingSR === Infinity || battingSR < 0) {
+                  battingSR = "-";
+                }
+                if (runs == null || runs === Infinity || runs < 0) {
+                  runs = "-";
+                }
+                if (battingAvg == null || battingAvg === Infinity || battingAvg < 0) {
+                  battingAvg = "-";
+                }
+                if (wickets == null || wickets === Infinity || wickets < 0) {
+                  wickets = "-";
+                }
+                if (economyRate == null || economyRate === Infinity || economyRate < 0) {
+                  economyRate = "-";
+                }
+                if (bowlingSR == null || bowlingSR === Infinity || bowlingSR < 0) {
+                  bowlingSR = "-";
+                }
+
+                return (
+                  <PlayerInformation
+                    title={"Player Information"}
+                    child2={predictedTeam[id]}
+                    child3={image}
+                    child4={""}
+                    child5={battingSR}
+                    child6={runs}
+                    child7={battingAvg}
+                    child8={wickets}
+                    child9={economyRate}
+                    child10={bowlingSR}
+                  />
+                );
+              })()}
           </div>
           <div className="flex flex-col text-slate-300 w-[50rem] tracking-wider text-lg ml-[24rem] mb-[18rem] leading-relaxed overflow-scroll">
             <p>

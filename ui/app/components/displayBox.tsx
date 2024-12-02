@@ -1,11 +1,20 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import countryImages from "../../public/countryImages.json";
 import playersImages from "../../public/playerImages.json";
 import { PlayerStats } from "../contexts/matchDataContext";
 
-function PlayerList({ predictedTeam, playerStats }: { predictedTeam: string[]; playerStats: PlayerStats[] }) {
+function PlayerList({
+  predictedTeam,
+  playerStats,
+  selectedPlayersTeamA,
+  selectedPlayersTeamB,
+}: {
+  predictedTeam: string[];
+  playerStats: PlayerStats[];
+  selectedPlayersTeamA: string[];
+  selectedPlayersTeamB: string[];
+}) {
   const router = useRouter();
 
   const playerStatsLookup = playerStats.reduce(
@@ -20,36 +29,59 @@ function PlayerList({ predictedTeam, playerStats }: { predictedTeam: string[]; p
     router.push(`/player-information?id=${id}&image=${encodeURIComponent(image)}`);
   }
 
-  function getPlayerImagePath(playerName: string) {
-    const matchingPlayer = playersImages.data.find((imageData) => {
-      const isMatch = imageData.fullname === playerName;
-      if (isMatch) {
-        imageData.image_path;
-      }
-      return isMatch;
+  interface PlayerData {
+    id: number;
+    name: string;
+    image: string;
+  }
+
+  function getPlayerImagePath(
+    playerName: string,
+    selectedPlayersTeamA: PlayerData[],
+    selectedPlayersTeamB: PlayerData[]
+  ): string {
+    const nameParts = playerName.split(" ");
+    const lastName = nameParts[nameParts.length - 1];
+    const firstInitial = nameParts[0][0];
+    const allPlayers = [...selectedPlayersTeamA, ...selectedPlayersTeamB];
+
+    let matchingPlayer = allPlayers.find((player) => {
+      const playerNameParts = player.name.split(" ");
+      const playerLastName = playerNameParts[playerNameParts.length - 1];
+      const playerFirstInitial = player.name[0];
+
+      return playerLastName === lastName && playerFirstInitial === firstInitial;
     });
 
     if (!matchingPlayer) {
-      playersImages.data[4].image_path;
+      matchingPlayer = allPlayers.find((player) => {
+        const playerNameParts = player.name.split(" ");
+        const playerLastName = playerNameParts[playerNameParts.length - 1];
+        return playerLastName === lastName;
+      });
     }
 
-    return matchingPlayer ? matchingPlayer.image_path : playersImages.data[4].image_path;
+    // Return the matched image or default image
+    return matchingPlayer ? matchingPlayer.image : "default_player_image_url";
   }
 
   return (
     <div className="players-list">
       {predictedTeam.map((player, index) => (
-        <div key={index} className="badge-bg" onClick={() => handlePlayerClick(index, getPlayerImagePath(player))}>
+        <div
+          key={index}
+          className="badge-bg cursor-pointer"
+          onClick={() =>
+            handlePlayerClick(player, getPlayerImagePath(player, selectedPlayersTeamA, selectedPlayersTeamB))
+          }
+        >
           <div className="player-image-container">
-            <div className="flag-container">
-              <img src={countryImages.data[0].image_path} alt="Flag" className="flag" />
-              <hr className="flag-hr" />
-              <img src={countryImages.data[0].image_path} alt="Flag" className="flag" />
-              <hr className="flag-hr" />
-              <img src={countryImages.data[0].image_path} alt="Flag" className="flag" />
-            </div>
             <div className="image-container">
-              <img src={getPlayerImagePath(player)} alt="Player Image" className="player-image" />
+              <img
+                src={getPlayerImagePath(player, selectedPlayersTeamA, selectedPlayersTeamB)}
+                alt="Player Image"
+                className="player-image"
+              />
             </div>
           </div>
           <div className="player-bio-container">
@@ -60,12 +92,12 @@ function PlayerList({ predictedTeam, playerStats }: { predictedTeam: string[]; p
             <div className="player-bio">
               <div className="flex flex-col">
                 <p className="w-full ">🏏: {playerStatsLookup[player].batting_points}</p>
-                <p className="w-full">WIC: {playerStatsLookup[player].fielding_points}</p>
+                <p className="w-full">W: {playerStatsLookup[player].fielding_points}</p>
               </div>
               <hr className="badge-hr" />
               <div className="flex flex-col">
                 <p className="w-full">⚾️: {playerStatsLookup[player].bowling_points}</p>
-                <p className="w-full">AVG: {playerStatsLookup[player].mean_points}</p>
+                <p className="w-full">Av: {playerStatsLookup[player].mean_points}</p>
               </div>
             </div>
           </div>
