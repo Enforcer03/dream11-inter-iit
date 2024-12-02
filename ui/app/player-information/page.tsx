@@ -8,13 +8,9 @@ import PlayerInformation from "../components/playerInformation";
 import { PlayerStats, useMatchData } from "../contexts/matchDataContext";
 
 export default function SwapPlayer() {
+  const { aggregateStats, matchData } = useMatchData();
 
-    const {
-      aggregateStats,
-      matchData,
-    } = useMatchData();
-
-  const {predictedTeam} = useMatchData();
+  const { predictedTeam } = useMatchData();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const image = searchParams.get("image");

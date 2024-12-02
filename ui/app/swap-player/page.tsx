@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { revaluateTeamSwap } from "../api/predictedSquad";
 import ButtonComponent from "../components/buttonComp";
 import PageTemplateWithoutTop from "../components/pageTemplateNoTop";
 import PitchComponent from "../components/pitchPlayer";
-import PlayerInformation from "../components/playerInformation";
+import PlayerInformationSwap from "../components/playerInformationSwap";
 import { useMatchData } from "../contexts/matchDataContext";
-import { revaluateTeamSwap } from "../api/predictedSquad";
+import { RevaluateTeamApiResponse } from "../types/modelApiResponse";
 
 export default function SwapPlayer() {
   const {
@@ -17,26 +18,25 @@ export default function SwapPlayer() {
     matchData,
     selectedPlayersTeamA,
     selectedPlayersTeamB,
+    teamStats,
+    setTeamStats,
+    aggregateStats,
   } = useMatchData();
 
   const [selectedPlayer, setSelectedPlayer] = useState<number | null>(0);
-  const [hoveredPlayer, setHoveredPlayer] = useState<number | null>(null);
+  const [newTeamStats, setNewTeamStats] = useState<RevaluateTeamApiResponse | null>(null);
 
-    const prevPage = "/playing11";
-    const nextPage = "/playing11";
+  const prevPage = "/playing11";
+  const nextPage = "/final-playing11";
 
-  async function handleTeamRevaluation() {
+  async function handleTeamRevaluation(newPredictedTeam: string[], flag: boolean) {
     try {
-      const response = await revaluateTeamSwap(covMatrix, JSON.stringify(playerStats), predictedTeam);
+      const response = await revaluateTeamSwap(covMatrix, JSON.stringify(playerStats), newPredictedTeam);
+      if (flag) setTeamStats(response);
+      else setNewTeamStats(response);
     } catch (error) {
       console.error(error);
     }
-  }
-  console.log("SwapPlayer");
-  console.log(predictedTeam);
-
-  function handleClick () {
-    console.log("Finalize");
   }
 
   return (
@@ -45,23 +45,28 @@ export default function SwapPlayer() {
         <PageTemplateWithoutTop>
           <div className="flex w-full">
             <div className="playerShortDetails -ml-16">
-              <PlayerInformation title="Swap Player" selectedPlayer={selectedPlayer} hoveredPlayer={hoveredPlayer} />
+              <PlayerInformationSwap
+                playerName={predictedTeam[selectedPlayer]}
+                playerInfo={aggregateStats[predictedTeam[selectedPlayer]]}
+                teamStats={teamStats}
+                newTeamStats={newTeamStats}
+              />
             </div>
             <PitchComponent
               selectedPlayer={selectedPlayer}
               setSelectedPlayer={setSelectedPlayer}
-              setHoveredPlayer={setHoveredPlayer}
               predictedTeam={predictedTeam}
               setPredictedTeam={setPredictedTeam}
               matchData={matchData}
               selectedPlayersTeamA={selectedPlayersTeamA}
               selectedPlayersTeamB={selectedPlayersTeamB}
               handleTeamRevaluation={handleTeamRevaluation}
+              setNewTeamStats={setNewTeamStats}
             />
           </div>
         </PageTemplateWithoutTop>
         <div className="buttonPlayerSelectionDiv">
-          <ButtonComponent nextPage={nextPage} onClick={handleClick}>Finalize</ButtonComponent>
+          <ButtonComponent nextPage={nextPage}>Finalize</ButtonComponent>
           <ButtonComponent nextPage={prevPage}>BACK</ButtonComponent>
         </div>
       </div>

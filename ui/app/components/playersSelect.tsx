@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useEffect, useState } from "react";
+import { useState } from "react";
 import playersImages from "../../public/playerImages.json";
 import { useMatchData } from "../contexts/matchDataContext";
 import AnonymousPlayer from "./anonymousPlayer";
@@ -16,7 +16,14 @@ type SimplifiedPlayer = {
 };
 
 function PeopleDisplay() {
-  const { aggregateStats, matchData, setSelectedPlayersTeamA, setSelectedPlayersTeamB, selectedPlayersTeamA, selectedPlayersTeamB } = useMatchData();
+  const {
+    aggregateStats,
+    matchData,
+    setSelectedPlayersTeamA,
+    setSelectedPlayersTeamB,
+    selectedPlayersTeamA,
+    selectedPlayersTeamB,
+  } = useMatchData();
   const router = useRouter();
 
   // if (!aggregateStats) return null;
@@ -94,7 +101,7 @@ function PeopleDisplay() {
     }
   }
 
-  function displaySelected() {    
+  function displaySelected() {
     setSelectedData((prevSelectedData) => {
       const updatedSelectedData = [...prevSelectedData, ...filledDivs.filter((player) => player !== null)];
       return updatedSelectedData;
@@ -103,7 +110,7 @@ function PeopleDisplay() {
     setSelectedPlayersTeamB(filledDivs.filter((player) => player !== null));
 
     setFilledDivs(Array(11).fill(null));
-      console.log(selectedPlayersTeamA, selectedPlayersTeamB);
+    console.log(selectedPlayersTeamA, selectedPlayersTeamB);
 
     router.push(nextPage);
   }
@@ -120,8 +127,8 @@ function PeopleDisplay() {
     });
 
     if (!matchingPlayer) {
-      matchingPlayer= playersImages.data.find((imageData) => {
-        const isMatch = imageData.lastname === lastName ;
+      matchingPlayer = playersImages.data.find((imageData) => {
+        const isMatch = imageData.lastname === lastName;
         if (isMatch) {
           return isMatch;
         }

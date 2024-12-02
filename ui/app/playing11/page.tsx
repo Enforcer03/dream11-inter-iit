@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { getPredicted11 } from "../api/predictedSquad";
+import { getPredicted11, revaluateTeamSwap } from "../api/predictedSquad";
 import Button from "../components/buttonComp";
 import DisplayBox from "../components/displayBox";
 import PageTemplate from "../components/pageTemplate";
@@ -21,6 +21,7 @@ function Playing11() {
     setPredictedTeam,
     selectedPlayersTeamA,
     selectedPlayersTeamB,
+    setTeamStats,
   } = useMatchData();
 
   const [totalScore, setTotalScore] = useState(0);
@@ -58,6 +59,9 @@ function Playing11() {
         setPredictedTeam(response.best_team);
         setCovMatrix(response.cov_matrix);
         setPlayerStats(player_stats);
+
+        const resp = await revaluateTeamSwap(response.cov_matrix, response.player_stats, response.best_team);
+        setTeamStats(resp);
       } catch (error) {
         console.error(error);
       } finally {
@@ -65,7 +69,16 @@ function Playing11() {
       }
     }
     handleFetchPredictedPlayers();
-  }, [date, matchData, setCovMatrix, setPlayerStats, setPredictedTeam, selectedPlayersTeamA, selectedPlayersTeamB]);
+  }, [
+    date,
+    matchData,
+    setCovMatrix,
+    setPlayerStats,
+    setPredictedTeam,
+    selectedPlayersTeamA,
+    selectedPlayersTeamB,
+    setTeamStats,
+  ]);
 
   if (isLoading) {
     return (
@@ -80,7 +93,7 @@ function Playing11() {
       <PageTemplate title="PLAYING 11" />
       <div className="displayBoxDivDiv">
         <button className="predictedScoreBtn" onClick={handlePredictedScoreClick}>
-          PREDICTED TOTAL SCORE {totalScore}
+          PREDICTED TOTAL SCORE {totalScore.toFixed(2)}
         </button>
         <div className="displayBoxDiv">
           <DisplayBox
