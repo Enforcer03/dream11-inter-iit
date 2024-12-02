@@ -12,6 +12,8 @@ type PitchComponentProps = {
   predictedTeam: string[];
   setPredictedTeam: (predictedTeam: string[] | ((prev: string[]) => string[])) => void;
   matchData: MatchDetails | null;
+  selectedPlayersTeamA: string[];
+  selectedPlayersTeamB: string[];
 };
 
 type PlayerComponentProps = {
@@ -43,6 +45,9 @@ export default function PitchComponent({
   predictedTeam,
   setPredictedTeam,
   matchData,
+  selectedPlayersTeamA,
+  selectedPlayersTeamB,
+  handleTeamRevaluation,
 }: PitchComponentProps) {
   return (
     <div className="w-[55.5rem] flex flex-col ml-[26rem] mb-12">
@@ -63,6 +68,9 @@ export default function PitchComponent({
         predictedTeam={predictedTeam}
         setPredictedTeam={setPredictedTeam}
         matchData={matchData}
+        selectedPlayersTeamA={selectedPlayersTeamA}
+        selectedPlayersTeamB={selectedPlayersTeamB}
+        handleTeamRevaluation={handleTeamRevaluation}
       />
     </div>
   );

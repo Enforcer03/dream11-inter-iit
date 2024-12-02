@@ -59,13 +59,13 @@ function PlayerList({ predictedTeam, playerStats }: { predictedTeam: string[]; p
             <hr className="player-hr" />
             <div className="player-bio">
               <div className="flex flex-col">
-                <p className="w-full ">🏏: {playerStats[index].batting_points}</p>
-                <p className="w-full">WIC: {playerStats[index].fielding_points}</p>
+                <p className="w-full ">🏏: {playerStatsLookup[player].batting_points}</p>
+                <p className="w-full">WIC: {playerStatsLookup[player].fielding_points}</p>
               </div>
               <hr className="badge-hr" />
               <div className="flex flex-col">
                 <p className="w-full">⚾️: {playerStatsLookup[player].bowling_points}</p>
-                <p className="w-full">AVG: {playerStats[index].mean_points}</p>
+                <p className="w-full">AVG: {playerStatsLookup[player].mean_points}</p>
               </div>
             </div>
           </div>

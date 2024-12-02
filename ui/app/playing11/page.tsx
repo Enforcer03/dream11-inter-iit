@@ -38,15 +38,16 @@ function Playing11() {
           [teams[0]]: selectedPlayersTeamA.map((player) => player.name),
           [teams[1]]: selectedPlayersTeamB.map((player) => player.name),
         };
+
         const response = await getPredicted11(date, matchData?.Format as "T20" | "Test" | "ODI", player_info);
-        console.log(response);
+
         const player_stats: PlayerStats[] = JSON.parse(response.player_stats);
 
         let total_score = 0;
 
         for (let i = 0; i < player_stats.length; i++) {
-          if (player_stats[i].player in response.best_team) {
-            total_score += player_stats[i].mean_points;
+          if (response.best_team.includes(player_stats[i].player)) {
+            if (player_stats[i].mean_points > 0) total_score += player_stats[i].mean_points;
           }
         }
 

@@ -9,7 +9,15 @@ import { useMatchData } from "../contexts/matchDataContext";
 import { revaluateTeamSwap } from "../api/predictedSquad";
 
 export default function SwapPlayer() {
-  const { predictedTeam, setPredictedTeam, playerStats, covMatrix, matchData } = useMatchData();
+  const {
+    predictedTeam,
+    setPredictedTeam,
+    playerStats,
+    covMatrix,
+    matchData,
+    selectedPlayersTeamA,
+    selectedPlayersTeamB,
+  } = useMatchData();
 
   const [selectedPlayer, setSelectedPlayer] = useState<number | null>(0);
   const [hoveredPlayer, setHoveredPlayer] = useState<number | null>(null);
@@ -21,7 +29,8 @@ export default function SwapPlayer() {
       console.error(error);
     }
   }
-
+  console.log("SwapPlayer");
+  console.log(predictedTeam);
   return (
     <>
       <div>
@@ -37,6 +46,9 @@ export default function SwapPlayer() {
               predictedTeam={predictedTeam}
               setPredictedTeam={setPredictedTeam}
               matchData={matchData}
+              selectedPlayersTeamA={selectedPlayersTeamA}
+              selectedPlayersTeamB={selectedPlayersTeamB}
+              handleTeamRevaluation={handleTeamRevaluation}
             />
           </div>
         </PageTemplateWithoutTop>
