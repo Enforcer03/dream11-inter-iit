@@ -231,7 +231,7 @@ def main():
         player_info=player_info,
         num_matches=50,
         date_of_match=date_of_match,
-        risk_tolerance=1.0,
+        risk_aversion=0.1,
         solver='pulp',
         fantasy_points_data=fantasy_points_data
     )

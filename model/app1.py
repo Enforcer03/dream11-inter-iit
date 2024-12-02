@@ -74,7 +74,7 @@ st.markdown("""
     - Evaluate the generated the best team of 11 players using AI.
 """)
 
-st.sidebar.image("logo-model-ui.jpg")
+st.sidebar.image("logo-model-ui.png")
 st.sidebar.header("OPTIONS")
 format_selected = st.sidebar.selectbox("Select Format", ['T20', 'ODI', 'Test'])
 # upload_sample = st.sidebar.checkbox("Load Sample Players from JSON")
@@ -84,10 +84,8 @@ get_team_snapshot = st.sidebar.checkbox("Get Selection CSV")
 # assess_players = st.sidebar.checkbox("Assess Players from the squads")
 # optimize_team_option = st.sidebar.checkbox("Optimize Team Selection")
 with st.sidebar.expander("📊 Optimization Framework", expanded=True):
-    st.markdown("""
-    ### Solver Options
-                
-    **1. PuLP Optimizer**
+    st.markdown("""                
+    **PuLP Optimizer**
     $$
     \\begin{align*}
     & \\text{maximize} && \\sum_{i=1}^{n} \\mu_i x_i - \\lambda \\sum_{i=1}^{n} \\sigma_i x_i \\\\
@@ -119,27 +117,27 @@ with st.sidebar.expander("🎯 Technical Guidelines", expanded=True):
     - Higher λ: Lesser deviation in performance ratio
     
     **2. Historical Window**
-    $$N_{matches} \\in [20, 500], \\text{ default} = 50$$
+    $$M_{matches} \\in [20, 500], \\text{ default} = 40$$
     - Number of past matches to analyze
     - Affects statistical estimations
     
     **3. Consistency Threshold (α₁)**
-    $$\\alpha_1 \\in [0.1, 1.0], \\text{ default} = 0.5$$
+    $$\\alpha_c \\in [0.1, 1.0], \\text{ default} = 0.5$$
     - Minimum required Sharpe ratio
     - Controls reliability of selections
     
     **4. Diversity Threshold (α₂)**
-    $$\\alpha_2 \\in [0.1, 1.0], \\text{ default} = 0.5$$
+    $$\\alpha_d \\in [0.1, 1.0], \\text{ default} = 0.5$$
     - Enforces point distribution entropy
     - Prevents over-reliance on few players
     
     **5. Form Threshold (α₃)**
-    $$\\alpha_3 \\in [0.1, 1.0], \\text{ default} = 0.333$$
+    $$\\alpha_f \\in [0.1, 1.0], \\text{ default} = 0.333$$
     - Proportion of in-form players
     - Based on form quantile cutoff
     
     **6. Form Quantile (q)**
-    $$q \\in [50, 90], \\text{ default} = 75$$
+    $$q \\in [40, 90], \\text{ default} = 40$$
     - Percentile cutoff for form consideration
     - Higher q: More selective on recent performance
     
