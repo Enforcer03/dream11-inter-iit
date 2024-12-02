@@ -7,7 +7,10 @@ export async function getPredicted11(
   player_info: PlayerInfo
 ): Promise<ModelApiResponse> {
   try {
-    const obj = { date, format, player_info };
+    const [day, month, year] = date.split("/");
+    const formattedDate = `${year}-${month}-${day}`;
+
+    const obj = { date: formattedDate, format, player_info };
     const response = await axios.post("http://localhost:8089/generate_best_team", obj);
     return response.data;
   } catch (error) {
