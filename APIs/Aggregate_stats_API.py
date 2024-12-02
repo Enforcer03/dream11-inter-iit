@@ -27,23 +27,33 @@ with open(T20_aggregate_points, "r") as file:
 def get_player_stats():
     data = request.get_json()
     player_names = data["Players"]
+    format = data["Format"]
 
     stats = {}
     for player_name in player_names:
         stats[player_name] = {}
-        stats[player_name]["ODI"] = "Not available"
-        stats[player_name]["Test"] = "Not available"
-        stats[player_name]["T20"] = "Not available"
+        stats[player_name][format] = "Not available"
         # Get the player name from the query string
         if player_name:
             # Check if the player exists in the data
-            player_T20_stats = player_T20_data.get(player_name)
-            player_ODI_stats = player_ODI_data.get(player_name)
-            player_Test_stats = player_Test_data.get(player_name)
-            stats[player_name]["ODI"] = player_ODI_stats
-            stats[player_name]["T20"] = player_T20_stats
-            stats[player_name]["Test"] = player_Test_stats
+            player_stats = []
+            if format == "ODI":
+                player_stats = player_ODI_data.get(player_name)
+            elif format == "T20":
+                player_stats = player_T20_data.get(player_name)
+            elif format == "Test":
+                player_stats = player_Test_data.get(player_name)
+
+            stats[player_name] = player_stats
     if stats:
+
+        for player, player_stats in stats.items():
+            if player_stats:
+                for key, value in player_stats.items():
+                    if value == float("inf"):
+                        player_stats[key] = "Infinity"
+
+        print(stats)
         return jsonify(stats)
     else:
         return jsonify({"error": "Player name is required"}), 400
