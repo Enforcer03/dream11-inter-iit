@@ -76,7 +76,7 @@ def best_team_button():
 def get_past_match_performance(player_name, fantasy_points, num_matches=50, key='total_points', date_of_match=None):
     """
     Retrieves and processes historical match performance data for a player.
-    If fewer matches than requested are available, extends using the last available match's data.
+    If fewer matches than requested are available, extends using cyclic repetition of available matches.
     
     Args:
         player_name (str): Name of the player
@@ -88,7 +88,7 @@ def get_past_match_performance(player_name, fantasy_points, num_matches=50, key=
     Returns:
         tuple: Lists of match identifiers and corresponding points.
               If N matches requested but M < N available (M > 0),
-              returns M actual matches plus (N-M) copies of the last match.
+              returns matches in cyclic pattern until N matches are filled.
               If no matches available, returns lists filled with 'No Match' and 0.
     """
     # Get player data
@@ -99,7 +99,7 @@ def get_past_match_performance(player_name, fantasy_points, num_matches=50, key=
     # Convert to list of matches
     matches_data = list(player_data.items()) if isinstance(player_data, dict) else player_data
 
-    # Filter by date if specified
+    # Filter and sort by date if specified
     if date_of_match:
         try:
             date_of_match_dt = datetime.datetime.strptime(date_of_match, '%Y-%m-%d')
@@ -110,7 +110,12 @@ def get_past_match_performance(player_name, fantasy_points, num_matches=50, key=
                 if date_match:
                     match_date = datetime.datetime.strptime(date_match.group(), '%Y-%m-%d')
                     if match_date < date_of_match_dt:
-                        filtered_player_data.append(match_data)
+                        filtered_player_data.append((match_date, match_data))
+            
+            # Sort by date and remove date from tuple, keeping only match data
+            filtered_player_data.sort(key=lambda x: x[0])
+            filtered_player_data = [x[1] for x in filtered_player_data]
+            # print(filtered_player_data)
         except ValueError:
             return ['No Match'] * num_matches, [0] * num_matches
     else:
@@ -120,33 +125,34 @@ def get_past_match_performance(player_name, fantasy_points, num_matches=50, key=
     if not filtered_player_data:
         return ['No Match'] * num_matches, [0] * num_matches
 
-    # Get the last available matches
-    last_matches_data = filtered_player_data[-num_matches:]
-
     # Process available matches
-    last_matches, last_points = [], []
-    for match_data in last_matches_data:
+    available_matches, available_points = [], []
+    for match_data in filtered_player_data:
         if isinstance(match_data, tuple):
             match_key, match_info = match_data
-            last_matches.append(match_key)
-            last_points.append(match_info.get(key, 0))
+            available_matches.append(match_key)
+            available_points.append(match_info.get(key, 0))
         else:
-            last_matches.append(match_data[0])
-            last_points.append(match_data[1].get(key, 0))
+            available_matches.append(match_data[0])
+            available_points.append(match_data[1].get(key, 0))
 
-    # If we have some matches but fewer than requested,
-    # extend using the last available match's data
-    if last_points and len(last_points) < num_matches:
-        # Get the last available match data
-        last_match = last_matches[-1]
-        last_point = last_points[-1]
+    # If we have fewer matches than requested, implement cyclic repetition
+    # print(available_matches)
+    available_matches.reverse()
+    if available_matches:
+        num_available = len(available_matches)
+        final_matches = []
+        final_points = []
         
-        # Extend both lists with copies of the last match
-        extension_length = num_matches - len(last_points)
-        last_matches.extend([last_match] * extension_length)
-        last_points.extend([last_point] * extension_length)
-
-    return last_matches, last_points
+        # Fill up to num_matches using cyclic repetition
+        for i in range(num_matches):
+            idx = i % num_available
+            final_matches.append(available_matches[idx])
+            final_points.append(available_points[idx])
+        print(final_matches)
+        return final_matches, final_points
+    
+    return ['No Match'] * num_matches, [0] * num_matches
 
 def plot_team_distribution(mu, sigma, actual_score, optimal_score):
     """
@@ -195,7 +201,7 @@ def plot_team_distribution(mu, sigma, actual_score, optimal_score):
     
     return fig
 
-def calculate_team_metrics(stats_df, weights_df, cov_matrix):
+def calculate_team_metrics(stats_df, weights_df, cov_matrix, quantile_form =75):
     """
     Calculates comprehensive performance metrics for a selected team.
     
@@ -229,8 +235,8 @@ def calculate_team_metrics(stats_df, weights_df, cov_matrix):
         else:
             diversity_score = 0
 
-        points_75th = stats_df['mean_points'].quantile(0.75)
-        top_performers = selected_df[selected_df['mean_points'] >= points_75th]
+        points_q = stats_df['mean_points'].quantile(quantile_form/100)
+        top_performers = selected_df[selected_df['mean_points'] >= points_q]
         form_score = len(top_performers)
 
         return {

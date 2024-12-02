@@ -270,7 +270,7 @@ if get_team_snapshot:
         st.session_state.analysis_generated = False
     
     # Set default date to July 6th, 2024
-    default_date = datetime.date(2024, 7, 6)
+    default_date = datetime.date(2024, 7, 1)
     date_filter = default_date
     
     st.write("Analysis will include matches from July 6th, 2024 onward")
@@ -484,41 +484,71 @@ if squad_info:
             else:
                 keys = ['total_points', 'batting_points', 'bowling_points', 'fielding_points']
                 data = {}
-                for key in keys:
+                
+                # First get the matches and points for total_points to establish base matches
+                base_matches, base_points = get_past_match_performance(
+                    player_name,
+                    fantasy_points,
+                    num_matches=num_matches_assess,
+                    key='total_points',
+                    date_of_match=date_of_match
+                )
+                data['total_points'] = (base_matches, base_points)
+                
+                # Use the same match sequence for other metrics
+                unique_matches = []
+                seen = set()
+                for match in base_matches:
+                    if match not in seen:
+                        seen.add(match)
+                        unique_matches.append(match)
+                
+                # Get points for other metrics using the same match sequence
+                for key in keys[1:]:  # Skip total_points as we already have it
                     matches, points = get_past_match_performance(
                         player_name,
                         fantasy_points,
-                        num_matches=num_matches_assess,
+                        num_matches=len(unique_matches),  # Use length of unique matches
                         key=key,
                         date_of_match=date_of_match
                     )
-                    data[key] = (matches, points)
+                    
+                    # Ensure we use the same match sequence
+                    aligned_points = []
+                    for match in unique_matches:
+                        try:
+                            idx = matches.index(match)
+                            aligned_points.append(points[idx])
+                        except ValueError:
+                            aligned_points.append(0)  # Use 0 if match not found
+                    
+                    data[key] = (unique_matches, aligned_points)
 
-                if any(data[key][0] and data[key][1] for key in keys):
-                    df_list = []
-                    for key in keys:
-                        matches, points = data[key]
-                        df_temp = pd.DataFrame({
-                            'match': matches,
-                            key: points
-                        })
-                        df_list.append(df_temp)
+            if any(data[key][0] and data[key][1] for key in keys):
+                df_list = []
+                for key in keys:
+                    matches, points = data[key]
+                    df_temp = pd.DataFrame({
+                        'match': matches,
+                        key: points
+                    })
+                    df_list.append(df_temp)
+                
+                # Merge all dataframes on the match column
+                df_combined = df_list[0]  # Start with total_points
+                for df in df_list[1:]:    # Merge the rest one by one
+                    df_combined = df_combined.merge(df, on='match', how='outer')
+                
+                # Reorder columns to put total_points at the end
+                columns_order = ['match', 'batting_points', 'bowling_points', 'fielding_points', 'total_points']
+                df_combined = df_combined[columns_order]
+                
+                st.markdown(f"### Past scores for {selected_player}")
+                st.write(df_combined)
                     
-                    # Merge all dataframes on the match column
-                    df_combined = df_list[0]  # Start with total_points
-                    for df in df_list[1:]:    # Merge the rest one by one
-                        df_combined = df_combined.merge(df, on='match', how='outer')
-                    
-                    # Reorder columns to put total_points at the end
-                    columns_order = ['match', 'batting_points', 'bowling_points', 'fielding_points', 'total_points']
-                    df_combined = df_combined[columns_order]
-                    
-                    st.markdown(f"### Past scores for {selected_player}")
-                    st.write(df_combined)
-                        
-                else:
-                    st.error(f"No data available for {player_name} before {date_of_match}.")
-
+            else:
+                st.error(f"No data available for {player_name} before {date_of_match}.")
+                
 # if optimize_team_option:
     st.markdown("## SOLVER AND OPTIMIZER CONFIG")
     all_players = [player.split(":")[0].strip() for team in player_info.values() for player in team]

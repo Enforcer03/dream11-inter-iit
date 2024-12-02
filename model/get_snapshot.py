@@ -24,7 +24,7 @@ def extract_date_from_match_key(match_key):
 
 def get_team_selection_snapshot(match_keys, match_data, fantasy_points, 
                            optim_fantasy_points_t20, optim_fantasy_points_odi, 
-                           optim_fantasy_points_test, input_date=None, num_matches =50, quantile_form=75, consistency_threshold =0.5, form_threshold =0.333, diversity_threshold=0.5):
+                           optim_fantasy_points_test, input_date=None, num_matches =40, quantile_form=40, consistency_threshold =0.5, form_threshold =0.333, diversity_threshold=0.5):
     """
     Generate a CSV snapshot of team selections after a specified date
     

@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from datetime import datetime
 
-file_path = "./data/player_fantasy_points_t20.json"
+file_path = "../data/player_fantasy_points_t20.json"
 with open(file_path, "r") as file:
     player_data = json.load(file)
 

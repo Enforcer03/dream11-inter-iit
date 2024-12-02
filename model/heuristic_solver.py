@@ -41,7 +41,7 @@ def load_player_fantasy_points_for_optimization(json_file: str) -> Dict:
         return sorted_data
 
 def compute_player_stats(fantasy_points: Dict, players: List[str], 
-                        num_matches: int = 50, date_of_match: str = None, 
+                        num_matches: int = 40, date_of_match: str = None, 
                         key: str = 'total_points') -> pd.DataFrame:
     """
     Computes mean and variance of fantasy points for each player.
@@ -78,7 +78,7 @@ def compute_player_stats(fantasy_points: Dict, players: List[str],
     return pd.DataFrame(stats_list)
 
 def compute_covariance_matrix(fantasy_points: Dict, players: List[str], 
-                            num_matches: int = 100, 
+                            num_matches: int = 40, 
                             date_of_match: str = None) -> pd.DataFrame:
     """
     Computes covariance matrix of player performances.
@@ -106,6 +106,8 @@ def compute_covariance_matrix(fantasy_points: Dict, players: List[str],
 
     return pd.DataFrame(time_series_data).cov()
 
+
+### NOT BEING USED BY US
 def optimize_team_sharpe(stats_df: pd.DataFrame, cov_matrix: Union[pd.DataFrame, np.ndarray], 
                         num_players: int = 11, risk_aversion: float = 1.0, 
                         boolean: bool = True) -> Tuple[List[str], pd.DataFrame]:
@@ -168,7 +170,7 @@ def optimize_team_advanced(stats_df: pd.DataFrame, cov_matrix: np.ndarray,
                          consistency_threshold: float = 0.5,
                          diversity_threshold: float = 0.5,
                          form_threshold: float = 0.333,
-                         quantile_form = 75
+                         quantile_form = 40
                          ) -> Tuple[List[str], pd.DataFrame]:
     """
     Advanced team optimization with configurable constraints using PuLP.
@@ -215,7 +217,7 @@ def optimize_team_advanced(stats_df: pd.DataFrame, cov_matrix: np.ndarray,
     # Constraint 4: Form
     valid_mu = mu[~np.isnan(mu) & ~np.isinf(mu)]
     if len(valid_mu) > 0:
-        recent_form = np.percentile(valid_mu, quantile_form)  # Q₇₅
+        recent_form = np.percentile(valid_mu, quantile_form)  # Qq
         high_form_players = [i for i in players if mu[i] >= recent_form]
         if high_form_players:
             prob += pulp.lpSum([x[i] for i in high_form_players]) >= (
