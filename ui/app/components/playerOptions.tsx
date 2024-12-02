@@ -2,7 +2,6 @@ import Image from "next/image";
 import { RevaluateTeamApiResponse } from "../types/modelApiResponse";
 
 type PlayerOptionsProps = {
-  setHoveredPlayer: (player: number | null) => void;
   selectedPlayer: number | null;
   predictedTeam: string[];
   setPredictedTeam: (predictedTeam: string[] | ((prev: string[]) => string[])) => void;

@@ -28,6 +28,7 @@ function Playing11() {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const prevPage = "/player-selection";
+  const nextPage = "/swap-player";
 
   const handlePredictedScoreClick = () => {
     router.push("/information-report");
@@ -106,7 +107,7 @@ function Playing11() {
       </div>
       <div className="buttonCompDiv">
         <Button nextPage={prevPage}>BACK</Button>
-        <Button downloadScreenshot={true}>SAVE</Button>
+        <Button nextPage={nextPage}>SWAP</Button>
       </div>
     </div>
   );

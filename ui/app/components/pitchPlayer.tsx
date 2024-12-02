@@ -99,7 +99,6 @@ export default function PitchComponent({
         </div>
       </div>
       <PlayerOptions
-        setHoveredPlayer={setHoveredPlayer}
         selectedPlayer={selectedPlayer}
         predictedTeam={predictedTeam}
         setPredictedTeam={setPredictedTeam}
