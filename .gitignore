@@ -9,8 +9,6 @@ __pycache__/
 .zip
 /raw
 /old_data
-
-
 # Distribution / packaging
 .Python
 build/
