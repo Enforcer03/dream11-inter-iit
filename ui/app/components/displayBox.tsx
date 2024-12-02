@@ -26,6 +26,7 @@ function PlayerList({
   );
 
   function handlePlayerClick(id: number, image: string) {
+    console.log("pushed");
     router.push(`/player-information?id=${id}&image=${encodeURIComponent(image)}`);
   }
 

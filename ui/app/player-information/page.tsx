@@ -19,6 +19,8 @@ export default function SwapPlayer() {
   const nextPage = "/swap-player";
 
   const format = matchData?.Format;
+  console.log(aggregateStats[id]?.["Batting S/R"]);
+  
 
   useEffect(() => {}, []);
   return (
@@ -28,14 +30,14 @@ export default function SwapPlayer() {
           <div className="playerShortDetails -ml-10 mt-12">
             {format &&
               ["ODI", "T20", "Test"].includes(format) &&
-              predictedTeam[id] &&
+              id &&
               (() => {
-                let battingSR = aggregateStats[predictedTeam[id]]?.["Batting S/R"];
-                let runs = aggregateStats[predictedTeam[id]]?.["Runs"];
-                let battingAvg = aggregateStats[predictedTeam[id]]?.["Batting Avg"];
-                let wickets = aggregateStats[predictedTeam[id]]?.["Wickets"];
-                let economyRate = aggregateStats[predictedTeam[id]]?.["Economy Rate"];
-                let bowlingSR = aggregateStats[predictedTeam[id]]?.["Bowling S/R"];
+                let battingSR = aggregateStats[id]?.["Batting S/R"];
+                let runs = aggregateStats[id]?.["Runs"];
+                let battingAvg = aggregateStats[id]?.["Batting Avg"];
+                let wickets = aggregateStats[id]?.["Wickets"];
+                let economyRate = aggregateStats[id]?.["Economy Rate"];
+                let bowlingSR = aggregateStats[id]?.["Bowling S/R"];
 
                 if (battingSR == null || battingSR === Infinity || battingSR < 0) {
                   battingSR = "-";
@@ -55,6 +57,9 @@ export default function SwapPlayer() {
                 if (bowlingSR == null || bowlingSR === Infinity || bowlingSR < 0) {
                   bowlingSR = "-";
                 }
+
+                console.log("battingSR", battingSR);
+                console.log(predictedTeam[id]);
 
                 return (
                   <PlayerInformation
