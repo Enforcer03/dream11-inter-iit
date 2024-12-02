@@ -5,9 +5,9 @@ from pipeline import calculate_optimal_team, evaluate_team
 from utils import load_player_fantasy_points, calculate_team_metrics
 
 # # Path to the JSON file
-T20_fantasy_points = "../data/player_fantasy_points_t20.json"
-ODI_fantasy_points = "../data/player_fantasy_points_odi.json"
-Test_fantasy_points = "../data/player_fantasy_points_test.json"
+T20_fantasy_points = "../data/processed/player_fantasy_points_t20.json"
+ODI_fantasy_points = "../data/processed/player_fantasy_points_odi.json"
+Test_fantasy_points = "../data/processed/player_fantasy_points_test.json"
 
 
 app = Flask(__name__)

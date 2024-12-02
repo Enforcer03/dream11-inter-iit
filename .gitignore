@@ -9,6 +9,7 @@ __pycache__/
 .zip
 /raw
 /old_data
+/DS_Store
 
 
 # Distribution / packaging
