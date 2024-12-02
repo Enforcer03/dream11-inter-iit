@@ -9,10 +9,6 @@ type AggregateStats = {
   Wickets: number;
 };
 
-type Formats = "T20" | "ODI" | "Test";
-
 export type AggregateApiResponse = {
-  [playerName: string]: {
-    [K in Formats]: AggregateStats;
-  };
+  [playerName: string]: AggregateStats;
 };

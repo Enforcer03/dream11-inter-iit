@@ -24,7 +24,7 @@ function PlayerList({ predictedTeam, playerStats }: { predictedTeam: string[]; p
     const matchingPlayer = playersImages.data.find((imageData) => {
       const isMatch = imageData.fullname === playerName;
       if (isMatch) {
-      imageData.image_path;
+        imageData.image_path;
       }
       return isMatch;
     });

@@ -7,10 +7,20 @@ import Button from "../components/buttonComp";
 import DisplayBox from "../components/displayBox";
 import PageTemplate from "../components/pageTemplate";
 import { PlayerStats, useMatchData } from "../contexts/matchDataContext";
+import { PlayerInfo } from "../types/modelApiResponse";
 
 function Playing11() {
-  const { date, matchData, setCovMatrix, playerStats, setPlayerStats, predictedTeam, setPredictedTeam } =
-    useMatchData();
+  const {
+    date,
+    matchData,
+    setCovMatrix,
+    playerStats,
+    setPlayerStats,
+    predictedTeam,
+    setPredictedTeam,
+    selectedPlayersTeamA,
+    selectedPlayersTeamB,
+  } = useMatchData();
 
   const [totalScore, setTotalScore] = useState(0);
   const router = useRouter();
@@ -23,7 +33,13 @@ function Playing11() {
   useEffect(() => {
     async function handleFetchPredictedPlayers() {
       try {
-        const response = await getPredicted11(date, matchData?.Format as "T20" | "Test" | "ODI");
+        const teams = Object.keys(matchData).filter((team) => team != "Format");
+        const player_info: PlayerInfo = {
+          [teams[0]]: selectedPlayersTeamA.map((player) => player.name),
+          [teams[1]]: selectedPlayersTeamB.map((player) => player.name),
+        };
+        const response = await getPredicted11(date, matchData?.Format as "T20" | "Test" | "ODI", player_info);
+        console.log(response);
         const player_stats: PlayerStats[] = JSON.parse(response.player_stats);
 
         let total_score = 0;
@@ -44,7 +60,7 @@ function Playing11() {
       }
     }
     handleFetchPredictedPlayers();
-  }, [date, matchData, setCovMatrix, setPlayerStats, setPredictedTeam]);
+  }, [date, matchData, setCovMatrix, setPlayerStats, setPredictedTeam, selectedPlayersTeamA, selectedPlayersTeamB]);
 
   return (
     <div>

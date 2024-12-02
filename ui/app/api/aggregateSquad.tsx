@@ -1,9 +1,15 @@
 import axios from "axios";
 import { AggregateApiResponse } from "@/app/types/aggregateApiResponse";
 
-export async function getAggregateStats(playerNames: string[]): Promise<AggregateApiResponse> {
+export async function getAggregateStats(
+  playerNames: string[],
+  format: "T20" | "Test" | "ODI"
+): Promise<AggregateApiResponse> {
   try {
-    const response = await axios.post("http://localhost:8080/aggregate_stats", { Players: playerNames });
+    const response = await axios.post("http://localhost:8080/aggregate_stats", {
+      Players: playerNames,
+      Format: format,
+    });
     return response.data;
   } catch (error) {
     console.error(error);

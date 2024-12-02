@@ -1,3 +1,7 @@
+export type PlayerInfo = {
+  [key: string]: string[];
+};
+
 export type ModelApiResponse = {
   best_team: string[];
   cov_matrix: string;

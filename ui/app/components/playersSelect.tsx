@@ -1,15 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import AnonymousPlayer from "./anonymousPlayer";
-import SelectedPlayer from "./selectedPlayer";
-import Button from "./buttonComp";
-import playersData from "../../public/players.json";
-import playersImages from "../../public/playerImages.json";
+import { useState } from "react";
 import countryImages from "../../public/countryImages.json";
-import PlayerInformation from "./playerInformation";
+import playersImages from "../../public/playerImages.json";
 import { useMatchData } from "../contexts/matchDataContext";
+import AnonymousPlayer from "./anonymousPlayer";
+import Button from "./buttonComp";
+import PlayerInformation from "./playerInformation";
+import SelectedPlayer from "./selectedPlayer";
 
 type SimplifiedPlayer = {
   id: number;
@@ -18,35 +17,40 @@ type SimplifiedPlayer = {
 };
 
 function PeopleDisplay() {
-  const { aggregateStats, matchData } = useMatchData();
-
+  const { aggregateStats, matchData, setSelectedPlayersTeamA, setSelectedPlayersTeamB } = useMatchData();
   const router = useRouter();
 
-  if (!aggregateStats) return null;
-
-  const playerNames = Object.keys(aggregateStats);
-  const format = matchData?.Format;
+  // if (!aggregateStats) return null;
 
   const [currentDataset, setCurrentDataset] = useState(1);
-  const [selectedPlayers, setSelectedPlayers] = useState(matchData[Object.keys(matchData).filter(team => team !== "Format")[currentDataset - 1]]);
+  const [selectedPlayers, setSelectedPlayers] = useState(
+    matchData ? matchData[Object.keys(matchData).filter((team) => team !== "Format")[currentDataset - 1]] : []
+  );
   const [selectedData, setSelectedData] = useState([]);
   const [filledDivs, setFilledDivs] = useState<(null | SimplifiedPlayer)[]>(Array(11).fill(null));
-  const [details, setDetails] = useState({id: 0, name: matchData[Object.keys(matchData).filter(team => team !== "Format")[currentDataset - 1]][0]});
+  const [details, setDetails] = useState(
+    matchData && {
+      id: 0,
+      name: matchData[Object.keys(matchData).filter((team) => team !== "Format")[currentDataset - 1]][0],
+    }
+  );
 
-  const handleSelection = () => {playerNames
+  const format = matchData?.Format;
+
+  function handleSelection() {
     const simplifiedPlayers = selectedPlayers.slice(0, 11).map((player, index) => ({
       id: index,
       name: player,
       image: getPlayerImagePath(player),
     }));
     setFilledDivs(simplifiedPlayers);
-  };
+  }
 
-  const handleDetails = (player: (typeof playersData.players)[0]) => {
+  function handleDetails(player: (typeof playersData.players)[0]) {
     setDetails(player);
-  };
+  }
 
-  const handleOptionClick = (player: (typeof playersData.players)[0]) => {
+  function handleOptionClick(player: (typeof playersData.players)[0]) {
     handleDetails(player);
     if (filledDivs.some((filledPlayer) => filledPlayer?.id === player.id)) {
       return;
@@ -70,41 +74,41 @@ function PeopleDisplay() {
     setSelectedData((prevSelectedDivs) => {
       return [...prevSelectedDivs, player];
     });
-  };
+  }
 
-  const handleEmptyDivClick = (index: number) => {
+  function handleEmptyDivClick(index: number) {
     setFilledDivs((prev) => {
       const newFilledDivs = [...prev];
       newFilledDivs[index] = null;
       return newFilledDivs;
     });
-  };
+  }
 
-  const handleNext = () => {
+  function handleNext() {
     if (currentDataset === 1) {
       setCurrentDataset(2);
-      setSelectedPlayers(matchData[Object.keys(matchData).filter(team => team !== "Format")[1]]);
-      setDetails({id: 0, name: matchData[Object.keys(matchData).filter(team => team !== "Format")[1]][0]});
+      setSelectedPlayers(matchData[Object.keys(matchData).filter((team) => team !== "Format")[1]]);
+      setDetails({ id: 0, name: matchData[Object.keys(matchData).filter((team) => team !== "Format")[1]][0] });
       setSelectedData(filledDivs.filter((player) => player !== null));
+      setSelectedPlayersTeamA(filledDivs.filter((player) => player !== null));
       setFilledDivs(Array(11).fill(null));
     }
-  };
+  }
 
-  const displaySelected = () => {
+  function displaySelected() {
     setSelectedData((prevSelectedData) => {
-      const updatedSelectedData = [
-        ...prevSelectedData,
-        ...filledDivs.filter((player) => player !== null)
-      ];
+      const updatedSelectedData = [...prevSelectedData, ...filledDivs.filter((player) => player !== null)];
       return updatedSelectedData;
     });
+
+    setSelectedPlayersTeamB(filledDivs.filter((player) => player !== null));
 
     setFilledDivs(Array(11).fill(null));
 
     router.push(nextPage);
   }
 
-  const getPlayerImagePath = (playerName: string) => {
+  function getPlayerImagePath(playerName: string) {
     let nameParts = playerName.split(" ");
     let lastName = nameParts[nameParts.length - 1];
     const matchingPlayer = playersImages.data.find((imageData) => {
@@ -119,7 +123,7 @@ function PeopleDisplay() {
     }
 
     return matchingPlayer ? matchingPlayer.image_path : playersImages.data[4].image_path;
-  };
+  }
 
   const prevPage = "/select-match";
   const nextPage = "/playing11";
@@ -129,80 +133,83 @@ function PeopleDisplay() {
 
   const isNextActive = currentDataset === 1 || countTeam1 + countTeam2 >= 11;
 
+  if (!aggregateStats) return null;
+
   return (
     <div>
       <div className="playerShortDetails">
-        {format && ['ODI', 'T20', 'Test'].includes(format) && details.name && (() => {
+        {format &&
+          ["ODI", "T20", "Test"].includes(format) &&
+          details.name &&
+          (() => {
+            let battingSR = aggregateStats[details.name]?.["Batting S/R"];
+            let runs = aggregateStats[details.name]?.["Runs"];
+            let battingAvg = aggregateStats[details.name]?.["Batting Avg"];
+            let wickets = aggregateStats[details.name]?.["Wickets"];
+            let economyRate = aggregateStats[details.name]?.["Economy Rate"];
+            let bowlingSR = aggregateStats[details.name]?.["Bowling S/R"];
 
-          let battingSR = aggregateStats[details.name]?.[format]?.["Batting S/R"];
-          let runs = aggregateStats[details.name]?.[format]?.["Runs"];
-          let battingAvg = aggregateStats[details.name]?.[format]?.["Batting Avg"];
-          let wickets = aggregateStats[details.name]?.[format]?.["Wickets"];
-          let economyRate = aggregateStats[details.name]?.[format]?.["Economy Rate"];
-          let bowlingSR = aggregateStats[details.name]?.[format]?.["Bowling S/R"];
+            if (battingSR == null || battingSR === Infinity || battingSR < 0) {
+              battingSR = "-";
+            }
+            if (runs == null || runs === Infinity || runs < 0) {
+              runs = "-";
+            }
+            if (battingAvg == null || battingAvg === Infinity || battingAvg < 0) {
+              battingAvg = "-";
+            }
+            if (wickets == null || wickets === Infinity || wickets < 0) {
+              wickets = "-";
+            }
+            if (economyRate == null || economyRate === Infinity || economyRate < 0) {
+              economyRate = "-";
+            }
+            if (bowlingSR == null || bowlingSR === Infinity || bowlingSR < 0) {
+              bowlingSR = "-";
+            }
 
-          if (battingSR == null || battingSR === Infinity || battingSR < 0) {
-            battingSR = "-";
-          }
-          if (runs == null || runs === Infinity || runs < 0) {
-            runs = "-";
-          }
-          if (battingAvg == null || battingAvg === Infinity || battingAvg < 0) {
-            battingAvg = "-";
-          }
-          if (wickets == null || wickets === Infinity || wickets < 0) {
-            wickets = "-";
-          }
-          if (economyRate == null || economyRate === Infinity || economyRate < 0) {
-            economyRate = "-";
-          }
-          if (bowlingSR == null || bowlingSR === Infinity || bowlingSR < 0) {
-            bowlingSR = "-";
-          }
-
-          return (
-            <PlayerInformation
-              title={"PLAYER SELECTION"}
-              child2={details.name}
-              child3={getPlayerImagePath(details.name)}
-              child4={countryImages.data[0].image_path}
-              child5={battingSR}
-              child6={runs}
-              child7={battingAvg}
-              child8={wickets}
-              child9={economyRate}
-              child10={bowlingSR}
-            />
-          );
-        })()}
+            return (
+              <PlayerInformation
+                title={"PLAYER SELECTION"}
+                child2={details.name}
+                child3={getPlayerImagePath(details.name)}
+                child4={countryImages.data[0].image_path}
+                child5={battingSR}
+                child6={runs}
+                child7={battingAvg}
+                child8={wickets}
+                child9={economyRate}
+                child10={bowlingSR}
+              />
+            );
+          })()}
       </div>
 
       <div className="selectionListDiv">
         <div className="players-list ">
           {(() => {
-            const firstTeam = Object.keys(matchData).filter(team => team !== "Format")[currentDataset - 1];
+            const firstTeam = Object.keys(matchData).filter((team) => team !== "Format")[currentDataset - 1];
             const teamPlayers = matchData[firstTeam];
 
             return teamPlayers.map((playerName, playerIndex) => {
               const playerStats = aggregateStats[playerName];
-              let battingAvg = format && ['ODI', 'T20', 'Test'].includes(format)
-                ? playerStats[format]["Batting Avg"]
-                : "No data";
+              let battingAvg =
+                format && ["ODI", "T20", "Test"].includes(format) ? playerStats["Batting Avg"] : "No data";
 
-              let wickets = playerStats[format]?.["Wickets"];
-              let bowling = playerStats[format]?.["Bowling S/R"];
-              let battingSR = playerStats[format]["Batting S/R"];
+              let wickets = playerStats["Wickets"];
+              let bowling = playerStats["Bowling S/R"];
+              let battingSR = playerStats["Batting S/R"];
 
-              if (battingAvg == null || battingAvg === Infinity || battingAvg < 0) {
+              if (battingAvg == null || battingAvg === "Infinity" || battingAvg < 0) {
                 battingAvg = "-";
               }
-              if (wickets == null || wickets === Infinity || wickets < 0) {
+              if (wickets == null || wickets === "Infinity" || wickets < 0) {
                 wickets = "-";
               }
-              if (bowling == null || bowling === Infinity || bowling < 0) {
+              if (bowling == null || bowling === "Infinity" || bowling < 0) {
                 bowling = "-";
               }
-              if (battingSR == null || battingSR === Infinity || battingSR < 0) {
+              if (battingSR == null || battingSR === "Infinity" || battingSR < 0) {
                 battingSR = "-";
               }
 
@@ -211,9 +218,7 @@ function PeopleDisplay() {
                   key={`${firstTeam}-${playerIndex}`}
                   onClick={() => handleOptionClick({ id: playerIndex, name: playerName })}
                   className={`text-center cursor-pointer badge-bg ${
-                    filledDivs.some((filledPlayer) => filledPlayer?.id === playerName.id)
-                      ? "cursor-not-allowed"
-                      : ""
+                    filledDivs.some((filledPlayer) => filledPlayer?.id === playerName.id) ? "cursor-not-allowed" : ""
                   }`}
                   style={{ minHeight: "150px" }}
                 >

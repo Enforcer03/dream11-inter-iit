@@ -17,6 +17,10 @@ interface MatchDataContextProps {
   setPredictedTeam: React.Dispatch<React.SetStateAction<string[]>>;
   playerStats: PlayerStats[];
   setPlayerStats: React.Dispatch<React.SetStateAction<PlayerStats[]>>;
+  selectedPlayersTeamA: string[];
+  setSelectedPlayersTeamA: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedPlayersTeamB: string[];
+  setSelectedPlayersTeamB: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export type PlayerStats = {
@@ -38,6 +42,8 @@ export const MatchDataProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [covMatrix, setCovMatrix] = useState<string>("");
   const [predictedTeam, setPredictedTeam] = useState<string[]>([]);
   const [playerStats, setPlayerStats] = useState<PlayerStats[]>([]);
+  const [selectedPlayersTeamA, setSelectedPlayersTeamA] = useState<string[]>([]);
+  const [selectedPlayersTeamB, setSelectedPlayersTeamB] = useState<string[]>([]);
 
   return (
     <MatchDataContext.Provider
@@ -54,6 +60,10 @@ export const MatchDataProvider: React.FC<{ children: ReactNode }> = ({ children 
         setPredictedTeam,
         playerStats,
         setPlayerStats,
+        selectedPlayersTeamA,
+        setSelectedPlayersTeamA,
+        selectedPlayersTeamB,
+        setSelectedPlayersTeamB,
       }}
     >
       {children}

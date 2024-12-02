@@ -133,7 +133,7 @@ function SelectMatchScreen() {
 
       const combinePlayerList = teamPlayers.map((team) => team.players).flat();
 
-      const response = await getAggregateStats(combinePlayerList);
+      const response = await getAggregateStats(combinePlayerList, matchData["Format"]);
       setAggregateStats(response);
       router.push(nextPage);
     } catch (error) {

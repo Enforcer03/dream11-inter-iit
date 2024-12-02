@@ -1,7 +1,11 @@
 import axios from "axios";
-import { ModelApiResponse, RevaluateTeamApiResponse } from "@/app/types/modelApiResponse";
+import { ModelApiResponse, PlayerInfo, RevaluateTeamApiResponse } from "@/app/types/modelApiResponse";
 
-export async function getPredicted11(date: string, format: "T20" | "Test" | "ODI"): Promise<ModelApiResponse> {
+export async function getPredicted11(
+  date: string,
+  format: "T20" | "Test" | "ODI",
+  player_info: PlayerInfo
+): Promise<ModelApiResponse> {
   try {
     const obj = { date, format, player_info };
     const response = await axios.post("http://localhost:8089/generate_best_team", obj);
