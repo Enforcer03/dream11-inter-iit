@@ -4,7 +4,7 @@ import json
 
 
 # Path to the JSON file
-T20_aggregate_points = "T20_aggregate_data.json"
+T20_aggregate_points = "./data/data/processed/T20_aggregate_data.json"
 ODI_ODM_aggregate_points = "ODI_ODM_aggregate_data.json"
 Test_MDM_aggregate_points = "Test_MDM_aggregate_data.json"
 

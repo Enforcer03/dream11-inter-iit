@@ -166,3 +166,5 @@ cython_debug/
 
 myenv/
 APIs/*.json
+
+data/

@@ -11,7 +11,7 @@ export async function getPredicted11(
     const formattedDate = `${year}-${month}-${day}`;
 
     const obj = { date: formattedDate, format, player_info };
-    const response = await axios.post("http://localhost:8089/generate_best_team", obj);
+    const response = await axios.post("http://localhost:8080/generate_best_team", obj);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -26,7 +26,7 @@ export async function revaluateTeamSwap(
 ): Promise<RevaluateTeamApiResponse> {
   try {
     const obj = { best_team, player_stats, cov_matrix };
-    const response = await axios.post("http://localhost:8089/team_evaluation", obj);
+    const response = await axios.post("http://localhost:8080/team_evaluation", obj);
     return response.data;
   } catch (error) {
     console.error(error);

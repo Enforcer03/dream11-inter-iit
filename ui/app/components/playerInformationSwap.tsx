@@ -61,7 +61,7 @@ function PlayerInformationSwap({
   child3,
   child4,
   selectedPlayersTeamA,
-  selectedPlayersTeamB
+  selectedPlayersTeamB,
 }: PlayerInformationSwapProps) {
   const formatName = (name: string) => {
     if (name.length > 13) {
@@ -83,8 +83,16 @@ function PlayerInformationSwap({
       ((newTeamStats.team_consistency_score - teamStats.team_consistency_score) * 100) /
       teamStats?.team_consistency_score;
     newDiversityScorePercent =
-      ((newTeamStats.team_diversity_score - teamStats.team_diversity_score) * 100) / teamStats?.team_diversity_score;
+      ((Math.pow(newTeamStats.team_diversity_score, 1) - Math.pow(teamStats.team_diversity_score, 1)) * 100) /
+      Math.pow(teamStats?.team_diversity_score, 1);
+    // newDiversityScorePercent =
+    //   ((Math.pow(newTeamStats.team_diversity_score, 2.7) - Math.pow(teamStats.team_diversity_score, 2.7)) * 100) /
+    //   Math.pow(teamStats?.team_diversity_score, 2.7);
     newFormScorePercent = ((newTeamStats.form_score - teamStats.form_score) * 100) / teamStats?.form_score;
+
+    newConsistencyScorePercent = newConsistencyScorePercent.toFixed(2);
+    newDiversityScorePercent = newDiversityScorePercent.toFixed(2);
+    newFormScorePercent = newFormScorePercent.toFixed(2);
   }
 
   let runsDiff, battingSRDiff, bowlingSRDiff, economyRateDiff;
@@ -124,11 +132,15 @@ function PlayerInformationSwap({
               <div className="w-4/6">
                 <span>{playerInfo?.Runs < 0 || playerInfo?.Runs === "Infinity" ? "-" : playerInfo?.Runs}</span>
                 <span className={`${runsDiff > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
-                  {hoverPlayerStats
-                    ? runsDiff > 0
-                      ? `${runsDiff} ${String.fromCharCode(8593)}`
-                      : `${runsDiff * -1} ${String.fromCharCode(8595)}`
-                    : null}
+                  {hoverPlayerStats ? (
+                    runsDiff > 0 ? (
+                      `${runsDiff} ${String.fromCharCode(8595)}`
+                    ) : (
+                      `${runsDiff * -1} ${String.fromCharCode(8593)}`
+                    )
+                  ) : (
+                    <span className="text-gray-500">HOVER TO VIEW</span>
+                  )}
                 </span>
               </div>
             </div>
@@ -145,22 +157,24 @@ function PlayerInformationSwap({
                 </span>
                 <span className={`${battingSRDiff > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
                   {hoverPlayerStats
-                    ? battingSRDiff > 0
-                      ? `${battingSRDiff} ${String.fromCharCode(8593)}`
-                      : `${battingSRDiff * -1} ${String.fromCharCode(8595)}`
+                    ? battingSRDiff < 0
+                      ? `${battingSRDiff} ${String.fromCharCode(8595)}`
+                      : `${battingSRDiff * -1} ${String.fromCharCode(8593)}`
                     : null}
                 </span>
               </div>
               <div className="w-4/6">
-                {newTeamStats ? (
-                  newConsistencyScorePercent < 0 ? (
-                    `${(newConsistencyScorePercent * -1).toFixed(1)}% ${String.fromCharCode(8593)}`
+                <span className={`${newConsistencyScorePercent < 0 ? "text-red-500" : "text-green-500"}`}>
+                  {newTeamStats ? (
+                    newConsistencyScorePercent < 0 ? (
+                      `${newConsistencyScorePercent * -1}% ${String.fromCharCode(8595)}`
+                    ) : (
+                      `${newConsistencyScorePercent}% ${String.fromCharCode(8593)}`
+                    )
                   ) : (
-                    `${newConsistencyScorePercent.toFixed(1)}% ${String.fromCharCode(8595)}`
-                  )
-                ) : (
-                  <span className="text-gray-500">HOVER TO VIEW</span>
-                )}
+                    <span className="text-gray-500">HOVER TO VIEW</span>
+                  )}
+                </span>
               </div>
             </div>
             <div className="flex text-dream11FontColor">
@@ -176,22 +190,24 @@ function PlayerInformationSwap({
                 </span>
                 <span className={`${bowlingSRDiff > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
                   {hoverPlayerStats
-                    ? bowlingSRDiff > 0
-                      ? `${bowlingSRDiff} ${String.fromCharCode(8593)}`
-                      : `${bowlingSRDiff * -1} ${String.fromCharCode(8595)}`
+                    ? bowlingSRDiff < 0
+                      ? `${bowlingSRDiff} ${String.fromCharCode(8595)}`
+                      : `${bowlingSRDiff * -1} ${String.fromCharCode(8593)}`
                     : null}
                 </span>
               </div>
               <div className="w-4/6">
-                {newTeamStats ? (
-                  newDiversityScorePercent < 0 ? (
-                    `${(newDiversityScorePercent * -1).toFixed(1)}% ${String.fromCharCode(8593)}`
+                <span className={`${newDiversityScorePercent < 0 ? "text-red-500" : "text-green-500"}`}>
+                  {newTeamStats ? (
+                    newDiversityScorePercent < 0 ? (
+                      `${newDiversityScorePercent * -1}% ${String.fromCharCode(8595)}`
+                    ) : (
+                      `${newDiversityScorePercent}% ${String.fromCharCode(8593)}`
+                    )
                   ) : (
-                    `${newDiversityScorePercent.toFixed(1)}% ${String.fromCharCode(8595)}`
-                  )
-                ) : (
-                  <span className="text-gray-500">HOVER TO VIEW</span>
-                )}
+                    <span className="text-gray-500">HOVER TO VIEW</span>
+                  )}
+                </span>
               </div>
             </div>
             <div className="flex text-dream11FontColor">
@@ -207,22 +223,24 @@ function PlayerInformationSwap({
                 </span>
                 <span className={`${economyRateDiff > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
                   {hoverPlayerStats
-                    ? economyRateDiff > 0
-                      ? `${economyRateDiff} ${String.fromCharCode(8593)}`
-                      : `${economyRateDiff * -1} ${String.fromCharCode(8595)}`
+                    ? economyRateDiff < 0
+                      ? `${economyRateDiff} ${String.fromCharCode(8595)}`
+                      : `${economyRateDiff * -1} ${String.fromCharCode(8593)}`
                     : null}
                 </span>
               </div>
               <div className="w-4/6">
-                {newTeamStats ? (
-                  newFormScorePercent < 0 ? (
-                    `${(newFormScorePercent * -1).toFixed(1)}% ${String.fromCharCode(8593)}`
+                <span className={`${newFormScorePercent < 0 ? "text-red-500" : "text-green-500"}`}>
+                  {newTeamStats ? (
+                    newFormScorePercent < 0 ? (
+                      `${newFormScorePercent * -1}% ${String.fromCharCode(8595)}`
+                    ) : (
+                      `${newFormScorePercent}% ${String.fromCharCode(8593)}`
+                    )
                   ) : (
-                    `${newFormScorePercent.toFixed(1)}% ${String.fromCharCode(8595)}`
-                  )
-                ) : (
-                  <span className="text-gray-500">HOVER TO VIEW</span>
-                )}
+                    <span></span>
+                  )}
+                </span>
               </div>
             </div>
           </div>

@@ -6,7 +6,7 @@ export async function getAggregateStats(
   format: "T20" | "Test" | "ODI"
 ): Promise<AggregateApiResponse> {
   try {
-    const response = await axios.post("http://localhost:8080/aggregate_stats", {
+    const response = await axios.post("http://localhost:3002/aggregate_stats", {
       Players: playerNames,
       Format: format,
     });
