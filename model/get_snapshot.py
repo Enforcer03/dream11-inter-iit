@@ -8,7 +8,7 @@ import datetime
 import re
 import numpy as np
 import scipy.stats as stats
-from heuristic_solver import compute_player_stats, compute_covariance_matrix, optimize_team_advanced
+from heuristic_solver import compute_player_stats, compute_covariance_matrix, optimize_team_advanced, optimize_team_advanced_test
 import pandas as pd
 from tqdm import tqdm
 
@@ -24,7 +24,7 @@ def extract_date_from_match_key(match_key):
 
 def get_team_selection_snapshot(match_keys, match_data, fantasy_points, 
                            optim_fantasy_points_t20, optim_fantasy_points_odi, 
-                           optim_fantasy_points_test, input_date=None):
+                           optim_fantasy_points_test, input_date=None, num_matches =50, quantile_form=75, consistency_threshold =0.5, form_threshold =0.333, diversity_threshold=0.5):
     """
     Generate a CSV snapshot of team selections after a specified date
     
@@ -59,9 +59,9 @@ def get_team_selection_snapshot(match_keys, match_data, fantasy_points,
         # Determine match format from key suffix
         if match_key.endswith('T20'):
             optim_fantasy_points = optim_fantasy_points_t20
-        elif match_key.endswith('ODM'):
+        elif match_key.endswith('ODM') or  match_key.endswith('ODI'):
             optim_fantasy_points = optim_fantasy_points_odi
-        elif match_key.endswith('Test'):
+        elif match_key.endswith('Test') or match_key.endswith('MDM'):
             optim_fantasy_points = optim_fantasy_points_test
         else:
             print(f"Unknown format for match: {match_key}")
@@ -86,7 +86,7 @@ def get_team_selection_snapshot(match_keys, match_data, fantasy_points,
         stats_df = compute_player_stats(
             optim_fantasy_points,
             list(all_players),
-            num_matches=50,
+            num_matches=num_matches,
             date_of_match=match_date_str
         )
         
@@ -95,7 +95,7 @@ def get_team_selection_snapshot(match_keys, match_data, fantasy_points,
             cov_matrix = compute_covariance_matrix(
                 optim_fantasy_points,
                 stats_df['player'].tolist(),
-                num_matches=50,
+                num_matches=num_matches,
                 date_of_match=match_date_str
             )
             
@@ -103,10 +103,15 @@ def get_team_selection_snapshot(match_keys, match_data, fantasy_points,
             stats_df['team'] = stats_df['player'].map(player_team_mapping)
             
             # Optimize team using advanced optimizer
-            selected_players, weights_df = optimize_team_advanced(
+            selected_players, weights_df = optimize_team_advanced_test(
                 stats_df, 
                 cov_matrix,
-                boolean=True
+                boolean=True,
+                quantile_form=quantile_form,
+                consistency_threshold=consistency_threshold,
+                form_threshold=form_threshold,
+                diversity_threshold= diversity_threshold
+
             )
             
             if weights_df is not None and not weights_df.empty:

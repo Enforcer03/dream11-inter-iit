@@ -3,12 +3,12 @@
 import pandas as pd
 import numpy as np
 import datetime
-from heuristic_solver import compute_player_stats, compute_covariance_matrix, optimize_team_advanced, optimize_team_sharpe
+from heuristic_solver import compute_player_stats, compute_covariance_matrix, optimize_team_advanced, optimize_team_sharpe, optimize_team_advanced_test
 from utils import load_player_fantasy_points, calculate_team_metrics
 import requests
 import json
 
-def calculate_optimal_team(player_info, num_matches=50, date_of_match=None, risk_tolerance=1.0, solver='pulp', fantasy_points_data=None):
+def calculate_optimal_team(player_info, num_matches=50, date_of_match=None, risk_aversion=0.1, solver='pulp', fantasy_points_data=None):
     """
     Given a list of player names (combined squad), calculates the optimal team.
     Returns selected_players and stats_df.
@@ -79,13 +79,13 @@ def calculate_optimal_team(player_info, num_matches=50, date_of_match=None, risk
     stats_df['team'] = stats_df['player'].map(player_team_mapping)
 
     # Select optimizer based on solver argument
-    optimizer = optimize_team_advanced if solver == 'pulp' else optimize_team_sharpe
+    optimizer = optimize_team_advanced_test if solver == 'pulp' else optimize_team_sharpe
 
     # Optimize team selection
     selected_players, weights_df = optimizer(
         stats_df, 
         cov_matrix, 
-        risk_aversion=risk_tolerance, 
+        risk_aversion=risk_aversion, 
         boolean=True
     )
 

@@ -13,7 +13,8 @@ from heuristic_solver import (
     compute_player_stats,
     compute_covariance_matrix,
     optimize_team_sharpe,
-    optimize_team_advanced
+    optimize_team_advanced,
+    optimize_team_advanced_test
 )
 import datetime
 from utils import get_optimal_team_llm, get_past_match_performance, best_team_button, extract_date_from_match_key, plot_team_distribution, calculate_team_metrics
@@ -76,8 +77,8 @@ st.markdown("""
 st.sidebar.image("logo-model-ui.jpg")
 st.sidebar.header("OPTIONS")
 format_selected = st.sidebar.selectbox("Select Format", ['T20', 'ODI', 'Test'])
-upload_sample = st.sidebar.checkbox("Load Sample Players from JSON")
-manual_input = st.sidebar.checkbox("Add Players Manually")
+# upload_sample = st.sidebar.checkbox("Load Sample Players from JSON")
+# manual_input = st.sidebar.checkbox("Add Players Manually")
 squad_info = st.sidebar.checkbox("Load squads from scheduled matches")
 get_team_snapshot = st.sidebar.checkbox("Get Selection CSV")
 # assess_players = st.sidebar.checkbox("Assess Players from the squads")
@@ -86,42 +87,25 @@ with st.sidebar.expander("📊 Optimization Framework", expanded=True):
     st.markdown("""
     ### Solver Options
                 
-    **1. PuLP Optimizer(PREFERRED)**
+    **1. PuLP Optimizer**
     $$
     \\begin{align*}
-    & \\text{maximize} && \\sum_{i=1}^{n} \\mu_i x_i \\\\
+    & \\text{maximize} && \\sum_{i=1}^{n} \\mu_i x_i - \\lambda \\sum_{i=1}^{n} \\sigma_i x_i \\\\
     & \\text{subject to:} && \\\\
     & \\text{1. Team Size} && \\sum_{i=1}^{n} x_i = 11 \\\\
-    & \\text{2. Consistency} && \\sum_{i=1}^{n} \\frac{\\mu_i}{\\sigma_i} x_i \\geq \\frac{11}{2} \\cdot \\mathbb{E}[\\frac{\\mu}{\\sigma}] \\\\
-    & \\text{3. Diversity} && \\sum_{i=1}^{n} H(\\frac{\\mu_i}{\\sum_j \\mu_j}) x_i \\geq \\frac{11}{2} H(\\mathbf{\\mu}) \\\\
-    & \\text{4. Form} && \\sum_{i: \\mu_i \\geq Q_{75}(\\mu)} x_i \\geq \\frac{11}{3} \\\\
+    & \\text{2. Consistency} && \\sum_{i=1}^{n} \\frac{\\mu_i}{\\sigma_i} x_i \\geq \\alpha_1 \\cdot \\mathbb{E}[\\frac{\\mu}{\\sigma}] \\\\
+    & \\text{3. Diversity} && \\sum_{i=1}^{n} H(\\frac{\\mu_i}{\\sum_j \\mu_j}) x_i \\geq \\alpha_2 \\cdot H(\\mathbf{\\mu}) \\\\
+    & \\text{4. Form} && \\sum_{i: \\mu_i \\geq Q_{q}(\\mu)} x_i \\geq \\alpha_3 \\cdot 11 \\\\
     & \\text{5. Team Coverage} && \\sum_{i \\in T_k} x_i \\geq 1 \\quad \\forall k \\in \\text{Teams} \\\\
     & \\text{where:} && x_i \\in \\{0,1\\} \\text{ for all } i \\\\
-    &&& T_k \\text{ players from team }k
+    &&& T_k \\text{ players from team } k \\\\
+    &&& \\lambda \\text{ is the risk aversion factor} \\\\
+    &&& \\alpha_1 \\text{ is the consistency threshold} \\\\
+    &&& \\alpha_2 \\text{ is the diversity threshold} \\\\
+    &&& \\alpha_3 \\text{ is the form threshold} \\\\
+    &&& q \\text{ is the form quantile threshold}
     \\end{align*}
     $$
-    
-    **2. CVXPY Optimizer**
-    $$
-    \\begin{align*}
-    \\text{maximize} & \\quad \\mu^T w - \\lambda w^T \\Sigma w \\\\
-    \\text{subject to:} & \\quad \\sum_{i=1}^n w_i = 11 \\\\
-    & \\quad w_i \\in \\{0,1\\} \\quad \\forall i \\\\
-    & \\quad \\Sigma \\succeq 0 \\text{ (Positive Semi Definite)}
-    \\end{align*}
-    $$
-    where:
-    - $\\mu$: mean points vector
-    - $\\Sigma$: covariance matrix (made PSD)
-    - $\\lambda$: risk aversion parameter
-    - $w$: binary selection vector
-    
-    **Solver Cascade:**
-    1. GUROBI (primary)
-    2. CBC (fallback)
-    3. SCS (final fallback)
-    
-    
     """)
 
 # Add Technical Guidelines in Sidebar
@@ -129,16 +113,39 @@ with st.sidebar.expander("🎯 Technical Guidelines", expanded=True):
     st.markdown("""
     ### Key Parameters
     
-    **1. Risk Tolerance (λ)**
-    $$\\lambda \\in [0.01, 10.0]$$
-    - Lower λ: Aggressive optimization
-    - Higher λ: Conservative selection
+    **1. Risk Aversion (λ)**
+    $$\\lambda \\in [0.01, 0.3], \\text{ default} = 0.1$$
+    - Balances expected points vs. risk
+    - Higher λ: Lesser deviation in performance ratio
     
     **2. Historical Window**
-    $$N_{matches} \\in [20, 500]$$
-    - Affects covariance estimation
-    - Impacts mean return calculation
-
+    $$N_{matches} \\in [20, 500], \\text{ default} = 50$$
+    - Number of past matches to analyze
+    - Affects statistical estimations
+    
+    **3. Consistency Threshold (α₁)**
+    $$\\alpha_1 \\in [0.1, 1.0], \\text{ default} = 0.5$$
+    - Minimum required Sharpe ratio
+    - Controls reliability of selections
+    
+    **4. Diversity Threshold (α₂)**
+    $$\\alpha_2 \\in [0.1, 1.0], \\text{ default} = 0.5$$
+    - Enforces point distribution entropy
+    - Prevents over-reliance on few players
+    
+    **5. Form Threshold (α₃)**
+    $$\\alpha_3 \\in [0.1, 1.0], \\text{ default} = 0.333$$
+    - Proportion of in-form players
+    - Based on form quantile cutoff
+    
+    **6. Form Quantile (q)**
+    $$q \\in [50, 90], \\text{ default} = 75$$
+    - Percentile cutoff for form consideration
+    - Higher q: More selective on recent performance
+    
+    **7. Team Coverage**
+    - Minimum one player per team
+    - Ensures balanced representation
     """)
 
 format_lower = format_selected.lower().replace('-', '').replace(' ', '')
@@ -159,11 +166,11 @@ except FileNotFoundError:
     st.error(f"Fantasy points JSON file for {format_selected} not found.")
     st.stop()
 
-try:
-    aggregate_stats = load_sample_players(aggregate_stats_path)
-except FileNotFoundError:
-    st.error(f"Aggregate stats JSON file for {format_selected} not found.")
-    st.stop()
+# try:
+#     aggregate_stats = load_sample_players(aggregate_stats_path)
+# except FileNotFoundError:
+#     st.error(f"Aggregate stats JSON file for {format_selected} not found.")
+#     st.stop()
 
 
 
@@ -261,114 +268,155 @@ if get_team_snapshot:
         st.session_state.snapshot_df = None
     if 'last_date_filter' not in st.session_state:
         st.session_state.last_date_filter = None
+    if 'analysis_generated' not in st.session_state:
+        st.session_state.analysis_generated = False
     
     # Set default date to July 6th, 2024
     default_date = datetime.date(2024, 7, 6)
     date_filter = default_date
-    #     "Show selections after date:",
-    #     value=default_date
-    # )
     
-    # Only regenerate snapshot if date filter changes
-    all_paths = [f"../data/player_fantasy_points_{format_lower}.json" for format_lower in ["t20", "odi", "test"]
-]
-    if date_filter != st.session_state.last_date_filter:
-        st.session_state.snapshot_df = get_team_selection_snapshot(
-            match_keys,
-            match_data,
-            fantasy_points,
-            get_optim_file(all_paths[0]),
-            get_optim_file(all_paths[1]),
-            get_optim_file(all_paths[2]),
-            input_date=date_filter
-        )
-        st.session_state.last_date_filter = date_filter
-    
-    snapshot_df = st.session_state.snapshot_df
-    
-    if snapshot_df is not None and not snapshot_df.empty:
-        st.success(f"Generated snapshot for {len(snapshot_df)} matches")
+    st.write("Analysis will include matches from July 6th, 2024 onward")
+
+    # Add a button to trigger the analysis
+    if st.button("Generate Team Selection Analysis", key="generate_analysis") or st.session_state.analysis_generated:
+        st.session_state.analysis_generated = True
+        all_paths = [f"../data/player_fantasy_points_{format_lower}.json" for format_lower in ["t20", "odi", "test"]]
         
-        # Display snapshot with formatted columns
-        display_df = format_display_dataframe(snapshot_df)
-        st.dataframe(display_df)
-        
-        # Download button
-        csv = snapshot_df.to_csv(index=False)
-        st.download_button(
-            "Download CSV",
-            csv,
-            "team_selections.csv",
-            "text/csv",
-            key='download-csv'
-        )
-        
-        # Visualization section
-        if st.checkbox("Show Performance Visualizations"):
-            trend_fig, dist_fig = create_performance_plots(snapshot_df)
+        # Show loading message while processing
+        if date_filter != st.session_state.last_date_filter:
+            with st.spinner('Analyzing team selections... This may take a few moments.'):
+                st.session_state.snapshot_df = get_team_selection_snapshot(
+                    match_keys,
+                    match_data,
+                    fantasy_points,
+                    get_optim_file(all_paths[0]),
+                    get_optim_file(all_paths[1]),
+                    get_optim_file(all_paths[2]),
+                    input_date=date_filter,
+                    quantile_form=40,
+                    num_matches=40
+                )
+                st.session_state.last_date_filter = date_filter
+
+        snapshot_df = st.session_state.snapshot_df
+
+        if snapshot_df is not None and not snapshot_df.empty:
+            st.success(f"Generated snapshot for {len(snapshot_df)} matches")
             
-            if dist_fig:
-                st.plotly_chart(dist_fig)
-                
-                # Add summary statistics
-                col1, col2, col3, col4 = st.columns(4)
-                with col1:
-                    st.metric(
-                        "Mean Performance",
-                        f"{snapshot_df['performance_ratio'].mean():.2%}"
-                    )
-                with col2:
-                    st.metric(
-                        "Median Performance",
-                        f"{snapshot_df['performance_ratio'].median():.2%}"
-                    )
-                with col3:
-                    st.metric(
-                        "Best Performance",
-                        f"{snapshot_df['performance_ratio'].max():.2%}"
-                    )
-                with col4:
-                    st.metric(
-                        "Worst Performance",
-                        f"{snapshot_df['performance_ratio'].min():.2%}"
-                    )
-    else:
-        st.warning("No matches found after the specified date.")
+            # Display snapshot with formatted columns
+            display_df = format_display_dataframe(snapshot_df)
+            st.dataframe(display_df)
+            
+            # Calculate metrics
+            map_actual_optimal = np.mean(np.abs(snapshot_df['actual_score'] - snapshot_df['optimal_score']))
+            mape_actual_optimal = np.mean(np.abs((snapshot_df['actual_score'] - snapshot_df['optimal_score']) / snapshot_df['optimal_score'])) * 100
+            map_actual_predicted = np.mean(np.abs(snapshot_df['actual_score'] - snapshot_df['predicted_score']))
+            mape_actual_predicted = np.mean(np.abs((snapshot_df['actual_score'] - snapshot_df['predicted_score']) / snapshot_df['predicted_score'])) * 100
 
+            # Display metrics in columns
+            st.markdown("### Performance Metrics")
+            col1, col2, col3, col4 = st.columns(4)
+            
+            with col1:
+                st.metric(
+                    "MAP (Actual vs Optimal)",
+                    f"{map_actual_optimal:.2f}",
+                    help="Mean Absolute Performance difference between Actual and Optimal points"
+                )
+            
+            with col2:
+                st.metric(
+                    "MAPE (Actual vs Optimal)",
+                    f"{mape_actual_optimal:.2f}%",
+                    help="Mean Absolute Percentage Error between Actual and Optimal points"
+                )
+            
+            with col3:
+                st.metric(
+                    "MAP (Actual vs Predicted)",
+                    f"{map_actual_predicted:.2f}",
+                    help="Mean Absolute Performance difference between Actual and Predicted points"
+                )
+            
+            with col4:
+                st.metric(
+                    "MAPE (Actual vs Predicted)",
+                    f"{mape_actual_predicted:.2f}%",
+                    help="Mean Absolute Percentage Error between Actual and Predicted points"
+                )
 
-player_data = []
-if upload_sample:
-    try:
-        teams = load_sample_players("sample_players.json")
-        for team_idx, team in enumerate(teams.values()):
-            for player in team['players']:
-                player['team'] = team_idx
-                player_data.append(player)
-        st.success("Sample players loaded successfully!")
-    except FileNotFoundError:
-        st.error("Sample file not found.")
-elif manual_input:
-    st.write("Enter details for each player:")
-    for i in range(22):
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            name = st.text_input(f"Player {i+1} Name:", key=f"name_{i}")
-        with col2:
-            role = st.selectbox(
-                f"Player {i+1} Role:",
-                ['Batter', 'Bowler', 'All-Rounder', 'Wicket-Keeper'],
-                key=f"role_{i}"
+            # Download button
+            csv = snapshot_df.to_csv(index=False)
+            st.download_button(
+                "Download CSV",
+                csv,
+                "team_selections.csv",
+                "text/csv",
+                key='download-csv'
             )
-        with col3:
-            score = st.number_input(
-                f"Player {i+1} Fantasy Score:",
-                min_value=0,
-                step=1,
-                key=f"score_{i}"
-            )
-        if name:
-            player_data.append({"name": name, "role": role, "score": score})
-    best_team_button()
+            # Visualization section
+            show_viz = st.checkbox("Show Performance Visualizations", key='show_viz')
+            if show_viz:
+                with st.spinner('Generating performance visualizations...'):
+                    trend_fig, dist_fig = create_performance_plots(snapshot_df)
+                    
+                    if dist_fig:
+                        st.plotly_chart(dist_fig)
+                        
+                        # First row of metrics - Summary statistics
+                        col1, col2, col3, col4 = st.columns(4)
+                        with col1:
+                            st.metric(
+                                "Mean Performance",
+                                f"{snapshot_df['performance_ratio'].mean():.2%}"
+                            )
+                        with col2:
+                            st.metric(
+                                "Median Performance",
+                                f"{snapshot_df['performance_ratio'].median():.2%}"
+                            )
+                        with col3:
+                            st.metric(
+                                "Best Performance",
+                                f"{snapshot_df['performance_ratio'].max():.2%}"
+                            )
+                        with col4:
+                            st.metric(
+                                "Worst Performance",
+                                f"{snapshot_df['performance_ratio'].min():.2%}"
+                            )
+                        
+                        # Second row of metrics - Quantile analysis
+                        st.markdown("### Quantile Analysis")
+                        col5, col6, col7, col8 = st.columns(4)
+                        with col5:
+                            st.metric(
+                                "25th Percentile",
+                                f"{snapshot_df['performance_ratio'].quantile(0.25):.2%}",
+                                help="Bottom 25% of performances were below this value"
+                            )
+                        with col6:
+                            st.metric(
+                                "50th Percentile",
+                                f"{snapshot_df['performance_ratio'].quantile(0.5):.2%}",
+                                help="50% of performances were below this value"
+                            )
+                        with col7:
+                            st.metric(
+                                "75th Percentile",
+                                f"{snapshot_df['performance_ratio'].quantile(0.75):.2%}",
+                                help="75% of performances were below this value"
+                            )
+                        with col8:
+                            st.metric(
+                                "100th Percentile",
+                                f"{snapshot_df['performance_ratio'].quantile(1.0):.2%}",
+                                help="Maximum performance value"
+                            )
+                            
+        else:
+            st.warning("No matches found after the specified date.")
+
 
 if squad_info:
     if 'assigned_weights_df' not in st.session_state:
@@ -454,15 +502,22 @@ if squad_info:
                         matches, points = data[key]
                         df_temp = pd.DataFrame({
                             'match': matches,
-                            'points': points,
-                            'point_type': key
+                            key: points
                         })
                         df_list.append(df_temp)
                     
-                    df_combined = pd.concat(df_list).drop_duplicates(subset=['match', 'point_type', 'points'])
+                    # Merge all dataframes on the match column
+                    df_combined = df_list[0]  # Start with total_points
+                    for df in df_list[1:]:    # Merge the rest one by one
+                        df_combined = df_combined.merge(df, on='match', how='outer')
+                    
+                    # Reorder columns to put total_points at the end
+                    columns_order = ['match', 'batting_points', 'bowling_points', 'fielding_points', 'total_points']
+                    df_combined = df_combined[columns_order]
+                    
                     st.markdown(f"### Past scores for {selected_player}")
                     st.write(df_combined)
-                    
+                        
                 else:
                     st.error(f"No data available for {player_name} before {date_of_match}.")
 
@@ -483,25 +538,69 @@ if squad_info:
         st.session_state.optimization_done = False
 
     # UI Elements
-    risk_tolerance = st.slider("Set Risk Tolerance- (For CVPXY only)", 
-                             min_value=0.01, 
-                             max_value=10.0, 
-                             value=st.session_state.risk_tolerance, 
-                             step=0.01,
-                             key='risk_tolerance_slider')
+    # risk_tolerance = st.slider("Set Risk Tolerance- (For CVPXY only)", 
+    #                          min_value=0.01, 
+    #                          max_value=10.0, 
+    #                          value=st.session_state.risk_tolerance, 
+    #                          step=0.01,
+    #                          key='risk_tolerance_slider')
     
     num_matches = st.slider("Number of past matches to consider", 
-                           min_value=20, 
-                           max_value=500, 
-                           value=st.session_state.num_matches, 
-                           step=1,
-                           key='num_matches_slider')
+                       min_value=20, 
+                       max_value=500, 
+                       value=st.session_state.num_matches, 
+                       step=1,
+                       key='num_matches_slider')
+
+# Add sliders for optimizer parameters
+    st.markdown("### Optimizer Parameters")
+    col1, col2 = st.columns(2)
+
+    with col1:
+        risk_aversion = st.slider(
+            "Risk Aversion",
+            min_value=0.01,
+            max_value=0.3,
+            value=0.1,
+            step=0.01,
+            help="Controls the trade-off between expected returns and risk",
+            key='risk_aversion_slider'
+        )
+
+        form_threshold = st.slider(
+            "Form Threshold",
+            min_value=0.1,
+            max_value=1.0,
+            value=0.5,
+            step=0.1,
+            help="Minimum threshold for recent performance consideration",
+            key='form_threshold_slider'
+        )
+
+    with col2:
+        diversity_threshold = st.slider(
+            "Diversity Threshold",
+            min_value=0.1,
+            max_value=1.0,
+            value=0.3,
+            step=0.1,
+            help="Threshold for team composition diversity",
+            key='diversity_threshold_slider'
+        )
+
+        quantile_form = st.slider(
+            "Form Quantile",
+            min_value=50,
+            max_value=90,
+            value=75,
+            step=5,
+            help="Percentile threshold for considering player form",
+            key='quantile_form_slider'
+        )
 
     # Solver selection before optimization
-    solver = st.selectbox("Select Solver", 
-                         ['pulp', 'cvpxy'], 
-                         key='solver_select')
-    
+    solver = 'pulp'
+
     date_of_match = extract_date_from_match_key(selected_match)
     if date_of_match is None:
         st.error(f"Could not extract date from match key: {selected_match}")
@@ -510,7 +609,7 @@ if squad_info:
     if st.button("Optimize Team"):
         st.session_state.optimization_done = True
         st.session_state.solver = solver
-        st.session_state.risk_tolerance = risk_tolerance
+        st.session_state.risk_tolerance = risk_aversion
         st.session_state.num_matches = num_matches
 
         stats_df = compute_player_stats(
@@ -538,10 +637,17 @@ if squad_info:
 
             stats_df['team'] = stats_df['player'].map(player_team_mapping)
 
-            optimizer = optimize_team_sharpe if solver == 'cvpxy' else optimize_team_advanced
+            # optimizer = optimize_team_sharpe if solver == 'cvpxy' else optimize_team_advanced
+            optimizer = optimize_team_sharpe if solver == 'cvpxy' else optimize_team_advanced_test
 
             selected_players, weights_df = optimizer(
-                stats_df, cov_matrix, risk_aversion=risk_tolerance, boolean=True
+                stats_df, 
+                cov_matrix, 
+                risk_aversion=risk_aversion, 
+                boolean=True,
+                form_threshold=form_threshold,
+                diversity_threshold=diversity_threshold,
+                quantile_form=quantile_form
             )
             
             
@@ -640,7 +746,7 @@ if squad_info:
 
                 # Create metrics display
                 col1, col2, col3, col4 = st.columns(4)
-                # st.write(stats_df)
+# st.write(stats_df)
 
                 with col1:
                     st.metric(
@@ -650,9 +756,11 @@ if squad_info:
                     )
 
                 with col2:
+                    performance_ratio = total_actual_points / top_11_total
                     st.metric(
-                        label="(Predicted) Std",
-                        value=f"{team_std:.2f}"
+                        label="Performance Ratio",
+                        value=f"{performance_ratio:.2f}",
+                        delta=f"{(performance_ratio - 1) * 100:.1f}%" if performance_ratio != 1 else None
                     )
 
                 with col3:
@@ -666,8 +774,7 @@ if squad_info:
                         label="Optimal Team Score (Top-11)",
                         value=f"{top_11_total:.2f}",
                         delta=f"{total_actual_points - top_11_total:.2f}"
-                    )
-
+    )
                 # Add an expander to show the top 11 players
                 with st.expander("Compare Selected vs Actual Top Players", expanded=True):
                     # Create two columns
@@ -763,39 +870,7 @@ if squad_info:
                                 - One variable per available player
                                 """)
 
-                # Create visualization
-                weights_df_display = weights_df_display.sort_values(by='weight', ascending=True)
-                fig = go.Figure()
-                fig.add_trace(go.Bar(
-                    x=weights_df_display['weight'],
-                    y=weights_df_display['player'],
-                    name='Selection Weight',
-                    orientation='h',
-                    marker_color='blue'
-                ))
-                fig.add_trace(go.Bar(
-                    x=weights_df_display['mean_points'],
-                    y=weights_df_display['player'],
-                    name='Expected Score',
-                    orientation='h',
-                    marker_color='green'
-                ))
-                fig.add_trace(go.Bar(
-                    x=np.sqrt(weights_df_display['variance']),
-                    y=weights_df_display['player'],
-                    name='Standard Deviation',
-                    orientation='h',
-                    marker_color='red'
-                ))
-                fig.update_layout(
-                    title="Player Selection Weights, Expected Scores, and Standard Deviations",
-                    xaxis_title="Value",
-                    yaxis_title="Player",
-                    barmode='group',
-                    template="plotly_white",
-                    height=600
-                )
-                st.plotly_chart(fig)
+               
             else:
                 st.error("Failed to select an optimal team.")
 
@@ -804,57 +879,44 @@ if squad_info:
     #     if st.button("Re-run Optimization with New Solver"):
     #         st.experimental_rerun()
     
-    if st.button("Get Optimal Team"):
-            # More robust session state checking
-            if ('stats_df' not in st.session_state) or ('assigned_weights_df' not in st.session_state):
-                st.error("Please run team optimization first!")
-            
-            if st.session_state.stats_df is None or st.session_state.assigned_weights_df is None:
-                st.error("No optimization data found. Please run team optimization first!")
-
+            # Move this section outside of the "Optimize Team" button block
+    if st.button("Get Team Analytics"):
+        if ('stats_df' not in st.session_state) or ('assigned_weights_df' not in st.session_state):
+            st.error("Please run team optimization first!")
+        elif st.session_state.stats_df is None or st.session_state.assigned_weights_df is None:
+            st.error("No optimization data found. Please run team optimization first!")
+        else:
             try:
-                # Get selected players from weights dataframe
                 weights_df = st.session_state.assigned_weights_df
                 if weights_df.empty:
                     st.error("No player weights found. Please run optimization again.")
-        
-
+                    
                 selected_players = weights_df[weights_df['weight'] == 1]['player'].tolist()
                 if not selected_players:
                     st.error("No players were selected in the optimization.")
-
-                # Get full stats dataframe
+                    
+                    
                 stats_df = st.session_state.stats_df
                 if stats_df.empty:
                     st.error("No player statistics found. Please run optimization again.")
-
-                st.write("### Team Analysis Report")
-                
-                with st.spinner("Generating comprehensive team analysis using AI..."):
-                    # Get the cricket format from session state or use default
-                    format_type = st.session_state.get('format_type', 'odi').lower() 
                     
-                    # Get team analysis
+                    
+                st.write("### Team Analysis Report")
+                with st.spinner("Generating comprehensive team analysis using AI..."):
+                    format_type = st.session_state.get('format_type', 'odi').lower() 
                     analysis = analyze_team_selection(
                         stats_df=stats_df,
                         selected_players=selected_players,
                         format_lower=format_type
                     )
-                    
                     if analysis:
                         st.markdown("## Analysis Results")
                         st.write(analysis)
                     else:
                         st.warning("No analysis was generated. Please check the data and try again.")
-
             except Exception as e:
                 st.error(f"An error occurred during analysis: {str(e)}")
                 st.error("Please check the data and try again.")
-                # Optionally log the full error for debugging
-                st.write("Debug information:")
-                st.write(f"Error type: {type(e).__name__}")
-                st.write(f"Error details: {str(e)}")
-                import traceback
-                st.code(traceback.format_exc())
-st.markdown("---")
-st.caption("Team-62")
+
+    st.markdown("---")
+    st.caption("Team-62")
