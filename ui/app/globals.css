@@ -282,6 +282,26 @@ body {
   letter-spacing: 3px;
 }
 
+.pitchPlayerText {
+  text-transform: uppercase;
+  color: #fad0539f;
+  font-size: 0.6rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  width: 10rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.optionalPlayerText {
+  text-transform: uppercase;
+  color: #fad0539f;
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
 .select-player-image {
   width: 5rem;
   height: 5rem;
@@ -290,9 +310,18 @@ body {
 }
 
 .bgSelectedPlayer {
+  background: url("../public/bgSelectedPlayer.svg") no-repeat center;
   display: flex;
-  width: 5rem;
+  width: 4.5rem;
   height: 5rem;
+}
+
+.bgInfoReportPlayer {
+  background: url("../public/bgSelectedPlayer.svg") no-repeat center;
+  display: flex;
+  width: 6rem;
+  height: 6.25rem;
+  justify-content: center;
 }
 
 .selectionListDiv {
@@ -438,7 +467,7 @@ th {
   background: url("../public/bgSelectedPlayer.svg") no-repeat center;
   background-size: cover;
   width: 4.8rem;
-  height: 5rem;
+  height: 4.8rem;
 }
 
 .playerOptionsDiv {

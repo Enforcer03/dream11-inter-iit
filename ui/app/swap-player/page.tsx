@@ -54,6 +54,8 @@ export default function SwapPlayer() {
                 teamStats={teamStats}
                 newTeamStats={newTeamStats}
                 hoverPlayerStats={hoverPlayerStats}
+                selectedPlayersTeamA={selectedPlayersTeamA}
+                selectedPlayersTeamB={selectedPlayersTeamB}
               />
             </div>
             <PitchComponent

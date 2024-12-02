@@ -59,12 +59,12 @@ function PlayerCard({
       onMouseLeave={() => handleExitHoverPlayer()}
       onClick={handleSwapPlayer}
     >
-      <div className="playerCardSwap flex mr-1 overflow-hidden">
-        <div className="mt-4">
+      <div className="playerCardSwap flex mr-1 mb-1 overflow-hidden">
+        <div>
           <Image src={player.image} alt="player" width={100} height={100} />
         </div>
       </div>
-      <p className="anonymousPlayerText ml-1">{player.name}</p>
+      <p className="optionalPlayerText w-[4.8rem] flex text-center justify-center">{`${player.name.split(" ").slice(1).join(" ").slice(0, 7)}`}</p>
     </div>
   );
 }
@@ -83,7 +83,6 @@ export default function PlayerOptions({
     (player) => !predictedTeam.includes(player.name)
   );
 
-  // const leftOutPlayers = // players not in predicted team but in the player selection done by the user.
   return (
     <div className="playerOptionsDiv">
       <div className="players-list">

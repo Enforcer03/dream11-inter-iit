@@ -1,18 +1,62 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import SelectedPlayer from "../components/selectedPlayer";
-import playersData from "../../public/players.json";
+import InfoReportPlayer from "../components/infoReportPlayer";
 import PageTemplate from "../components/pageTemplate";
 import Button from "../components/buttonComp";
+import { useMatchData } from "../contexts/matchDataContext";
 
 interface Instruction {
   id: number;
   text: string;
 }
 
+  interface PlayerData {
+    id: number;
+    name: string;
+    image: string;
+  }
+
+  function getPlayerImagePath(
+    playerName: string,
+    selectedPlayersTeamA: PlayerData[],
+    selectedPlayersTeamB: PlayerData[]
+  ): string {
+    const nameParts = playerName.split(" ");
+    const lastName = nameParts[nameParts.length - 1];
+    const firstInitial = nameParts[0][0];
+    const allPlayers = [...selectedPlayersTeamA, ...selectedPlayersTeamB];
+
+    let matchingPlayer = allPlayers.find((player) => {
+      const playerNameParts = player.name.split(" ");
+      const playerLastName = playerNameParts[playerNameParts.length - 1];
+      const playerFirstInitial = player.name[0];
+
+      return playerLastName === lastName && playerFirstInitial === firstInitial;
+    });
+
+    if (!matchingPlayer) {
+      matchingPlayer = allPlayers.find((player) => {
+        const playerNameParts = player.name.split(" ");
+        const playerLastName = playerNameParts[playerNameParts.length - 1];
+        return playerLastName === lastName;
+      });
+    }
+
+    return matchingPlayer ? matchingPlayer.image : "default_player_image_url";
+  }
+
 const PeopleDisplay = () => {
-  const [selectedPlayers, setSelectedPlayers] = useState(playersData.players.slice(0, 11));
+    const {
+      predictedTeam,
+      setPredictedTeam,
+      selectedPlayersTeamA,
+      selectedPlayersTeamB,
+    } = useMatchData();
+
+    console.log(predictedTeam);
+
+  const [selectedPlayers, setSelectedPlayers] = useState(predictedTeam.slice(0, 11));
   const [instructions, setInstructions] = useState<Instruction[]>([]);
 
   const prevPage = "/playing11";
@@ -47,8 +91,8 @@ const PeopleDisplay = () => {
           <h1 className="text-3xl text-[#FFD700] font-bold tracking-wider">PLAYERS' INFORMATION REPORT</h1>
         </div>
         <div className="flex m-4">
-          {selectedPlayers.map((player) => {
-            let fullName = player.name.split(" ");
+          {selectedPlayers.map((player, index) => {
+            let fullName = player.split(" ");
             let modifiedName = fullName
               .map((part) => {
                 return part.length > 7 ? part[0] + "." : part;
@@ -56,9 +100,15 @@ const PeopleDisplay = () => {
               .join(" ");
 
             return (
-              <div key={player.id} className="m-4">
-                <SelectedPlayer
-                  child1={<img src={player.image} alt="Player Image" className="player-image" />}
+              <div key={index} className="m-3">
+                <InfoReportPlayer
+                  child1={
+                    <img
+                      src={getPlayerImagePath(player, selectedPlayersTeamA, selectedPlayersTeamB)}
+                      alt="Player Image"
+                      className="player-image"
+                    />
+                  }
                   child2={modifiedName}
                 />
               </div>

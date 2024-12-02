@@ -62,7 +62,6 @@ function PlayerList({
       });
     }
 
-    // Return the matched image or default image
     return matchingPlayer ? matchingPlayer.image : "default_player_image_url";
   }
 
@@ -87,7 +86,7 @@ function PlayerList({
           </div>
           <div className="player-bio-container">
             <h4 className="player-name">
-              {player.split(" ")[0].charAt(0)}. {player.split(" ").slice(1).join(" ")}
+              {player.split(" ")[0].charAt(0)}. {(player.split(" ").slice(1).join(" ")).slice(0, 10)}
             </h4>
             <hr className="player-hr" />
             <div className="player-bio">

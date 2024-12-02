@@ -89,7 +89,7 @@ export default function LeagueSelector({
                   }`}
                   onClick={() => handleDirectClick(index)}
                 >
-                  <span className="text-yellow-100 relative z-10 text-white uppercase">{shortenLeague(league)}</span>
+                  <span className="text-yellow-100 relative z-10 text-white uppercase p-1">{shortenLeague(league)}</span>
                 </button>
               </div>
             );
@@ -139,14 +139,14 @@ export default function LeagueSelector({
       </div>
         <button
           onClick={handlePrevious}
-          className={`leftArrowBtn -mt-8 absolute left-0 top-1/2 transform -translate-y-1/2 p-2 ${
+          className={`leftArrowBtn -mt-4 -ml-24 absolute left-0 top-1/2 transform -translate-y-1/2 p-2 ${
             allLeagues.length != 0 && dateLength == 10 ? '' : 'hidden'
           }`}
           aria-label="Previous team"
         />
         <button
           onClick={handleNext}
-          className={`rightArrowBtn -mt-8 absolute right-0 top-1/2 transform -translate-y-1/2 p-2 ${
+          className={`rightArrowBtn -mt-4 -mr-24 absolute right-0 top-1/2 transform -translate-y-1/2 p-2 ${
             allLeagues.length != 0 && dateLength == 10 ? '' : 'hidden'
           }`}
           aria-label="Next team"

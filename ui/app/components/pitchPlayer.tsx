@@ -1,10 +1,44 @@
 "use client";
 
 import Image from "next/image";
-import profilePhoto from "../../public/photo.png";
 import { RevaluateTeamApiResponse } from "../types/modelApiResponse";
 import { MatchDetails } from "../types/squadApiResponse";
 import PlayerOptions from "./playerOptions";
+
+  interface PlayerData {
+    id: number;
+    name: string;
+    image: string;
+  }
+
+  function getPlayerImagePath(
+    playerName: string,
+    selectedPlayersTeamA: PlayerData[],
+    selectedPlayersTeamB: PlayerData[]
+  ): string {
+    const nameParts = playerName.split(" ");
+    const lastName = nameParts[nameParts.length - 1];
+    const firstInitial = nameParts[0][0];
+    const allPlayers = [...selectedPlayersTeamA, ...selectedPlayersTeamB];
+
+    let matchingPlayer = allPlayers.find((player) => {
+      const playerNameParts = player.name.split(" ");
+      const playerLastName = playerNameParts[playerNameParts.length - 1];
+      const playerFirstInitial = player.name[0];
+
+      return playerLastName === lastName && playerFirstInitial === firstInitial;
+    });
+
+    if (!matchingPlayer) {
+      matchingPlayer = allPlayers.find((player) => {
+        const playerNameParts = player.name.split(" ");
+        const playerLastName = playerNameParts[playerNameParts.length - 1];
+        return playerLastName === lastName;
+      });
+    }
+
+    return matchingPlayer ? matchingPlayer.image : "default_player_image_url";
+  }
 
 type PitchComponentProps = {
   selectedPlayer: number | null;
@@ -24,16 +58,33 @@ type PlayerComponentProps = {
   selectedPlayer: number | null;
   setSelectedPlayer: (selectedPlayer: number) => void;
   index: number;
+  selectedPlayersTeamA: PlayerData[];
+  selectedPlayersTeamB: PlayerData[];
 };
 
-function PlayerComponent({ player, selectedPlayer, setSelectedPlayer, index }: PlayerComponentProps) {
+function PlayerComponent({
+  player,
+  selectedPlayer,
+  setSelectedPlayer,
+  index,
+  selectedPlayersTeamA,
+  selectedPlayersTeamB,
+}: PlayerComponentProps) {
   return (
-    <div className={`m-2 w-40 p-3 ${selectedPlayer === index ? "selected" : null}`}>
-      <div onClick={() => setSelectedPlayer(index)} className={`flex w-full flex-col items-center text-white `}>
-        <Image src={profilePhoto} alt="player" width={200} height={200} />
-        <p className="anonymousPlayerText">
-          <span className="bg-green-950 p-2">{index + 1}</span>
-          <span className="bg-green-300 p-2 text-green-950 font-bold">{player}</span>
+    <div className={`m-2 w-32 p-3 ${selectedPlayer === index ? "selected" : null}`}>
+      <div
+        onClick={() => setSelectedPlayer(index)}
+        className={`flex w-full h-16 mb-24 flex-col items-center text-white`}
+      >
+        <Image
+          src={getPlayerImagePath(player, selectedPlayersTeamA, selectedPlayersTeamB)}
+          alt="player"
+          width={200}
+          height={200}
+        />
+        <p className="pitchPlayerText">
+          <span className="bg-green-950 p-1.5">{index + 1}</span>
+          <span className="bg-green-300 p-1.5 text-green-950 font-bold">{player.slice(0, 13)}</span>
         </p>
       </div>
     </div>
@@ -51,10 +102,12 @@ export default function PitchComponent({
   setNewTeamStats,
   setHoverPlayer,
 }: PitchComponentProps) {
+
+  
   return (
-    <div className="w-[55.5rem] flex flex-col ml-[26rem] mb-12">
+    <div className="w-[53rem] flex flex-col ml-[27rem] mb-12">
       <div className="w-full h-[35rem] pitch">
-        <div className="flex flex-row">
+        <div className="flex flex-row justify-center">
           {predictedTeam.map((player, index) => {
             if (index < 5) {
               return (
@@ -62,6 +115,8 @@ export default function PitchComponent({
                   key={index}
                   index={index}
                   player={player}
+                  selectedPlayersTeamA={selectedPlayersTeamA}
+                  selectedPlayersTeamB={selectedPlayersTeamB}
                   selectedPlayer={selectedPlayer}
                   setSelectedPlayer={setSelectedPlayer}
                 />
@@ -77,6 +132,8 @@ export default function PitchComponent({
                   key={index}
                   index={index}
                   player={player}
+                  selectedPlayersTeamA={selectedPlayersTeamA}
+                  selectedPlayersTeamB={selectedPlayersTeamB}
                   selectedPlayer={selectedPlayer}
                   setSelectedPlayer={setSelectedPlayer}
                 />
@@ -92,6 +149,8 @@ export default function PitchComponent({
                   key={index}
                   index={index}
                   player={player}
+                  selectedPlayersTeamA={selectedPlayersTeamA}
+                  selectedPlayersTeamB={selectedPlayersTeamB}
                   selectedPlayer={selectedPlayer}
                   setSelectedPlayer={setSelectedPlayer}
                 />
