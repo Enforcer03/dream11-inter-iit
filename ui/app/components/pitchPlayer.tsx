@@ -5,40 +5,40 @@ import { RevaluateTeamApiResponse } from "../types/modelApiResponse";
 import { MatchDetails } from "../types/squadApiResponse";
 import PlayerOptions from "./playerOptions";
 
-  interface PlayerData {
-    id: number;
-    name: string;
-    image: string;
-  }
+interface PlayerData {
+  id: number;
+  name: string;
+  image: string;
+}
 
-  function getPlayerImagePath(
-    playerName: string,
-    selectedPlayersTeamA: PlayerData[],
-    selectedPlayersTeamB: PlayerData[]
-  ): string {
-    const nameParts = playerName.split(" ");
-    const lastName = nameParts[nameParts.length - 1];
-    const firstInitial = nameParts[0][0];
-    const allPlayers = [...selectedPlayersTeamA, ...selectedPlayersTeamB];
+function getPlayerImagePath(
+  playerName: string,
+  selectedPlayersTeamA: PlayerData[],
+  selectedPlayersTeamB: PlayerData[]
+): string {
+  const nameParts = playerName.split(" ");
+  const lastName = nameParts[nameParts.length - 1];
+  const firstInitial = nameParts[0][0];
+  const allPlayers = [...selectedPlayersTeamA, ...selectedPlayersTeamB];
 
-    let matchingPlayer = allPlayers.find((player) => {
+  let matchingPlayer = allPlayers.find((player) => {
+    const playerNameParts = player.name.split(" ");
+    const playerLastName = playerNameParts[playerNameParts.length - 1];
+    const playerFirstInitial = player.name[0];
+
+    return playerLastName === lastName && playerFirstInitial === firstInitial;
+  });
+
+  if (!matchingPlayer) {
+    matchingPlayer = allPlayers.find((player) => {
       const playerNameParts = player.name.split(" ");
       const playerLastName = playerNameParts[playerNameParts.length - 1];
-      const playerFirstInitial = player.name[0];
-
-      return playerLastName === lastName && playerFirstInitial === firstInitial;
+      return playerLastName === lastName;
     });
-
-    if (!matchingPlayer) {
-      matchingPlayer = allPlayers.find((player) => {
-        const playerNameParts = player.name.split(" ");
-        const playerLastName = playerNameParts[playerNameParts.length - 1];
-        return playerLastName === lastName;
-      });
-    }
-
-    return matchingPlayer ? matchingPlayer.image : "default_player_image_url";
   }
+
+  return matchingPlayer ? matchingPlayer.image : "default_player_image_url";
+}
 
 type PitchComponentProps = {
   selectedPlayer: number | null;
@@ -102,8 +102,6 @@ export default function PitchComponent({
   setNewTeamStats,
   setHoverPlayer,
 }: PitchComponentProps) {
-
-  
   return (
     <div className="w-[53rem] flex flex-col ml-[27rem] mb-12">
       <div className="w-full h-[35rem] pitch">

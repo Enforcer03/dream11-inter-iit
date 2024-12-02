@@ -245,7 +245,7 @@ function PeopleDisplay() {
                   </div>
                   <div className="player-bio-container">
                     <h3 className="player-name">
-                      {playerName.split(" ")[0].charAt(0)}. {(playerName.split(" ").slice(1).join(" ")).slice(0, 10)}
+                      {playerName.split(" ")[0].charAt(0)}. {playerName.split(" ").slice(1).join(" ").slice(0, 10)}
                     </h3>
                     <hr className="player-hr" />
                     <div className="player-bio">

@@ -44,18 +44,18 @@ export default function MatchSelector({ setMatchData, allMatches, allData, leagu
       chunks.push(word.slice(i, i + chunkSize));
     }
 
-    const result = chunks.join('');
+    const result = chunks.join("");
     if (result.length > maxLength) {
-      return formatText(result.slice(0, 13)) + '...';
+      return formatText(result.slice(0, 13)) + "...";
     }
 
-    return chunks.join(' ');
+    return chunks.join(" ");
   };
 
   const formatLocation = (word: String) => {
     const maxLength = 22;
     if (word.length > maxLength) {
-      return (word.slice(0, 22)) + '..';
+      return word.slice(0, 22) + "..";
     }
 
     return word;
@@ -64,9 +64,7 @@ export default function MatchSelector({ setMatchData, allMatches, allData, leagu
   const convertToDay = (dateString: string) => {
     const [day, month, year] = dateString.split("/");
     const date = new Date(year, month - 1, day);
-    const daysOfWeek = [
-      "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
-    ];
+    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const dayName = daysOfWeek[date.getDay()];
 
     return dayName;

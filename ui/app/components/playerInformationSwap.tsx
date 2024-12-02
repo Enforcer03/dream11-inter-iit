@@ -132,15 +132,11 @@ function PlayerInformationSwap({
               <div className="w-4/6">
                 <span>{playerInfo?.Runs < 0 || playerInfo?.Runs === "Infinity" ? "-" : playerInfo?.Runs}</span>
                 <span className={`${runsDiff > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
-                  {hoverPlayerStats ? (
-                    runsDiff > 0 ? (
-                      `${runsDiff} ${String.fromCharCode(8595)}`
-                    ) : (
-                      `${runsDiff * -1} ${String.fromCharCode(8593)}`
-                    )
-                  ) : (
-                    <span className="text-gray-500">HOVER TO VIEW</span>
-                  )}
+                  {hoverPlayerStats
+                    ? runsDiff > 0
+                      ? `${runsDiff} ${String.fromCharCode(8595)}`
+                      : `${runsDiff * -1} ${String.fromCharCode(8593)}`
+                    : null}
                 </span>
               </div>
             </div>
@@ -238,7 +234,7 @@ function PlayerInformationSwap({
                       `${newFormScorePercent}% ${String.fromCharCode(8593)}`
                     )
                   ) : (
-                    <span></span>
+                    <span className="text-gray-500">HOVER TO VIEW</span>
                   )}
                 </span>
               </div>

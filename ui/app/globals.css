@@ -155,7 +155,7 @@ body {
 }
 
 .outer-page {
-  background-image: url("../public/image.png");
+  background-image: url("../public/back.png");
   background-size: cover;
   background-repeat: no-repeat;
 }

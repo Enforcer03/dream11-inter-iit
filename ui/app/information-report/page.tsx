@@ -5,84 +5,71 @@ import InfoReportPlayer from "../components/infoReportPlayer";
 import PageTemplate from "../components/pageTemplate";
 import Button from "../components/buttonComp";
 import { useMatchData } from "../contexts/matchDataContext";
+import { handleLLMTeam } from "../api/llmApi";
 
 interface Instruction {
   id: number;
   text: string;
 }
 
-  interface PlayerData {
-    id: number;
-    name: string;
-    image: string;
-  }
+interface PlayerData {
+  id: number;
+  name: string;
+  image: string;
+}
 
-  function getPlayerImagePath(
-    playerName: string,
-    selectedPlayersTeamA: PlayerData[],
-    selectedPlayersTeamB: PlayerData[]
-  ): string {
-    const nameParts = playerName.split(" ");
-    const lastName = nameParts[nameParts.length - 1];
-    const firstInitial = nameParts[0][0];
-    const allPlayers = [...selectedPlayersTeamA, ...selectedPlayersTeamB];
+function getPlayerImagePath(
+  playerName: string,
+  selectedPlayersTeamA: PlayerData[],
+  selectedPlayersTeamB: PlayerData[]
+): string {
+  const nameParts = playerName.split(" ");
+  const lastName = nameParts[nameParts.length - 1];
+  const firstInitial = nameParts[0][0];
+  const allPlayers = [...selectedPlayersTeamA, ...selectedPlayersTeamB];
 
-    let matchingPlayer = allPlayers.find((player) => {
+  let matchingPlayer = allPlayers.find((player) => {
+    const playerNameParts = player.name.split(" ");
+    const playerLastName = playerNameParts[playerNameParts.length - 1];
+    const playerFirstInitial = player.name[0];
+
+    return playerLastName === lastName && playerFirstInitial === firstInitial;
+  });
+
+  if (!matchingPlayer) {
+    matchingPlayer = allPlayers.find((player) => {
       const playerNameParts = player.name.split(" ");
       const playerLastName = playerNameParts[playerNameParts.length - 1];
-      const playerFirstInitial = player.name[0];
-
-      return playerLastName === lastName && playerFirstInitial === firstInitial;
+      return playerLastName === lastName;
     });
-
-    if (!matchingPlayer) {
-      matchingPlayer = allPlayers.find((player) => {
-        const playerNameParts = player.name.split(" ");
-        const playerLastName = playerNameParts[playerNameParts.length - 1];
-        return playerLastName === lastName;
-      });
-    }
-
-    return matchingPlayer ? matchingPlayer.image : "default_player_image_url";
   }
 
-const PeopleDisplay = () => {
-    const {
-      predictedTeam,
-      setPredictedTeam,
-      selectedPlayersTeamA,
-      selectedPlayersTeamB,
-    } = useMatchData();
+  return matchingPlayer ? matchingPlayer.image : "default_player_image_url";
+}
 
-    console.log(predictedTeam);
+const PeopleDisplay = () => {
+  const { predictedTeam, setPredictedTeam, selectedPlayersTeamA, selectedPlayersTeamB, playerStats } = useMatchData();
+
+  console.log(predictedTeam);
 
   const [selectedPlayers, setSelectedPlayers] = useState(predictedTeam.slice(0, 11));
   const [instructions, setInstructions] = useState<Instruction[]>([]);
-
+  const [loading, setLoading] = useState(false);
+  const [instruction, setInstruction] = useState<JSX.Element[]>([]);
   const prevPage = "/playing11";
 
   useEffect(() => {
     const fetchInstructions = async () => {
       try {
-        const response = await fetch("/instructions.txt");
-        if (!response.ok) {
-          throw new Error("Failed to load instructions");
-        }
-
-        const text = await response.text();
-        const instructionsList = text.split("\n").map((line, index) => ({
-          id: index + 1,
-          text: line.trim(),
-        }));
-
-        setInstructions(instructionsList);
+        const response = await handleLLMTeam(selectedPlayers, JSON.stringify(playerStats), "T20");
+        setInstruction(response["team analysis"]);
       } catch (error) {
         console.error("There was an error fetching the instructions.");
       }
     };
 
     fetchInstructions();
-  }, []);
+  }, [playerStats, selectedPlayers]);
 
   return (
     <div>
@@ -116,11 +103,12 @@ const PeopleDisplay = () => {
           })}
         </div>
         <div className="information-report-container">
-          <ul>
+          {/* <ul>
             {instructions.map((instruction) => (
               <li key={instruction.id}>{instruction.text}</li>
             ))}
-          </ul>
+          </ul> */}
+          {instruction}
         </div>
       </PageTemplate>
       <div className="buttonCompDiv">

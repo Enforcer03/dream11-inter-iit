@@ -154,12 +154,26 @@ function SelectMatchScreen() {
           setAllMatches={setAllMatches}
           setMatchData={setMatchData}
         />
-        <LeagueSelector setLeague={setLeague} allLeagues={allLeagues} setAllMatches={setAllMatches} allData={allData} dateLength= {date.length}/>
-        <MatchSelector allMatches={allMatches} setMatchData={setMatchData} allData={allData} league={league} date= {date}/>
+        <LeagueSelector
+          setLeague={setLeague}
+          allLeagues={allLeagues}
+          setAllMatches={setAllMatches}
+          allData={allData}
+          dateLength={date.length}
+        />
+        <MatchSelector
+          allMatches={allMatches}
+          setMatchData={setMatchData}
+          allData={allData}
+          league={league}
+          date={date}
+        />
       </div>
       <div className="buttonCompDiv">
         <ButtonComponent nextPage={prevPage}>BACK</ButtonComponent>
-        <ButtonComponent onClick={handleNextButton} disabled={!matchData}>NEXT</ButtonComponent>
+        <ButtonComponent onClick={handleNextButton} disabled={!matchData}>
+          NEXT
+        </ButtonComponent>
       </div>
       <div className="videoCompDiv">
         <VideoComp nextPage="/video-instructions">
