@@ -99,25 +99,25 @@ def main():
     # Process T20 data
     print("\nProcessing T20 data...")
     process_match_data(
-        'T20_combined_player_match_data.json',
-        'T20_aggregate_data.json',
-        'player_fantasy_points_t20.json'
+        '../data/interim/T20_player_match_data.json',
+        '../data/processed/T20_aggregate_data.json',
+        '../data/processed/player_fantasy_points_t20.json'
     )
     
     # Process ODI/ODM data
     print("\nProcessing ODI/ODM data...")
     process_match_data(
-        'ODI_ODM_combined_player_match_data.json',
-        'ODI_ODM_aggregate_data.json',
-        'player_fantasy_points_odi.json'
+        '../data/interim/ODI_ODM_player_match_data.json',
+        '../data/processed/ODI_ODM_aggregate_data.json',
+        '../data/processed/player_fantasy_points_odi.json'
     )
     
     # Process MDM Test data
     print("\nProcessing MDM Test data...")
     process_match_data(
-        'MDM_Test_combined_player_match_data.json',
-        'Test_MDM_aggregate_data.json',
-        'player_fantasy_points_test.json'
+        '../data/interim/Test_MDM_player_match_data.json',
+        '../data/processed/Test_MDM_aggregate_data.json',
+        '../data/processed/player_fantasy_points_test.json'
     )
 
 if __name__ == "__main__":
