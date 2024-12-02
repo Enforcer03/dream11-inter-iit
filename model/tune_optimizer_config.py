@@ -237,9 +237,9 @@ def run_optimization_cv(match_keys: List[str],
         output_file: Path to store results JSON
     """
     # Define parameter ranges
-    num_matches_range = range(20,81,20)
+    num_matches_range = range(20,81,5)
     consistency_range = [0.5]
-    quantile_range = [ 40,50, 60, 70, 80]
+    quantile_range = [ 40]
     diversity_range = [0.5]
     
     # Initialize results storage

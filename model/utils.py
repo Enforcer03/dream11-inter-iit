@@ -53,26 +53,6 @@ def get_optimal_team_llm(player_data, client):
 
     return response.choices[0].message.content
 
-def best_team_button():
-    """
-    Streamlit UI component for generating the optimal team using LLM.
-    Validates input data and displays the generated team.
-    """
-    if st.button("Generate Best Team LLM"):
-        if len(player_data) < 22:
-            st.error("Please ensure data for at least 22 players is provided.")
-        else:
-            player_input = "\n".join([f"{p['name']} ({p['role']}): {p['score']}" for p in player_data])
-            st.write("Processing your team selection...")
-            raw_response = get_optimal_team_llm(player_input)
-            
-            if raw_response:
-                st.success("Optimal Team Generated Successfully!")
-                st.subheader("Optimal Team")
-                st.text(raw_response)
-            else:
-                st.error("Error generating the optimal team.")
-
 def get_past_match_performance(player_name, fantasy_points, num_matches=50, key='total_points', date_of_match=None):
     """
     Retrieves and processes historical match performance data for a player.
@@ -149,7 +129,7 @@ def get_past_match_performance(player_name, fantasy_points, num_matches=50, key=
             idx = i % num_available
             final_matches.append(available_matches[idx])
             final_points.append(available_points[idx])
-        print(final_matches)
+        # print(final_matches)
         return final_matches, final_points
     
     return ['No Match'] * num_matches, [0] * num_matches
@@ -201,7 +181,62 @@ def plot_team_distribution(mu, sigma, actual_score, optimal_score):
     
     return fig
 
-def calculate_team_metrics(stats_df, weights_df, cov_matrix, quantile_form =75):
+# def calculate_team_metrics(stats_df, weights_df, cov_matrix, quantile_form =75):
+#     """
+#     Calculates comprehensive performance metrics for a selected team.
+    
+#     Args:
+#         stats_df (pd.DataFrame): Player statistics including mean_points and variance
+#         weights_df (pd.DataFrame): Selected players with weight=1 for selected
+#         cov_matrix (np.array): Covariance matrix of player performances
+    
+#     Returns:
+#         dict: Dictionary containing:
+#             - trend_score: Expected total points
+#             - consistency_score: Average Sharpe ratio
+#             - diversity_score: Entropy of point distribution
+#             - form_score: Number of top performers
+#     """
+#     try:
+#         selected_players = weights_df[weights_df['weight'] == 1]['player'].tolist()
+#         if not selected_players:
+#             raise ValueError("No players selected in weights_df")
+            
+#         selected_df = stats_df[stats_df['player'].isin(selected_players)].copy()
+#         if selected_df.empty:
+#             raise ValueError("No stats found for selected players")
+
+#         trend_score = selected_df['mean_points'].sum()
+#         consistency_score = (selected_df['mean_points'] / np.sqrt(selected_df['variance'])).mean()
+        
+#         if selected_df['mean_points'].sum() > 0:
+#             point_shares = selected_df['mean_points'] / selected_df['mean_points'].sum()
+#             diversity_score = -(np.sum(point_shares * np.log(point_shares + 1e-10)))/11
+#         else:
+#             diversity_score = 0
+
+#         points_q = stats_df['mean_points'].quantile(quantile_form/100)
+#         top_performers = selected_df[selected_df['mean_points'] >= points_q]
+#         form_score = len(top_performers)
+
+#         return {
+#             'trend_score': round(trend_score, 2),
+#             'consistency_score': round(consistency_score, 2),
+#             'diversity_score': round(diversity_score, 2),
+#             'form_score': round(form_score, 2)
+#         }
+        
+#     except Exception as e:
+#         print(f"Error calculating team metrics: {str(e)}")
+#         return {
+#             'trend_score': 0,
+#             'consistency_score': 0,
+#             'diversity_score': 0,
+#             'form_score': 0
+#         }
+
+
+def calculate_team_metrics(stats_df, weights_df, cov_matrix, quantile_form=75):
     """
     Calculates comprehensive performance metrics for a selected team.
     
@@ -209,13 +244,14 @@ def calculate_team_metrics(stats_df, weights_df, cov_matrix, quantile_form =75):
         stats_df (pd.DataFrame): Player statistics including mean_points and variance
         weights_df (pd.DataFrame): Selected players with weight=1 for selected
         cov_matrix (np.array): Covariance matrix of player performances
+        quantile_form (float): Percentile threshold for form calculation
     
     Returns:
         dict: Dictionary containing:
-            - trend_score: Expected total points
-            - consistency_score: Average Sharpe ratio
-            - diversity_score: Entropy of point distribution
-            - form_score: Number of top performers
+            - trend_score: Total expected points
+            - consistency_score: Linear consistency score (0-100)
+            - diversity_score: Linear diversity score (0-100)
+            - form_score: Number of players above form threshold
     """
     try:
         selected_players = weights_df[weights_df['weight'] == 1]['player'].tolist()
@@ -226,18 +262,32 @@ def calculate_team_metrics(stats_df, weights_df, cov_matrix, quantile_form =75):
         if selected_df.empty:
             raise ValueError("No stats found for selected players")
 
+        # Trend Score: Total expected points
         trend_score = selected_df['mean_points'].sum()
-        consistency_score = (selected_df['mean_points'] / np.sqrt(selected_df['variance'])).mean()
+
+        # Linear Consistency Score (0-100)
+        # Use coefficient of variation (CV) for each player
+        cvs = np.sqrt(selected_df['variance']) / selected_df['mean_points'].clip(lower=1e-10)
+        # Transform CVs to 0-100 scale where lower CV = higher consistency
+        max_acceptable_cv = 1.0  # Define max acceptable CV
+        consistency_scores = (100 * (1 - cvs.clip(upper=max_acceptable_cv)/max_acceptable_cv))
+        consistency_score = consistency_scores.mean()
         
-        if selected_df['mean_points'].sum() > 0:
-            point_shares = selected_df['mean_points'] / selected_df['mean_points'].sum()
-            diversity_score = -(np.sum(point_shares * np.log(point_shares + 1e-10)))/11
+        # Linear Diversity Score (0-100)
+        if trend_score > 0:
+            point_shares = selected_df['mean_points'] / trend_score
+            # Calculate how far each share is from ideal equal share
+            ideal_share = 1.0 / len(selected_players)
+            share_deviations = np.abs(point_shares - ideal_share)
+            # Convert to 0-100 score where 100 means perfectly equal distribution
+            max_deviation = ideal_share  # Maximum possible deviation from ideal
+            diversity_score = 100 * (1 - np.mean(share_deviations) / max_deviation)
         else:
             diversity_score = 0
 
-        points_q = stats_df['mean_points'].quantile(quantile_form/100)
-        top_performers = selected_df[selected_df['mean_points'] >= points_q]
-        form_score = len(top_performers)
+        # Form Score: Count of high performers
+        points_threshold = stats_df['mean_points'].quantile(quantile_form/100)
+        form_score = len(selected_df[selected_df['mean_points'] >= points_threshold])
 
         return {
             'trend_score': round(trend_score, 2),
@@ -254,7 +304,6 @@ def calculate_team_metrics(stats_df, weights_df, cov_matrix, quantile_form =75):
             'diversity_score': 0,
             'form_score': 0
         }
-
 def load_player_fantasy_points(json_file):
     """
     Loads and sorts player fantasy points data from a JSON file.

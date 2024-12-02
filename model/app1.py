@@ -17,7 +17,7 @@ from heuristic_solver import (
     optimize_team_advanced_test
 )
 import datetime
-from utils import get_optimal_team_llm, get_past_match_performance, best_team_button, extract_date_from_match_key, plot_team_distribution, calculate_team_metrics
+from utils import get_optimal_team_llm, get_past_match_performance, extract_date_from_match_key, plot_team_distribution, calculate_team_metrics
 from get_snapshot import get_team_selection_snapshot
 import pandas as pd
 import numpy as np
@@ -292,7 +292,7 @@ if get_team_snapshot:
                     get_optim_file(all_paths[2]),
                     input_date=date_filter,
                     quantile_form=40,
-                    num_matches=40
+                    num_matches=80
                 )
                 st.session_state.last_date_filter = date_filter
 
