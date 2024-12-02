@@ -12,6 +12,7 @@ interface PlayerInformationSwapProps {
   newTeamStats?: RevaluateTeamApiResponse | null;
   child3?: string;
   child4?: string;
+  hoverPlayerStats: AggregateStats | null;
 }
 
 function PlayerInformationSwap({
@@ -19,6 +20,7 @@ function PlayerInformationSwap({
   playerInfo,
   teamStats,
   newTeamStats,
+  hoverPlayerStats,
   child3,
   child4,
 }: PlayerInformationSwapProps) {
@@ -46,6 +48,20 @@ function PlayerInformationSwap({
     newFormScorePercent = ((newTeamStats.form_score - teamStats.form_score) * 100) / teamStats?.form_score;
   }
 
+  let runsDiff, battingSRDiff, bowlingSRDiff, economyRateDiff;
+
+  if (hoverPlayerStats) {
+    runsDiff = hoverPlayerStats.Runs - playerInfo?.Runs;
+    battingSRDiff = hoverPlayerStats["Batting S/R"] - playerInfo?.["Batting S/R"];
+    bowlingSRDiff = hoverPlayerStats["Bowling S/R"] - playerInfo?.["Bowling S/R"];
+    economyRateDiff = hoverPlayerStats["Economy Rate"] - playerInfo?.["Economy Rate"];
+
+    runsDiff = runsDiff.toFixed(2);
+    battingSRDiff = battingSRDiff.toFixed(2);
+    bowlingSRDiff = bowlingSRDiff.toFixed(2);
+    economyRateDiff = economyRateDiff.toFixed(2);
+  }
+
   return (
     <div className="flex flex-col justify-center items-center uppercase w-[21rem] h-full">
       <h1 className="uppercase text-dream11FontColor font-bold text-3xl mb-4 ">Swap Player</h1>
@@ -65,7 +81,14 @@ function PlayerInformationSwap({
             <div className="flex mb-2 text-white">
               <div className="w-1/2">{formatName(playerName)}</div>
               <div className="w-1/2">
-                {playerInfo?.Runs < 0 || playerInfo?.Runs === "Infinity" ? "-" : playerInfo?.Runs}
+                <span>{playerInfo?.Runs < 0 || playerInfo?.Runs === "Infinity" ? "-" : playerInfo?.Runs}</span>
+                <span className={`${runsDiff > 0 ? "text-green-500" : "text-red-500"} ml-10`}>
+                  {hoverPlayerStats
+                    ? runsDiff > 0
+                      ? `${runsDiff} ${String.fromCharCode(8593)}`
+                      : `${runsDiff * -1} ${String.fromCharCode(8595)}`
+                    : null}
+                </span>
               </div>
             </div>
             <div className="flex text-dream11FontColor">
@@ -74,9 +97,18 @@ function PlayerInformationSwap({
             </div>
             <div className="flex mb-2 text-white">
               <div className="w-1/2">
-                {playerInfo?.["Batting S/R"] < 0 || playerInfo?.["Batting S/R"] === "Infinity"
-                  ? "-"
-                  : playerInfo?.["Batting S/R"]}
+                <span>
+                  {playerInfo?.["Batting S/R"] < 0 || playerInfo?.["Batting S/R"] === "Infinity"
+                    ? "-"
+                    : playerInfo?.["Batting S/R"]}
+                </span>
+                <span className={`${battingSRDiff > 0 ? "text-green-500" : "text-red-500"} ml-10`}>
+                  {hoverPlayerStats
+                    ? battingSRDiff > 0
+                      ? `${battingSRDiff} ${String.fromCharCode(8593)}`
+                      : `${battingSRDiff * -1} ${String.fromCharCode(8595)}`
+                    : null}
+                </span>
               </div>
               <div className="w-1/2">
                 {newTeamStats
@@ -92,9 +124,18 @@ function PlayerInformationSwap({
             </div>
             <div className="flex mb-2 text-white">
               <div className="w-1/2">
-                {playerInfo?.["Bowling S/R"] < 0 || playerInfo?.["Bowling S/R"] === "Infinity"
-                  ? "-"
-                  : playerInfo?.["Bowling S/R"]}
+                <span>
+                  {playerInfo?.["Bowling S/R"] < 0 || playerInfo?.["Bowling S/R"] === "Infinity"
+                    ? "-"
+                    : playerInfo?.["Bowling S/R"]}
+                </span>
+                <span className={`${bowlingSRDiff > 0 ? "text-green-500" : "text-red-500"} ml-10`}>
+                  {hoverPlayerStats
+                    ? bowlingSRDiff > 0
+                      ? `${bowlingSRDiff} ${String.fromCharCode(8593)}`
+                      : `${bowlingSRDiff * -1} ${String.fromCharCode(8595)}`
+                    : null}
+                </span>
               </div>
               <div className="w-1/2">
                 {newTeamStats
@@ -110,9 +151,18 @@ function PlayerInformationSwap({
             </div>
             <div className="flex text-white">
               <div className="w-1/2">
-                {playerInfo?.["Economy Rate"] < 0 || playerInfo?.["Economy Rate"] === "Infinity"
-                  ? "-"
-                  : playerInfo?.["Economy Rate"]}
+                <span>
+                  {playerInfo?.["Economy Rate"] < 0 || playerInfo?.["Economy Rate"] === "Infinity"
+                    ? "-"
+                    : playerInfo?.["Economy Rate"]}
+                </span>
+                <span className={`${economyRateDiff > 0 ? "text-green-500" : "text-red-500"} ml-10`}>
+                  {hoverPlayerStats
+                    ? economyRateDiff > 0
+                      ? `${economyRateDiff} ${String.fromCharCode(8593)}`
+                      : `${economyRateDiff * -1} ${String.fromCharCode(8595)}`
+                    : null}
+                </span>
               </div>
               <div className="w-1/2">
                 {newTeamStats

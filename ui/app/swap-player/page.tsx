@@ -25,6 +25,7 @@ export default function SwapPlayer() {
 
   const [selectedPlayer, setSelectedPlayer] = useState<number | null>(0);
   const [newTeamStats, setNewTeamStats] = useState<RevaluateTeamApiResponse | null>(null);
+  const [hoverPlayer, setHoverPlayer] = useState<string | null>(null);
 
   const prevPage = "/playing11";
   const nextPage = "/final-playing11";
@@ -39,6 +40,8 @@ export default function SwapPlayer() {
     }
   }
 
+  const hoverPlayerStats = hoverPlayer ? aggregateStats[hoverPlayer] : null;
+
   return (
     <>
       <div>
@@ -50,6 +53,7 @@ export default function SwapPlayer() {
                 playerInfo={aggregateStats[predictedTeam[selectedPlayer]]}
                 teamStats={teamStats}
                 newTeamStats={newTeamStats}
+                hoverPlayerStats={hoverPlayerStats}
               />
             </div>
             <PitchComponent
@@ -62,6 +66,7 @@ export default function SwapPlayer() {
               selectedPlayersTeamB={selectedPlayersTeamB}
               handleTeamRevaluation={handleTeamRevaluation}
               setNewTeamStats={setNewTeamStats}
+              setHoverPlayer={setHoverPlayer}
             />
           </div>
         </PageTemplateWithoutTop>

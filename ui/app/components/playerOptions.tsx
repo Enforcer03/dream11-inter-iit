@@ -9,6 +9,7 @@ type PlayerOptionsProps = {
   selectedPlayersTeamB: string[];
   handleTeamRevaluation: (newPredictedTeam: string[], flag: boolean) => void;
   setNewTeamStats: (response: RevaluateTeamApiResponse) => void;
+  setHoverPlayer: (hoverPlayer: string | null) => void;
 };
 
 type PlayerCardProps = {
@@ -18,6 +19,7 @@ type PlayerCardProps = {
   predictedTeam: string[];
   handleTeamRevaluation: (newPredictedTeam: string[], flag: boolean) => void;
   setNewTeamStats: (response: RevaluateTeamApiResponse) => void;
+  setHoverPlayer: (hoverPlayer: string | null) => void;
 };
 
 function PlayerCard({
@@ -27,14 +29,17 @@ function PlayerCard({
   predictedTeam,
   handleTeamRevaluation,
   setNewTeamStats,
+  setHoverPlayer,
 }: PlayerCardProps) {
   function handleEnterHoverPlayer() {
+    setHoverPlayer(player.name);
     const newPredictedTeam = [...predictedTeam];
     newPredictedTeam[selectedPlayer] = player.name;
     handleTeamRevaluation(newPredictedTeam, false);
   }
 
   function handleExitHoverPlayer() {
+    setHoverPlayer(null);
     setNewTeamStats(null);
   }
 
@@ -72,6 +77,7 @@ export default function PlayerOptions({
   selectedPlayersTeamB,
   handleTeamRevaluation,
   setNewTeamStats,
+  setHoverPlayer,
 }: PlayerOptionsProps) {
   const leftOutPlayers: string[] = [...selectedPlayersTeamA, ...selectedPlayersTeamB].filter(
     (player) => !predictedTeam.includes(player.name)
@@ -91,6 +97,7 @@ export default function PlayerOptions({
               setPredictedTeam={setPredictedTeam}
               handleTeamRevaluation={handleTeamRevaluation}
               setNewTeamStats={setNewTeamStats}
+              setHoverPlayer={setHoverPlayer}
             />
           );
         })}

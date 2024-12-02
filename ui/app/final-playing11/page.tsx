@@ -34,7 +34,7 @@ function FinalPlaying11() {
       <PageTemplate title="PLAYING 11" />
       <div className="displayBoxDivDiv">
         <button className="predictedScoreBtn" onClick={handlePredictedScoreClick}>
-          PREDICTED TOTAL SCORE {totalScore}
+          PREDICTED TOTAL SCORE {totalScore.toFixed(2)}
         </button>
         <div className="displayBoxDiv">
           <DisplayBox

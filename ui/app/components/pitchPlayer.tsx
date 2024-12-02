@@ -16,6 +16,7 @@ type PitchComponentProps = {
   selectedPlayersTeamB: string[];
   handleTeamRevaluation: (newPredictedTeam: string[], flag: boolean) => void;
   setNewTeamStats: (response: RevaluateTeamApiResponse) => void;
+  setHoverPlayer: (hoverPlayer: string | null) => void;
 };
 
 type PlayerComponentProps = {
@@ -48,6 +49,7 @@ export default function PitchComponent({
   selectedPlayersTeamB,
   handleTeamRevaluation,
   setNewTeamStats,
+  setHoverPlayer,
 }: PitchComponentProps) {
   return (
     <div className="w-[55.5rem] flex flex-col ml-[26rem] mb-12">
@@ -106,6 +108,7 @@ export default function PitchComponent({
         selectedPlayersTeamB={selectedPlayersTeamB}
         handleTeamRevaluation={handleTeamRevaluation}
         setNewTeamStats={setNewTeamStats}
+        setHoverPlayer={setHoverPlayer}
       />
     </div>
   );
