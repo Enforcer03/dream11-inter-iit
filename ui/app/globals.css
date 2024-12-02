@@ -499,3 +499,8 @@ th {
   background-size: cover;
   padding: 2px;
 }
+
+.gradBorder{
+  background: url("../public/playerInfoBorder.svg") no-repeat center;
+  background-size: cover;
+}

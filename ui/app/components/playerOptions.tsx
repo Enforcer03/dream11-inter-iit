@@ -1,5 +1,5 @@
 import Image from "next/image";
-import profilePhoto from "../../public/photo.png";
+import { RevaluateTeamApiResponse } from "../types/modelApiResponse";
 
 type PlayerOptionsProps = {
   setHoveredPlayer: (player: number | null) => void;
@@ -8,38 +8,52 @@ type PlayerOptionsProps = {
   setPredictedTeam: (predictedTeam: string[] | ((prev: string[]) => string[])) => void;
   selectedPlayersTeamA: string[];
   selectedPlayersTeamB: string[];
+  handleTeamRevaluation: (newPredictedTeam: string[], flag: boolean) => void;
+  setNewTeamStats: (response: RevaluateTeamApiResponse) => void;
 };
 
 type PlayerCardProps = {
   player: string;
   selectedPlayer: number | null;
   setPredictedTeam: (predictedTeam: string[] | ((prev: string[]) => string[])) => void;
-  setHoveredPlayer: (player: number | null) => void;
-  index: number;
+  predictedTeam: string[];
+  handleTeamRevaluation: (newPredictedTeam: string[], flag: boolean) => void;
+  setNewTeamStats: (response: RevaluateTeamApiResponse) => void;
 };
 
 function PlayerCard({
   player,
-  setHoveredPlayer,
   selectedPlayer,
   setPredictedTeam,
-  index,
+  predictedTeam,
   handleTeamRevaluation,
+  setNewTeamStats,
 }: PlayerCardProps) {
+  function handleEnterHoverPlayer() {
+    const newPredictedTeam = [...predictedTeam];
+    newPredictedTeam[selectedPlayer] = player.name;
+
+    handleTeamRevaluation(newPredictedTeam, false);
+  }
+
+  function handleExitHoverPlayer() {
+    setNewTeamStats(null);
+  }
+
   function handleSwapPlayer() {
     if (selectedPlayer === null) return;
-    setPredictedTeam((prev: string[]) => {
-      const newTeam = [...prev];
-      newTeam[selectedPlayer] = player.name;
-      return newTeam;
-    });
-    handleTeamRevaluation();
+    const newPredictedTeam = [...predictedTeam];
+    newPredictedTeam[selectedPlayer] = player.name;
+
+    setPredictedTeam(newPredictedTeam);
+
+    handleTeamRevaluation(newPredictedTeam, true);
   }
 
   return (
     <div
-      onMouseEnter={() => setHoveredPlayer(index)}
-      onMouseLeave={() => setHoveredPlayer(null)}
+      onMouseEnter={() => handleEnterHoverPlayer()}
+      onMouseLeave={() => handleExitHoverPlayer()}
       onClick={handleSwapPlayer}
     >
       <div className="playerCardSwap flex mr-1 overflow-hidden">
@@ -53,20 +67,18 @@ function PlayerCard({
 }
 
 export default function PlayerOptions({
-  setHoveredPlayer,
   selectedPlayer,
   predictedTeam,
   setPredictedTeam,
   selectedPlayersTeamA,
   selectedPlayersTeamB,
   handleTeamRevaluation,
+  setNewTeamStats,
 }: PlayerOptionsProps) {
-  console.log("PlayerOptions", predictedTeam);
   const leftOutPlayers: string[] = [...selectedPlayersTeamA, ...selectedPlayersTeamB].filter(
     (player) => !predictedTeam.includes(player.name)
   );
 
-  console.log("leftOutPlayers", leftOutPlayers);
   // const leftOutPlayers = // players not in predicted team but in the player selection done by the user.
   return (
     <div className="playerOptionsDiv">
@@ -75,12 +87,12 @@ export default function PlayerOptions({
           return (
             <PlayerCard
               key={index}
-              setHoveredPlayer={setHoveredPlayer}
               player={player}
               selectedPlayer={selectedPlayer}
-              index={index}
+              predictedTeam={predictedTeam}
               setPredictedTeam={setPredictedTeam}
               handleTeamRevaluation={handleTeamRevaluation}
+              setNewTeamStats={setNewTeamStats}
             />
           );
         })}

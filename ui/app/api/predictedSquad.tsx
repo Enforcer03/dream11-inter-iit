@@ -26,7 +26,7 @@ export async function revaluateTeamSwap(
 ): Promise<RevaluateTeamApiResponse> {
   try {
     const obj = { best_team, player_stats, cov_matrix };
-    const response = await axios.post("http://localhost:8089/generate_best_team", obj);
+    const response = await axios.post("http://localhost:8089/team_evaluation", obj);
     return response.data;
   } catch (error) {
     console.error(error);
