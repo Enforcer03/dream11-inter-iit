@@ -8,7 +8,6 @@ import AnonymousPlayer from "./anonymousPlayer";
 import Button from "./buttonComp";
 import PlayerInformation from "./playerInformation";
 import SelectedPlayer from "./selectedPlayer";
-import defaultPhoto from "../../public/Grass.svg";
 
 type SimplifiedPlayer = {
   id: number;
@@ -124,26 +123,20 @@ function PeopleDisplay() {
     let nameParts = playerName.split(" ");
     let lastName = nameParts[nameParts.length - 1];
     let inital = nameParts[0][0];
-    let matchingPlayer = playersImages.data.find((imageData) => {
-      const isMatch = imageData.lastname === lastName && imageData.firstname[0] === inital;
-      if (isMatch) {
-        return isMatch;
-      }
-    });
+    let matchingPlayer = playersImages.data.find(
+      (imageData) => imageData.lastname === lastName && imageData.firstname[0] === inital
+    );
 
     if (!matchingPlayer) {
-      matchingPlayer = playersImages.data.find((imageData) => {
-        const isMatch = imageData.lastname === lastName;
-        if (isMatch) {
-          return isMatch;
-        }
-      });
-      if (!matchingPlayer) {
-        return defaultPhoto;
-      }
+      matchingPlayer = playersImages.data.find((imageData) => imageData.lastname === lastName);
     }
 
-    return matchingPlayer ? matchingPlayer.image_path : "https://cdn.sportmonks.com/images/cricket/placeholder.png";
+    // return matchingPlayer ? matchingPlayer.image_path : "https://cdn.sportmonks.com/images/cricket/placeholder.png";
+    return matchingPlayer
+      ? matchingPlayer.image_path === "https://cdn.sportmonks.com/images/cricket/placeholder.png"
+        ? "/default.png"
+        : matchingPlayer.image_path
+      : "/default.png";
   }
 
   const prevPage = "/select-match";
