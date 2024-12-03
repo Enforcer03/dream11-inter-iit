@@ -1,0 +1,546 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-quantico: "Quantico", sans-serif;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-quantico);
+}
+
+body {
+  background-color: rgb(92, 70, 29);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text-dream11FontColor {
+  color: #e8ba15;
+}
+
+.displayBoxDivDiv {
+  position: absolute;
+  bottom: 5rem;
+  left: 15%;
+  top: 12%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  justify-content: center;
+  width: 70%;
+  height: 75%;
+}
+
+.displayBoxDiv {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.predictedScoreBtn {
+  background: url("../public/predictedScoreBtn.svg") no-repeat center;
+  background-size: 100% 100%;
+  width: 22rem;
+  height: 2.5rem;
+  text-align: center;
+  color: #e8ba15;
+  font-size: 0.9rem;
+  font-weight: bold;
+  letter-spacing: 3px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.players-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.badge-bg {
+  background-image: url("../public/badge.svg");
+  background-repeat: no-repeat;
+  padding: 10px;
+  margin: 0rem 0.7rem;
+  width: 9.5rem;
+  height: 17rem;
+}
+
+.player-image {
+  width: 90px;
+  height: 100px;
+  border-radius: 5%;
+  object-fit: cover;
+}
+
+.flag {
+  width: 28px;
+  height: 20px;
+  object-fit: cover;
+}
+
+.flag-hr {
+  width: 30px;
+  border: 0.5px solid #c0af64;
+  margin: 5px 0;
+}
+
+.badge-hr {
+  height: 30px;
+  border: 0.5px solid #c0af64;
+  margin: 4px;
+}
+
+.player-image-container {
+  display: flex;
+  margin-top: 35%;
+}
+
+.image-container {
+  flex: 0 0 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.player-name {
+  text-transform: uppercase;
+  font-weight: bold;
+  text-align: center;
+  padding: 2px 0;
+}
+
+.player-bio {
+  font-size: 14px;
+  display: flex;
+  overflow: hidden;
+  justify-content: center;
+  display: flex;
+  width: 110%;
+  text-align: center;
+}
+
+.player-bio-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.player-hr {
+  width: 130px;
+  border: 0.5px solid #c0af64;
+}
+
+.main_window {
+  background-image: url("../public/newSubtract.svg");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.outer-page {
+  background-image: url("../public/image.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+.nextButton {
+  background: url("../public/nextButton.svg") no-repeat center;
+  background-size: contain;
+  width: 30rem;
+  height: 5rem;
+  text-align: center;
+  padding: 0 2rem;
+  margin: 0 9rem;
+  color: #e8ba15;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 5px;
+}
+
+.nextButton:hover {
+  background: url("../public/nextBtnHover.svg") no-repeat center;
+  background-size: contain;
+  color: #000000;
+}
+
+.buttonCompDiv {
+  position: absolute;
+  bottom: 0.8rem;
+  left: 25%;
+  z-index: 1;
+}
+
+.buttonComp {
+  background: url("../public/buttonComp.svg") no-repeat center;
+  background-size: contain;
+  width: 20rem;
+  height: 5rem;
+  text-align: center;
+  padding: 0 2rem;
+  margin: 0 2rem;
+  color: #e8ba15;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 5px;
+}
+
+.buttonComp:hover {
+  background: url("../public/buttonCompHover.svg") no-repeat center;
+  background-size: contain;
+  color: #000000;
+}
+
+.instructionsDiv {
+  position: absolute;
+  top: 20%;
+  left: 4%;
+  margin: 0 5rem;
+  color: #c2c0c0;
+  font-size: 1.2rem;
+  font-weight: lighter;
+  letter-spacing: 3px;
+}
+
+.videoCompDiv {
+  position: absolute;
+  bottom: 6%;
+  left: 6.5%;
+}
+
+.videoComp {
+  display: flex;
+  background: url("../public/leftBottomButtonComp.svg") no-repeat center;
+  background-size: contain;
+  width: 27rem;
+  height: 4rem;
+  color: #fad0539f;
+  font-size: 1.4rem;
+  font-weight: lighter;
+  align-items: flex-end;
+  padding: 0 1rem;
+  letter-spacing: 5px;
+}
+
+.videoCam {
+  display: flex;
+  background: url("../public/videoCam.svg") no-repeat center;
+  background-size: contain;
+  width: 4rem;
+  height: 4rem;
+  margin: 0 1rem -0.9rem 0.5rem;
+}
+
+.audioCompDiv {
+  position: absolute;
+  bottom: 4.5%;
+  right: 9%;
+}
+
+.audioComp {
+  background: url("../public/speaker.svg") no-repeat center;
+  background-size: contain;
+  width: 4rem;
+  height: 4rem;
+}
+
+.audioCompClicked {
+  background: url("../public/speakerCrossed.svg") no-repeat center;
+  background-size: contain;
+  width: 4rem;
+  height: 4rem;
+}
+
+.anonymousPlayer {
+  background: url("../public/anonymousPlayer.svg") no-repeat center;
+  background-size: contain;
+  width: 5rem;
+  height: 5rem;
+}
+
+.anonymousPlayerText {
+  text-transform: uppercase;
+  color: #fad0539f;
+  font-size: 0.8rem;
+  font-weight: bold;
+  letter-spacing: 3px;
+}
+
+.pitchPlayerText {
+  text-transform: uppercase;
+  color: #fad0539f;
+  font-size: 0.6rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  width: 10rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.optionalPlayerText {
+  text-transform: uppercase;
+  color: #fad0539f;
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.select-player-image {
+  width: 5rem;
+  height: 5rem;
+  padding: 0 6px;
+  object-fit: cover;
+}
+
+.bgSelectedPlayer {
+  background: url("../public/bgSelectedPlayer.svg") no-repeat center;
+  display: flex;
+  width: 4.5rem;
+  height: 5rem;
+}
+
+.bgInfoReportPlayer {
+  background: url("../public/bgSelectedPlayer.svg") no-repeat center;
+  display: flex;
+  width: 6rem;
+  height: 6.25rem;
+  justify-content: center;
+}
+
+.selectionListDiv {
+  position: absolute;
+  top: 12%;
+  right: 9%;
+  width: 58%;
+  height: 62%;
+  overflow-y: scroll;
+}
+
+.buttonPlayerSelectionDiv {
+  position: absolute;
+  bottom: 4rem;
+  left: 8%;
+  width: 10rem;
+  padding: 0;
+}
+
+.buttonPlayerSelectionDiv .buttonComp {
+  margin: 0.5rem 1rem;
+}
+
+.selectListDiv {
+  position: absolute;
+  bottom: 1%;
+  right: 8%;
+  width: 60%;
+}
+
+.dateInputMatch {
+  background: url("../public/DateInputBG.svg") no-repeat center;
+  background-size: contain;
+  color: white;
+  width: 100%;
+  text-align: center;
+  padding: 0.5rem 16rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 5px;
+  outline: none;
+  border: none;
+}
+
+.leftArrowBtn {
+  position: absolute;
+  left: -5rem;
+  background: url("../public/leftArrow.svg") no-repeat center;
+  background-size: contain;
+  width: 2rem;
+  height: 2rem;
+}
+
+.downArrowBtn {
+  position: absolute;
+  right: 27.3rem;
+  bottom: 12rem;
+  background: url("../public/leftArrow.svg") no-repeat center;
+  background-size: contain;
+  width: 2rem;
+  height: 2rem;
+}
+
+.rightArrowBtn {
+  position: absolute;
+  right: -5rem;
+  background: url("../public/rightArrow.svg") no-repeat center;
+  background-size: contain;
+  width: 2rem;
+  height: 2rem;
+}
+
+.selectMatchDiv {
+  position: absolute;
+  top: 14%;
+  left: 25%;
+  font-size: 1rem;
+  font-weight: lighter;
+}
+
+.main_window_without_top {
+  background-image: url("../public/backgroundBlur.svg");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+th {
+  color: white;
+}
+
+.profilePhoto {
+  background: url("../public/Grass.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.pitch {
+  background: url("../public/Grass.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: repeat;
+}
+
+.playerShortDetails {
+  position: absolute;
+  top: 10%;
+  left: 8%;
+  display: flex;
+  flex-direction: column;
+}
+
+.autoSelectBtn {
+  background: url("../public/autoSelectBtn.svg") no-repeat center;
+  background-size: contain;
+  cursor: pointer;
+  width: 10rem;
+  height: 2.5rem;
+  text-align: center;
+  margin: 0 1rem;
+  color: #e8ba15;
+  font-size: 1rem;
+  font-weight: bold;
+  position: relative;
+}
+
+.information-report-container {
+  color: #c2c0c0;
+  font-size: 1.2rem;
+  font-weight: lighter;
+  letter-spacing: 2px;
+  width: 85%;
+}
+
+.videoDisplayDiv iframe {
+  position: absolute;
+  top: 19%;
+  left: 22.5%;
+  width: 55%;
+  height: 65%;
+}
+
+.selected {
+  background: url("../public/selectedFrame.svg") no-repeat center;
+  background-size: 100% 100%;
+}
+
+.playerCardSwap {
+  background: url("../public/bgSelectedPlayer.svg") no-repeat center;
+  background-size: cover;
+  width: 4.8rem;
+  height: 4.8rem;
+}
+
+.playerOptionsDiv {
+  position: absolute;
+  bottom: 4%;
+  right: 2%;
+  width: 69%;
+}
+
+.playerInformationDiv {
+  position: absolute;
+  top: 20%;
+  left: 4%;
+  margin: 0 5rem;
+  color: #c2c0c0;
+  font-size: 1.2rem;
+  font-weight: lighter;
+  letter-spacing: 3px;
+}
+
+.emptyLeague {
+  background: url("../public/emptyLeague.svg") no-repeat center;
+  background-size: cover;
+  border: 1px solid #e8ba153a;
+}
+
+.emptyMatch {
+  background: url("../public/emptyMatch.svg") no-repeat center;
+  background-size: cover;
+
+  border: 1px solid #e8ba153a;
+}
+
+.emptyText {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 3px;
+}
+
+.filledLeague {
+  background: url("../public/filledLeague.svg") no-repeat center;
+  background-size: cover;
+  padding: 2px;
+}
+
+.filledMatch {
+  background: url("../public/filledMatch.svg") no-repeat center;
+  background-size: cover;
+  padding: 2px;
+}
+
+.loader-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.loader-container img {
+  height: 300px;
+  width: 300px;
+}
