@@ -42,7 +42,7 @@ def generate_best_team():
             
         selected_players, stats_df, cov_matrix = calculate_optimal_team(
         player_info=player_info,
-        num_matches=50,
+        num_matches=65,
         date_of_match= date,
         risk_aversion=0.1,
         solver='pulp',

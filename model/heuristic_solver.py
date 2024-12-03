@@ -41,7 +41,7 @@ def load_player_fantasy_points_for_optimization(json_file: str) -> Dict:
         return sorted_data
 
 def compute_player_stats(fantasy_points: Dict, players: List[str], 
-                        num_matches: int = 40, date_of_match: str = None, 
+                        num_matches: int = 65, date_of_match: str = None, 
                         key: str = 'total_points') -> pd.DataFrame:
     """
     Computes mean and variance of fantasy points for each player.
@@ -78,7 +78,7 @@ def compute_player_stats(fantasy_points: Dict, players: List[str],
     return pd.DataFrame(stats_list)
 
 def compute_covariance_matrix(fantasy_points: Dict, players: List[str], 
-                            num_matches: int = 40, 
+                            num_matches: int = 65, 
                             date_of_match: str = None) -> pd.DataFrame:
     """
     Computes covariance matrix of player performances.
@@ -287,7 +287,7 @@ def optimize_team_advanced_test(stats_df: pd.DataFrame, cov_matrix: np.ndarray,
                          consistency_threshold: float = 0.5,
                          diversity_threshold: float = 0.5,
                          form_threshold: float = 0.333,
-                         quantile_form = 75
+                         quantile_form = 40
                          ) -> Tuple[List[str], pd.DataFrame]:
     """
     Advanced team optimization with configurable constraints using PuLP.

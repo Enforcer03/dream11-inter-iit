@@ -8,7 +8,7 @@ from utils import load_player_fantasy_points, calculate_team_metrics
 import requests
 import json
 
-def calculate_optimal_team(player_info, num_matches=40, date_of_match=None, risk_aversion=0.1, solver='pulp', fantasy_points_data=None):
+def calculate_optimal_team(player_info, num_matches=65, date_of_match=None, risk_aversion=0.1, solver='pulp', fantasy_points_data=None):
     """
     Given a list of player names (combined squad), calculates the optimal team.
     Returns selected_players and stats_df.
