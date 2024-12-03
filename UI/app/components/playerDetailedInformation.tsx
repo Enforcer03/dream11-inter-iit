@@ -69,39 +69,39 @@ function PlayerInformation({
               <div className="font-bold w-1/2">Runs:</div>
             </div>
             <div className="flex mb-2 text-white">
-              <div className="w-1/2">{child4}</div>
-              <div className="w-1/2">{child11}</div>
+              <div className="w-1/2">{child4.toFixed(2)}</div>
+              <div className="w-1/2">{child11.toFixed(0)}</div>
             </div>
             <div className="flex text-dream11FontColor">
               <div className="font-bold w-1/2">Batting Avg:</div>
               <div className="font-bold w-1/2">Wickets:</div>
             </div>
             <div className="flex mb-2 text-white">
-              <div className="w-1/2">{child5}</div>
-              <div className="w-1/2">{child12}</div>
+              <div className="w-1/2">{child5.toFixed(2)}</div>
+              <div className="w-1/2">{child12.toFixed(0)}</div>
             </div>
             <div className="flex text-dream11FontColor">
               <div className="font-bold w-1/2">Economy Rate:</div>
               <div className="font-bold w-1/2">Bowling S/R:</div>
             </div>
             <div className="flex text-white">
-              <div className="w-1/2">{child13}</div>
-              <div className="w-1/2">{child6}</div>
+              <div className="w-1/2">{child13.toFixed(2)}</div>
+              <div className="w-1/2">{child6.toFixed(2)}</div>
             </div>
             <div className="flex mt-4 text-dream11FontColor">
               <div className="font-bold w-1/2">Expected Bowling Points:</div>
               <div className="font-bold w-1/2">Expected Batting Points:</div>
             </div>
             <div className="flex text-white">
-              <div className="w-1/2">{child7}</div>
-              <div className="w-1/2">{child8}</div>
+              <div className="w-1/2">{child7.toFixed(2)}</div>
+              <div className="w-1/2">{child8.toFixed(2)}</div>
             </div>
             <div className="flex text-dream11FontColor">
               <div className="font-bold w-1/2">Mean Points:</div>
               <div className="font-bold w-1/2">Std Deviation:</div>
             </div>
             <div className="flex text-white">
-              <div className="w-1/2">{child9}</div>
+              <div className="w-1/2">{child9.toFixed(2)}</div>
               <div className="w-1/2">{Math.pow(child10, 0.5).toFixed(2)}</div>
             </div>
           </div>

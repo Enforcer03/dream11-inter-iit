@@ -4,7 +4,7 @@ import PageTemplate from "./pageTemplate";
 export default function LoadingScreen() {
   return (
     <div>
-      <PageTemplate title="Playing 11" />
+      <PageTemplate title="Playing XI" />
       <div className="loader-container">
         <Image src="/loading.gif" alt="Loading..." width={100} height={100} priority />
       </div>

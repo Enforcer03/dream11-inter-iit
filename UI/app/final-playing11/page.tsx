@@ -56,7 +56,7 @@ function FinalPlaying11() {
 
   return (
     <div>
-      <PageTemplate title="PLAYING 11" />
+      <PageTemplate title="PLAYING XI" />
       <div className="displayBoxDivDiv">
         <div className="predictedScoreBtn uppercase" onClick={handlePredictedScoreClick}>
           Get Team Info

@@ -71,7 +71,7 @@ const PeopleDisplay = () => {
 
   return (
     <div>
-      <PageTemplate title="playing 11">
+      <PageTemplate title="playing XI">
         <div className=" ml-2 -mt-20">
           <h1 className="text-3xl text-[#FFD700] font-bold tracking-wider">PLAYERS&apos; INFORMATION REPORT</h1>
         </div>

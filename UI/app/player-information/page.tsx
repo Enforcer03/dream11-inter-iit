@@ -46,7 +46,7 @@ export default function SwapPlayer() {
   }, [format, id, predictedTeam]);
   return (
     <>
-      <PageTemplate title="Playing 11">
+      <PageTemplate title="Playing XI">
         <div className="flex">
           <div className="playerShortDetails -ml-10 mt-12">
             {format &&
