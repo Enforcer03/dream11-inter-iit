@@ -8,10 +8,12 @@ import ButtonComponent from "../components/buttonComp";
 import PageTemplate from "../components/pageTemplate";
 import PlayerInformation from "../components/playerDetailedInformation";
 import { useMatchData } from "../contexts/matchDataContext";
+import Image from "next/image";
 
 export default function SwapPlayer() {
   const { aggregateStats, matchData } = useMatchData();
   const [playerLLMInfo, setPlayerLLMInfo] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { predictedTeam, playerStats } = useMatchData();
   const searchParams = useSearchParams();
@@ -26,6 +28,7 @@ export default function SwapPlayer() {
   useEffect(() => {
     async function handleLLMForPlayers() {
       try {
+        setIsLoading(true);
         const res = await handleLLMPlayer(format, id, predictedTeam);
 
         // const res = {
@@ -33,6 +36,7 @@ export default function SwapPlayer() {
         //     "GJ Delany was likely selected due to his strong fielding skills and decent bowling performance, despite mediocre batting stats. Key positives include:\n\n- **Bowling**: 67 wickets, economy rate of 7.5, and high dot ball percentage (35.5%).\n- **Fielding**: 28 catches.\n\nBest statistics:\n- **Wickets**: 67\n- **Economy Rate**: 7.5\n- **Catches**: 28",
         // };
         setPlayerLLMInfo(res.analysis);
+        setIsLoading(false);
       } catch (error) {
         console.error(error);
       }
@@ -118,7 +122,13 @@ export default function SwapPlayer() {
               })()}
           </div>
           <div className="flex flex-col text-slate-300 w-[50rem] tracking-wider text-lg ml-[24rem] mb-[18rem] leading-relaxed overflow-hidden">
-            <ReactMarkdown>{playerLLMInfo}</ReactMarkdown>
+            {isLoading ? (
+              <div className="loader-container">
+                <Image src="/loading.gif" alt="Loading..." width={100} height={100} priority />
+              </div>
+            ) : (
+              <ReactMarkdown>{playerLLMInfo}</ReactMarkdown>
+            )}
           </div>
         </div>
       </PageTemplate>
