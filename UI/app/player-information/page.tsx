@@ -121,7 +121,7 @@ export default function SwapPlayer() {
                 );
               })()}
           </div>
-          <div className="flex flex-col text-slate-300 w-[50rem] tracking-wider text-lg ml-[24rem] mb-[18rem] leading-relaxed overflow-y-scroll">
+          <div className="flex flex-col text-slate-300 w-[50rem] tracking-wider text-lg ml-[24rem] leading-relaxed overflow-y-scroll h-[25rem] mb-10">
             {isLoading ? (
               <div className="loader-container">
                 <Image src="/loading.gif" alt="Loading..." width={100} height={100} priority />
