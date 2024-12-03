@@ -75,19 +75,21 @@ export default function SwapPlayer() {
                   bowlingSR = "-";
                 }
 
-                let playerData = playerStats.find((player) => player.player === id);
+                const playerData = playerStats.find((player) => player.player === id);
                 const team = playerData?.["team"];
+                let batting_points = playerData?.batting_points;
                 let bowling_points = playerData?.["bowling_points"];
-                let fielding_points = playerData?.["fielding_points"];
                 let mean_points = playerData?.["mean_points"];
                 let variance = playerData?.["variance"];
+
+                if (batting_points == null || batting_points === Infinity || batting_points < 0) {
+                  batting_points = "-";
+                }
 
                 if (bowling_points == null || bowling_points === Infinity || bowling_points < 0) {
                   bowling_points = "-";
                 }
-                if (fielding_points == null || fielding_points === Infinity || fielding_points < 0) {
-                  fielding_points = "-";
-                }
+
                 if (mean_points == null || mean_points === Infinity || mean_points < 0) {
                   mean_points = "-";
                 }
@@ -95,16 +97,17 @@ export default function SwapPlayer() {
                   variance = "-";
                 }
 
+                const formattedTeamName = team?.replace("_Second_Squad", "");
                 return (
                   <PlayerInformation
                     title={"Player Information"}
-                    child2={`${id} (${team})`}
+                    child2={`${id} (${formattedTeamName})`}
                     child3={image}
                     child4={battingSR}
                     child5={battingAvg}
                     child6={bowlingSR}
                     child7={bowling_points}
-                    child8={fielding_points}
+                    child8={batting_points}
                     child9={mean_points}
                     child10={variance}
                     child11={runs}
