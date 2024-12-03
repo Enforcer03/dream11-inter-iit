@@ -21,38 +21,6 @@ def extract_date_from_match_key(match_key):
   
 
 
-
-def get_optimal_team_llm(player_data, client):
-    """
-    Uses GPT-4 to select an optimal fantasy cricket team based on player data.
-    
-    Args:
-        player_data (str): String containing player information and scores
-        client: OpenAI client instance
-    
-    Returns:
-        str: LLM response containing selected team with player attributes and analysis
-    """
-    prompt = f"""
-    You are an expert fantasy cricket selector. Create the best team of 11 players from the following 22 players based on their expected fantasy scores. Make sure to include at least one player from each team. 
-
-    Players and their scores:
-    {player_data}
-
-    Return the team as a list of player names. For each player, output the most important attribute for the player's selection FROM AGGREGATE STATISTICS PROVIDED TO YOU. The only constraint is that at least one player from each team be selected ALSO MAKE SURE YOU GIVE AN OUTPUT WHICH IS READABLE BY A LAYMAN. MENTION AGGREGATE DATA AS WELL ASN THE CONSISTENCY PROVIDED BY THE VARIANCE.
-    """
-
-    response = client.chat.completions.create(
-        model="gpt-4", 
-        messages=[
-            {"role": "system", "content": "You are a fantasy cricket expert. Suggest the best 11 players out of the ones given. Ensure one player from each team is selected."},
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.9
-    )
-
-    return response.choices[0].message.content
-
 def get_past_match_performance(player_name, fantasy_points, num_matches=50, key='total_points', date_of_match=None):
     """
     Retrieves and processes historical match performance data for a player.

@@ -17,7 +17,7 @@ from heuristic_solver import (
     optimize_team_advanced_test
 )
 import datetime
-from utils import get_optimal_team_llm, get_past_match_performance, extract_date_from_match_key, plot_team_distribution, calculate_team_metrics
+from utils import get_past_match_performance, extract_date_from_match_key, plot_team_distribution, calculate_team_metrics
 from get_snapshot import get_team_selection_snapshot
 import pandas as pd
 import numpy as np
@@ -147,10 +147,9 @@ with st.sidebar.expander("🎯 Technical Guidelines", expanded=True):
     """)
 
 format_lower = format_selected.lower().replace('-', '').replace(' ', '')
-data_dir = "/Users/ved14/Library/CloudStorage/GoogleDrive-v_umrajkar@ma.iitr.ac.in/My Drive/SEM7/extras/dream11-inter-iit/data"
-fantasy_points_path = f"../data/player_fantasy_points_{format_lower}.json"
-json_file_path = f"../data/combined_squad.json"
-aggregate_stats_path = f"../data/aggregate_cricket_stats_{format_lower}.json"
+fantasy_points_path = f"../data/processed/player_fantasy_points_{format_lower}.json"
+json_file_path = f"../data/processed/combined_squad.json"
+aggregate_stats_path = f"../data/processed/aggregate_cricket_stats_{format_lower}.json"
 
 try:
     match_data = load_sample_players(json_file_path)
@@ -194,7 +193,7 @@ def create_performance_plots(df):
     dist_fig = go.Figure()
     dist_fig.add_trace(go.Histogram(
         x=df['performance_ratio'],
-        nbinsx=30,
+        nbinsx=100,
         name='Distribution',
         histnorm='probability'
     ))
@@ -270,7 +269,7 @@ if get_team_snapshot:
         st.session_state.analysis_generated = False
     
     # Set default date to July 6th, 2024
-    default_date = datetime.date(2024, 7, 1)
+    default_date = datetime.date(2020, 7, 1)
     date_filter = default_date
     
     st.write("Analysis will include matches from July 6th, 2024 onward")
@@ -278,7 +277,7 @@ if get_team_snapshot:
     # Add a button to trigger the analysis
     if st.button("Generate Team Selection Analysis", key="generate_analysis") or st.session_state.analysis_generated:
         st.session_state.analysis_generated = True
-        all_paths = [f"../data/player_fantasy_points_{format_lower}.json" for format_lower in ["t20", "odi", "test"]]
+        all_paths = [f"../data/processed/player_fantasy_points_{format_lower}.json" for format_lower in ["t20", "odi", "test"]]
         
         # Show loading message while processing
         if date_filter != st.session_state.last_date_filter:
@@ -292,7 +291,7 @@ if get_team_snapshot:
                     get_optim_file(all_paths[2]),
                     input_date=date_filter,
                     quantile_form=40,
-                    num_matches=80
+                    num_matches=65
                 )
                 st.session_state.last_date_filter = date_filter
 
@@ -467,7 +466,7 @@ if squad_info:
         "Number of past matches to consider",
         min_value=1,
         max_value=500,
-        value=50,
+        value=40,
         step=1,
         key='num_matches_assess'
     )
@@ -576,7 +575,7 @@ if squad_info:
     num_matches = st.slider("Number of past matches to consider", 
                        min_value=20, 
                        max_value=500, 
-                       value=st.session_state.num_matches, 
+                       value=40, 
                        step=1,
                        key='num_matches_slider')
 
@@ -620,7 +619,7 @@ if squad_info:
             "Form Quantile",
             min_value=50,
             max_value=90,
-            value=75,
+            value=40,
             step=5,
             help="Percentile threshold for considering player form",
             key='quantile_form_slider'
@@ -845,106 +844,48 @@ if squad_info:
             )
 
                 st.plotly_chart(score_dist_fig, use_container_width=False)
-                with st.expander("View Optimization Method"):
-                    st.markdown("""
-                                $$
-                                \\begin{align*}
-                                & \\text{maximize} && \\sum_{i=1}^{n} \\mu_i x_i \\\\
-                                & \\text{subject to:} && \\\\
-                                & \\text{1. Team Size} && \\sum_{i=1}^{n} x_i = 11 \\\\
-                                & \\text{2. Consistency} && \\sum_{i=1}^{n} \\frac{\\mu_i}{\\sigma_i} x_i \\geq \\frac{11}{2} \\cdot \\mathbb{E}[\\frac{\\mu}{\\sigma}] \\\\
-                                & \\text{3. Diversity} && \\sum_{i=1}^{n} H(\\frac{\\mu_i}{\\sum_j \\mu_j}) x_i \\geq \\frac{11}{2} H(\\mathbf{\\mu}) \\\\
-                                & \\text{4. Form} && \\sum_{i: \\mu_i \\geq Q_{75}(\\mu)} x_i \\geq \\frac{11}{3} \\\\
-                                & \\text{5. Team Coverage} && \\sum_{i \\in T_k} x_i \\geq 1 \\quad \\forall k \\in \\text{Teams} \\\\
-                                & \\text{where:} && x_i \\in \\{0,1\\} \\text{ for all } i \\\\
-                                &&& T_k \\text{ is the set of players from team } k
-                                \\end{align*}
-                                $$
-
-                                **Optimization Breakdown:**
-
-                                **Objective Function:**
-                                - Maximizes total expected fantasy points
-                                - $\\mu_i$ represents average points for player i
-                                - $x_i$ is binary (1 if player selected, 0 if not)
-
-                                **Constraints Explained:**
-
-                                1. **Team Size (Basic Rule)**
-                                - Ensures exactly 11 players are selected
-                                - Required for valid team formation
-
-                                2. **Consistency (Risk Management)**
-                                - Uses Sharpe ratio ($\\frac{\\mu_i}{\\sigma_i}$)
-                                - Favors consistent performers over volatile ones
-                                - Must exceed average team consistency
-
-                                3. **Diversity (Point Distribution)**
-                                - Uses entropy to measure scoring distribution
-                                - Prevents overreliance on few players
-                                - Ensures balanced point contribution
-
-                                4. **Form (Recent Performance)**
-                                - At least 1/3 of team from top 75% performers
-                                - Captures players in good current form
-                                - Balances historical data with recent performance
-
-                                5. **Team Coverage (Balance)**
-                                - Minimum one player from each team
-
-                                **Decision Variables:**
-                                - $x_i$ is binary (0 or 1)
-                                - Represents player selection/non-selection
-                                - One variable per available player
-                                """)
-
                
             else:
                 st.error("Failed to select an optimal team.")
 
-    # Allow solver change after optimization
-    # if st.session_state.optimization_done:
-    #     if st.button("Re-run Optimization with New Solver"):
-    #         st.experimental_rerun()
-    
-            # Move this section outside of the "Optimize Team" button block
-    if st.button("Get Team Analytics"):
-        if ('stats_df' not in st.session_state) or ('assigned_weights_df' not in st.session_state):
-            st.error("Please run team optimization first!")
-        elif st.session_state.stats_df is None or st.session_state.assigned_weights_df is None:
-            st.error("No optimization data found. Please run team optimization first!")
-        else:
-            try:
-                weights_df = st.session_state.assigned_weights_df
-                if weights_df.empty:
-                    st.error("No player weights found. Please run optimization again.")
+
+    # if st.button("Get Team Analytics"):
+    #     if ('stats_df' not in st.session_state) or ('assigned_weights_df' not in st.session_state):
+    #         st.error("Please run team optimization first!")
+    #     elif st.session_state.stats_df is None or st.session_state.assigned_weights_df is None:
+    #         st.error("No optimization data found. Please run team optimization first!")
+    #     else:
+    #         try:
+    #             weights_df = st.session_state.assigned_weights_df
+    #             if weights_df.empty:
+    #                 st.error("No player weights found. Please run optimization again.")
                     
-                selected_players = weights_df[weights_df['weight'] == 1]['player'].tolist()
-                if not selected_players:
-                    st.error("No players were selected in the optimization.")
+    #             selected_players = weights_df[weights_df['weight'] == 1]['player'].tolist()
+    #             if not selected_players:
+    #                 st.error("No players were selected in the optimization.")
                     
                     
-                stats_df = st.session_state.stats_df
-                if stats_df.empty:
-                    st.error("No player statistics found. Please run optimization again.")
+    #             stats_df = st.session_state.stats_df
+    #             if stats_df.empty:
+    #                 st.error("No player statistics found. Please run optimization again.")
                     
                     
-                st.write("### Team Analysis Report")
-                with st.spinner("Generating comprehensive team analysis using AI..."):
-                    format_type = st.session_state.get('format_type', 'odi').lower() 
-                    analysis = analyze_team_selection(
-                        stats_df=stats_df,
-                        selected_players=selected_players,
-                        format_lower=format_type
-                    )
-                    if analysis:
-                        st.markdown("## Analysis Results")
-                        st.write(analysis)
-                    else:
-                        st.warning("No analysis was generated. Please check the data and try again.")
-            except Exception as e:
-                st.error(f"An error occurred during analysis: {str(e)}")
-                st.error("Please check the data and try again.")
+    #             st.write("### Team Analysis Report")
+    #             with st.spinner("Generating comprehensive team analysis using AI..."):
+    #                 format_type = st.session_state.get('format_type', 'odi').lower() 
+    #                 analysis = analyze_team_selection(
+    #                     stats_df=stats_df,
+    #                     selected_players=selected_players,
+    #                     format_lower=format_type
+    #                 )
+    #                 if analysis:
+    #                     st.markdown("## Analysis Results")
+    #                     st.write(analysis)
+    #                 else:
+    #                     st.warning("No analysis was generated. Please check the data and try again.")
+    #         except Exception as e:
+    #             st.error(f"An error occurred during analysis: {str(e)}")
+    #             st.error("Please check the data and try again.")
 
     st.markdown("---")
     st.caption("Team-62")
