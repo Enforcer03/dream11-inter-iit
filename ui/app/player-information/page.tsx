@@ -2,15 +2,16 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { handleLLMPlayer } from "../api/llmApi";
 import ButtonComponent from "../components/buttonComp";
 import PageTemplate from "../components/pageTemplate";
 import PlayerInformation from "../components/playerDetailedInformation";
-import { PlayerStats, useMatchData } from "../contexts/matchDataContext";
+import { useMatchData } from "../contexts/matchDataContext";
 
 export default function SwapPlayer() {
   const { aggregateStats, matchData } = useMatchData();
-  const [playerLLMInfo, setPlayerLLMInfo] = useState<JSX.Element[]>([]);
+  const [playerLLMInfo, setPlayerLLMInfo] = useState<string>("");
 
   const { predictedTeam, playerStats } = useMatchData();
   const searchParams = useSearchParams();
@@ -20,17 +21,18 @@ export default function SwapPlayer() {
   const prevPage = "/playing11";
   const nextPage = "/swap-player";
 
-  const format = matchData?.Format; 
+  const format = matchData?.Format;
 
   useEffect(() => {
     async function handleLLMForPlayers() {
       try {
-        // const playerName = predictedTeam[id];
         const res = await handleLLMPlayer(format, id, predictedTeam);
-        console.log("LLM Response: ", res);
-        setPlayerLLMInfo(res.analysis);
 
-        console.log("LLM Response: ", res);
+        // const res = {
+        //   analysis:
+        //     "GJ Delany was likely selected due to his strong fielding skills and decent bowling performance, despite mediocre batting stats. Key positives include:\n\n- **Bowling**: 67 wickets, economy rate of 7.5, and high dot ball percentage (35.5%).\n- **Fielding**: 28 catches.\n\nBest statistics:\n- **Wickets**: 67\n- **Economy Rate**: 7.5\n- **Catches**: 28",
+        // };
+        setPlayerLLMInfo(res.analysis);
       } catch (error) {
         console.error(error);
       }
@@ -112,8 +114,8 @@ export default function SwapPlayer() {
                 );
               })()}
           </div>
-          <div className="flex flex-col text-slate-300 w-[50rem] tracking-wider text-lg ml-[24rem] mb-[18rem] leading-relaxed overflow-scroll">
-            {playerLLMInfo}
+          <div className="flex flex-col text-slate-300 w-[50rem] tracking-wider text-lg ml-[24rem] mb-[18rem] leading-relaxed overflow-hidden">
+            <ReactMarkdown>{playerLLMInfo}</ReactMarkdown>
           </div>
         </div>
       </PageTemplate>

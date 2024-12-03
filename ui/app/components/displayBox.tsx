@@ -60,7 +60,7 @@ function PlayerList({
         return playerLastName === lastName;
       });
     }
-    
+
     return matchingPlayer ? matchingPlayer.image : "https://cdn.sportmonks.com/images/cricket/placeholder.png";
   }
 
