@@ -1,8 +1,8 @@
+import BackButtonComponent from "../components/backButton";
 import ButtonComponent from "../components/buttonComp";
 import PageTemplate from "../components/pageTemplate";
 
 function InstructionsPage() {
-  const prevPage = "/";
   const nextPage = "/select-match";
 
   return (
@@ -19,7 +19,7 @@ function InstructionsPage() {
         ></iframe>
       </div>
       <div className="buttonCompDiv">
-        <ButtonComponent nextPage={prevPage}>BACK</ButtonComponent>
+        <BackButtonComponent>BACK</BackButtonComponent>
         <ButtonComponent nextPage={nextPage}>NEXT</ButtonComponent>
       </div>
     </div>

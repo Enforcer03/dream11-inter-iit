@@ -11,6 +11,7 @@ import PageTemplate from "../components/pageTemplate";
 import { PlayerStats, useMatchData } from "../contexts/matchDataContext";
 import { PlayerInfo } from "../types/modelApiResponse";
 import { areStringArraysEqualIgnoreOrder } from "../utils/TeamCompare";
+import BackButtonComponent from "../components/backButton";
 
 // const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -34,7 +35,6 @@ function Playing11() {
 
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const prevPage = "/player-selection";
   const nextPage = "/swap-player";
 
   const handlePredictedScoreClick = () => {
@@ -137,7 +137,7 @@ function Playing11() {
         </div>
       </div>
       <div className="buttonCompDiv">
-        <Button nextPage={prevPage}>BACK</Button>
+        <BackButtonComponent>BACK</BackButtonComponent>
         <Button nextPage={nextPage}>SWAP</Button>
       </div>
     </div>

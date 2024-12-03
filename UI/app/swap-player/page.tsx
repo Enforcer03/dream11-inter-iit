@@ -10,6 +10,7 @@ import PlayerInformationSwap from "../components/playerInformationSwap";
 import { useMatchData } from "../contexts/matchDataContext";
 import { RevaluateTeamApiResponse } from "../types/modelApiResponse";
 import { areStringArraysEqualIgnoreOrder } from "../utils/TeamCompare";
+import BackButtonComponent from "../components/backButton";
 
 // const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -33,7 +34,6 @@ export default function SwapPlayer() {
   const [newTeamStats, setNewTeamStats] = useState<RevaluateTeamApiResponse | null>(null);
   const [hoverPlayer, setHoverPlayer] = useState<string | null>(null);
 
-  const prevPage = "/playing11";
   const nextPage = "/final-playing11";
 
   async function handleTeamRevaluation(newPredictedTeam: string[], flag: boolean) {
@@ -104,7 +104,7 @@ export default function SwapPlayer() {
         </PageTemplateWithoutTop>
         <div className="buttonPlayerSelectionDiv">
           <ButtonComponent nextPage={nextPage}>Finalize</ButtonComponent>
-          <ButtonComponent nextPage={prevPage}>BACK</ButtonComponent>
+          <BackButtonComponent>BACK</BackButtonComponent>
         </div>
       </div>
     </>
