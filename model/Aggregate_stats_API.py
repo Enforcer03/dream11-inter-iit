@@ -59,22 +59,22 @@ def get_player_stats():
         return jsonify(stats)
     else:
         return jsonify({"error": "Player name is required"}), 400
-    
-@app.route('/analyze_player', methods=['POST'])
+
+
+@app.route("/analyze_player", methods=["POST"])
 def analyze_player():
     # Get the player name from the query string
     data = request.get_json()
-    if 'best_team' not in data:
-        return jsonify({'error': 'Best Team not found'}), 400
-    if 'Player' not in data:
-        return jsonify({'error': 'Player name not found'}), 400
-    if 'format' not in data:
-        return jsonify({'error': 'Please enter format as ODI/Test/T20'}), 400
-    
-    
-    selected_players = data['best_team']
-    player_name = data['Player']
-    format = data['format'].lower()
+    if "best_team" not in data:
+        return jsonify({"error": "Best Team not found"}), 400
+    if "Player" not in data:
+        return jsonify({"error": "Player name not found"}), 400
+    if "format" not in data:
+        return jsonify({"error": "Please enter format as ODI/Test/T20"}), 400
+
+    selected_players = data["best_team"]
+    player_name = data["Player"]
+    format = data["format"].lower()
     player_aggregate_stats = None
     if format == "t20":
         player_aggregate_stats = player_T20_data.get(player_name, {})
@@ -82,13 +82,15 @@ def analyze_player():
         player_aggregate_stats = player_ODI_data.get(player_name, {})
     elif format == "test":
         player_aggregate_stats = player_Test_data.get(player_name, {})
-    
-    
+
     if not player_aggregate_stats:
-        return jsonify({'error': f'No aggregate statistics found for {player_name}'}), 400 
-    
+        return (
+            jsonify({"error": f"No aggregate statistics found for {player_name}"}),
+            400,
+        )
+
     selection_status = "selected" if player_name in selected_players else "not selected"
-    
+
     prompt = f"""
 Based on the following statistics, explain why {player_name} was {selection_status} for the optimal fantasy cricket team:
 
@@ -129,27 +131,27 @@ Please provide a concise and brief analysis of why this player was {selection_st
     try:
         response = requests.post(url, json=data, headers=headers)
         response.raise_for_status()
-        analysis = response.json()['output']
+        analysis = response.json()["output"]
         return jsonify({"analysis": analysis})
     except requests.exceptions.RequestException as e:
         return jsonify({"error": "Error Querying LLM"}), 404
-    
-@app.route('/analyze_team', methods=['POST'])
+
+
+@app.route("/analyze_team", methods=["POST"])
 def analyze_team():
     # Get the player name from the query string
     data = request.get_json()
-    if 'best_team' not in data:
-        return jsonify({'error': 'Best Team not found'}), 400
-    if 'player_stats' not in data:
-        return jsonify({'error': 'Player Stats not loaded correctly'}), 400
-    if 'format' not in data:
-        return jsonify({'error': 'Please enter format as ODI/Test/T20'}), 400
-    
-    
-    selected_players = data['best_team']
-    stats_df_json = data['player_stats']
+    if "best_team" not in data:
+        return jsonify({"error": "Best Team not found"}), 400
+    if "player_stats" not in data:
+        return jsonify({"error": "Player Stats not loaded correctly"}), 400
+    if "format" not in data:
+        return jsonify({"error": "Please enter format as ODI/Test/T20"}), 400
+
+    selected_players = data["best_team"]
+    stats_df_json = data["player_stats"]
     stats_df = pd.DataFrame(json.loads(stats_df_json))
-    format = data['format'].lower()
+    format = data["format"].lower()
     aggregate_stats = None
     if format == "t20":
         aggregate_stats = player_T20_data
@@ -157,51 +159,64 @@ def analyze_team():
         player_aggregate_stats = player_ODI_data
     elif format == "test":
         aggregate_stats = player_Test_data
-    
+
     team_stats = []
     for player in selected_players:
-        player_fantasy_stats = stats_df[stats_df['player'] == player].to_dict('records')[0]
+        player_fantasy_stats = stats_df[stats_df["player"] == player].to_dict(
+            "records"
+        )[0]
         player_aggregate_stats = aggregate_stats.get(player, {})
-        
+
         # Create player stat summary
         player_summary = {
-            'name': player,
-            'batting_style': player_aggregate_stats.get('Batting', 'N/A'),
-            'bowling_style': player_aggregate_stats.get('Bowling', 'N/A'),
-            'mean_fantasy_points': player_fantasy_stats.get('mean_points', 'N/A'),
-            'batting_stats': {
-                'average': player_aggregate_stats.get('Batting Avg', 'N/A'),
-                'strike_rate': player_aggregate_stats.get('Batting S/R', 'N/A'),
-                'consistency': player_aggregate_stats.get('Scoring Consistency', 'N/A'),
-                'runs': player_aggregate_stats.get('Runs', 'N/A')
+            "name": player,
+            "batting_style": player_aggregate_stats.get("Batting", "N/A"),
+            "bowling_style": player_aggregate_stats.get("Bowling", "N/A"),
+            "mean_fantasy_points": player_fantasy_stats.get("mean_points", "N/A"),
+            "batting_stats": {
+                "average": player_aggregate_stats.get("Batting Avg", "N/A"),
+                "strike_rate": player_aggregate_stats.get("Batting S/R", "N/A"),
+                "consistency": player_aggregate_stats.get("Scoring Consistency", "N/A"),
+                "runs": player_aggregate_stats.get("Runs", "N/A"),
             },
-            'bowling_stats': {
-                'wickets': player_aggregate_stats.get('Wickets', 'N/A'),
-                'economy': player_aggregate_stats.get('Economy Rate', 'N/A'),
-                'average': player_aggregate_stats.get('Bowling Avg', 'N/A'),
-                'strike_rate': player_aggregate_stats.get('Bowling S/R', 'N/A')
+            "bowling_stats": {
+                "wickets": player_aggregate_stats.get("Wickets", "N/A"),
+                "economy": player_aggregate_stats.get("Economy Rate", "N/A"),
+                "average": player_aggregate_stats.get("Bowling Avg", "N/A"),
+                "strike_rate": player_aggregate_stats.get("Bowling S/R", "N/A"),
             },
-            'fielding_stats': {
-                'catches': player_aggregate_stats.get('Catches', 'N/A'),
-                'runouts': player_aggregate_stats.get('Runouts', 'N/A'),
-                'stumpings': player_aggregate_stats.get('Stumpings', 'N/A')
+            "fielding_stats": {
+                "catches": player_aggregate_stats.get("Catches", "N/A"),
+                "runouts": player_aggregate_stats.get("Runouts", "N/A"),
+                "stumpings": player_aggregate_stats.get("Stumpings", "N/A"),
             },
-            'overall_stats': {
-                'games': player_aggregate_stats.get('Games', 'N/A'),
-                'win_percentage': player_aggregate_stats.get('Win %', 'N/A')
-            }
+            "overall_stats": {
+                "games": player_aggregate_stats.get("Games", "N/A"),
+                "win_percentage": player_aggregate_stats.get("Win %", "N/A"),
+            },
         }
         team_stats.append(player_summary)
-    
+
     # Calculate team aggregate statistics
     team_summary = {
-        'total_mean_points': sum(p.get('mean_fantasy_points', 0) for p in team_stats),
-        'batting_styles': [p['batting_style'] for p in team_stats],
-        'bowling_styles': [p['bowling_style'] for p in team_stats if p['bowling_style'] != 'N/A'],
-        'avg_win_percentage': sum(float(p['overall_stats']['win_percentage']) for p in team_stats if p['overall_stats']['win_percentage'] != 'N/A') / len(team_stats),
-        'total_experience': sum(int(p['overall_stats']['games']) for p in team_stats if p['overall_stats']['games'] != 'N/A')
+        "total_mean_points": sum(p.get("mean_fantasy_points", 0) for p in team_stats),
+        "batting_styles": [p["batting_style"] for p in team_stats],
+        "bowling_styles": [
+            p["bowling_style"] for p in team_stats if p["bowling_style"] != "N/A"
+        ],
+        "avg_win_percentage": sum(
+            float(p["overall_stats"]["win_percentage"])
+            for p in team_stats
+            if p["overall_stats"]["win_percentage"] != "N/A"
+        )
+        / len(team_stats),
+        "total_experience": sum(
+            int(p["overall_stats"]["games"])
+            for p in team_stats
+            if p["overall_stats"]["games"] != "N/A"
+        ),
     }
-    
+
     # Create prompt for LLM
     prompt = f"""
         As a cricket analytics expert, provide a detailed analysis of why this team selection represents the optimal combination of players. Here's the team composition and their statistics:
@@ -250,10 +265,11 @@ def analyze_team():
     try:
         response = requests.post(url, json=data, headers=headers)
         response.raise_for_status()
-        analysis = response.json()['output']
+        analysis = response.json()["output"]
         return jsonify({"team analysis": analysis})
     except requests.exceptions.RequestException as e:
         return jsonify({"error": "Error Querying LLM"}), 404
 
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=3000,debug=True)
+    app.run(host="0.0.0.0", port=3000, debug=True)
