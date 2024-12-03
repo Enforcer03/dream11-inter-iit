@@ -118,7 +118,7 @@ function SelectMatchScreen() {
   const router = useRouter();
 
   const nextPage = "/player-selection";
-  const prevPage = "/instructions";
+  const prevPage = "/";
 
   async function handleNextButton() {
     try {

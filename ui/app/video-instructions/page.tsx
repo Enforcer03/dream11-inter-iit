@@ -2,7 +2,7 @@ import ButtonComponent from "../components/buttonComp";
 import PageTemplate from "../components/pageTemplate";
 
 function InstructionsPage() {
-  const prevPage = "/instructions";
+  const prevPage = "/";
   const nextPage = "/select-match";
 
   return (

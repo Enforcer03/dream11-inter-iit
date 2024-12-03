@@ -2,10 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { getPredicted11, revaluateTeamSwap } from "../api/predictedSquad";
 import Button from "../components/buttonComp";
 import DisplayBox from "../components/displayBox";
+import LoadingScreen from "../components/loadingScreen";
 import PageTemplate from "../components/pageTemplate";
 import { PlayerStats, useMatchData } from "../contexts/matchDataContext";
 import { PlayerInfo } from "../types/modelApiResponse";
@@ -82,11 +82,7 @@ function Playing11() {
   ]);
 
   if (isLoading) {
-    return (
-      <div className="loader-container">
-        <Image src="/loading.gif" alt="Loading..." width={100} height={100} priority />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (
