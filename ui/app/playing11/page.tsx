@@ -12,7 +12,7 @@ import { PlayerStats, useMatchData } from "../contexts/matchDataContext";
 import { PlayerInfo } from "../types/modelApiResponse";
 import { areStringArraysEqualIgnoreOrder } from "../utils/TeamCompare";
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+// const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function Playing11() {
   const {
@@ -28,9 +28,10 @@ function Playing11() {
     setTeamStats,
     instructionLLM,
     setInstructionLLM,
+    totalScore,
+    setTotalScore,
   } = useMatchData();
 
-  const [totalScore, setTotalScore] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const prevPage = "/player-selection";
@@ -114,6 +115,7 @@ function Playing11() {
     selectedPlayersTeamA,
     selectedPlayersTeamB,
     setTeamStats,
+    setTotalScore,
   ]);
 
   if (isLoading) {

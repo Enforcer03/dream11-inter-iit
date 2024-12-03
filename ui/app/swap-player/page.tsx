@@ -11,7 +11,7 @@ import { useMatchData } from "../contexts/matchDataContext";
 import { RevaluateTeamApiResponse } from "../types/modelApiResponse";
 import { areStringArraysEqualIgnoreOrder } from "../utils/TeamCompare";
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+// const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default function SwapPlayer() {
   const {
@@ -87,6 +87,7 @@ export default function SwapPlayer() {
                 hoverPlayerStats={hoverPlayerStats}
                 selectedPlayersTeamA={selectedPlayersTeamA}
                 selectedPlayersTeamB={selectedPlayersTeamB}
+                hoverPlayer={hoverPlayer}
               />
             </div>
             <PitchComponent

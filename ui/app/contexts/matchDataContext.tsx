@@ -26,6 +26,8 @@ interface MatchDataContextProps {
   setTeamStats: React.Dispatch<React.SetStateAction<RevaluateTeamApiResponse>>;
   instructionLLM: TeamLLMPara;
   setInstructionLLM: React.Dispatch<React.SetStateAction<TeamLLMPara>>;
+  totalScore: number;
+  setTotalScore: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export type PlayerStats = {
@@ -60,6 +62,7 @@ export const MatchDataProvider: React.FC<{ children: ReactNode }> = ({ children 
     form_score: 0,
   });
   const [instructionLLM, setInstructionLLM] = useState<TeamLLMPara>({ team: [], instruction: "" });
+  const [totalScore, setTotalScore] = useState<number>(0);
 
   return (
     <MatchDataContext.Provider
@@ -84,6 +87,8 @@ export const MatchDataProvider: React.FC<{ children: ReactNode }> = ({ children 
         setTeamStats,
         instructionLLM,
         setInstructionLLM,
+        totalScore,
+        setTotalScore,
       }}
     >
       {children}

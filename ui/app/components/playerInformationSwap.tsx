@@ -4,17 +4,17 @@ import Image from "next/image";
 import React from "react";
 import { AggregateStats } from "../types/aggregateApiResponse";
 import { RevaluateTeamApiResponse } from "../types/modelApiResponse";
+import { useMatchData } from "../contexts/matchDataContext";
 
 interface PlayerInformationSwapProps {
   playerName: string;
   playerInfo?: AggregateStats;
   teamStats?: RevaluateTeamApiResponse;
   newTeamStats?: RevaluateTeamApiResponse | null;
-  child3?: string;
-  child4?: string;
   hoverPlayerStats: AggregateStats | null;
   selectedPlayersTeamA?: string[];
   selectedPlayersTeamB?: string[];
+  hoverPlayer: string;
 }
 
 interface PlayerData {
@@ -58,11 +58,12 @@ function PlayerInformationSwap({
   teamStats,
   newTeamStats,
   hoverPlayerStats,
-  child3,
-  child4,
   selectedPlayersTeamA,
   selectedPlayersTeamB,
+  hoverPlayer,
 }: PlayerInformationSwapProps) {
+  const { totalScore, setTotalScore, playerStats } = useMatchData();
+
   const formatName = (name: string) => {
     if (name.length > 13) {
       const words = name.split(" ");
@@ -82,12 +83,11 @@ function PlayerInformationSwap({
     newConsistencyScorePercent =
       ((newTeamStats.team_consistency_score - teamStats.team_consistency_score) * 100) /
       teamStats?.team_consistency_score;
+
     newDiversityScorePercent =
       ((Math.pow(newTeamStats.team_diversity_score, 1) - Math.pow(teamStats.team_diversity_score, 1)) * 100) /
       Math.pow(teamStats?.team_diversity_score, 1);
-    // newDiversityScorePercent =
-    //   ((Math.pow(newTeamStats.team_diversity_score, 2.7) - Math.pow(teamStats.team_diversity_score, 2.7)) * 100) /
-    //   Math.pow(teamStats?.team_diversity_score, 2.7);
+
     newFormScorePercent = ((newTeamStats.form_score - teamStats.form_score) * 100) / teamStats?.form_score;
 
     newConsistencyScorePercent = newConsistencyScorePercent.toFixed(2);
@@ -95,7 +95,11 @@ function PlayerInformationSwap({
     newFormScorePercent = newFormScorePercent.toFixed(2);
   }
 
-  let runsDiff, battingSRDiff, bowlingSRDiff, economyRateDiff;
+  let runsDiff = 0,
+    battingSRDiff = 0,
+    bowlingSRDiff = 0,
+    economyRateDiff = 0,
+    totalScoreDiff = 0;
 
   if (hoverPlayerStats) {
     runsDiff = hoverPlayerStats.Runs - playerInfo?.Runs;
@@ -103,10 +107,25 @@ function PlayerInformationSwap({
     bowlingSRDiff = hoverPlayerStats["Bowling S/R"] - playerInfo?.["Bowling S/R"];
     economyRateDiff = hoverPlayerStats["Economy Rate"] - playerInfo?.["Economy Rate"];
 
-    runsDiff = runsDiff.toFixed(2);
-    battingSRDiff = battingSRDiff.toFixed(2);
-    bowlingSRDiff = bowlingSRDiff.toFixed(2);
-    economyRateDiff = economyRateDiff.toFixed(2);
+    let totalScoreHoverPlayer = 0;
+    let totalScoreSelectedPlayer = 0;
+
+    for (let i = 0; i < playerStats.length; i++) {
+      if (playerStats[i].player === hoverPlayer) {
+        totalScoreHoverPlayer = playerStats[i].mean_points;
+      }
+      if (playerStats[i].player === playerName) {
+        totalScoreSelectedPlayer = playerStats[i].mean_points;
+      }
+    }
+
+    totalScoreDiff = totalScoreHoverPlayer - totalScoreSelectedPlayer;
+
+    runsDiff = runsDiff.toFixed(0);
+    battingSRDiff = battingSRDiff.toFixed(1);
+    bowlingSRDiff = bowlingSRDiff.toFixed(1);
+    economyRateDiff = economyRateDiff.toFixed(1);
+    totalScoreDiff = totalScoreDiff.toFixed(2);
   }
 
   return (
@@ -125,20 +144,9 @@ function PlayerInformationSwap({
           <div className="flex flex-col w-[25rem] ml-24">
             <div className="flex text-dream11FontColor">
               <div className="font-bold w-2/6">Name:</div>
-              <div className="font-bold">Runs</div>
             </div>
             <div className="flex mb-2 text-white">
               <div className="w-2/6">{formatName(playerName)}</div>
-              <div className="w-4/6">
-                <span>{playerInfo?.Runs < 0 || playerInfo?.Runs === "Infinity" ? "-" : playerInfo?.Runs}</span>
-                <span className={`${runsDiff > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
-                  {hoverPlayerStats
-                    ? runsDiff > 0
-                      ? `${runsDiff} ${String.fromCharCode(8595)}`
-                      : `${runsDiff * -1} ${String.fromCharCode(8593)}`
-                    : null}
-                </span>
-              </div>
             </div>
             <div className="flex text-dream11FontColor">
               <div className="font-bold w-2/6">Batting S/R:</div>
@@ -151,13 +159,15 @@ function PlayerInformationSwap({
                     ? "-"
                     : playerInfo?.["Batting S/R"]}
                 </span>
-                <span className={`${battingSRDiff > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
-                  {hoverPlayerStats
-                    ? battingSRDiff < 0
-                      ? `${battingSRDiff} ${String.fromCharCode(8595)}`
-                      : `${battingSRDiff * -1} ${String.fromCharCode(8593)}`
-                    : null}
-                </span>
+                {playerInfo?.["Batting S/R"] < 0 || playerInfo?.["Batting S/R"] === "Infinity" ? null : (
+                  <span className={`${battingSRDiff > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
+                    {hoverPlayerStats
+                      ? battingSRDiff > 0
+                        ? `${battingSRDiff} ${String.fromCharCode(8593)}`
+                        : `${battingSRDiff * -1} ${String.fromCharCode(8595)}`
+                      : null}
+                  </span>
+                )}
               </div>
               <div className="w-4/6">
                 <span className={`${newConsistencyScorePercent < 0 ? "text-red-500" : "text-green-500"}`}>
@@ -184,13 +194,15 @@ function PlayerInformationSwap({
                     ? "-"
                     : playerInfo?.["Bowling S/R"]}
                 </span>
-                <span className={`${bowlingSRDiff > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
-                  {hoverPlayerStats
-                    ? bowlingSRDiff < 0
-                      ? `${bowlingSRDiff} ${String.fromCharCode(8595)}`
-                      : `${bowlingSRDiff * -1} ${String.fromCharCode(8593)}`
-                    : null}
-                </span>
+                {playerInfo?.["Bowling S/R"] < 0 || playerInfo?.["Bowling S/R"] === "Infinity" ? null : (
+                  <span className={`${bowlingSRDiff > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
+                    {hoverPlayerStats
+                      ? bowlingSRDiff > 0
+                        ? `${bowlingSRDiff} ${String.fromCharCode(8593)}`
+                        : `${bowlingSRDiff * -1} ${String.fromCharCode(8595)}`
+                      : null}
+                  </span>
+                )}
               </div>
               <div className="w-4/6">
                 <span className={`${newDiversityScorePercent < 0 ? "text-red-500" : "text-green-500"}`}>
@@ -217,13 +229,15 @@ function PlayerInformationSwap({
                     ? "-"
                     : playerInfo?.["Economy Rate"]}
                 </span>
-                <span className={`${economyRateDiff > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
-                  {hoverPlayerStats
-                    ? economyRateDiff < 0
-                      ? `${economyRateDiff} ${String.fromCharCode(8595)}`
-                      : `${economyRateDiff * -1} ${String.fromCharCode(8593)}`
-                    : null}
-                </span>
+                {playerInfo?.["Economy Rate"] < 0 || playerInfo?.["Economy Rate"] === "Infinity" ? null : (
+                  <span className={`${economyRateDiff > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
+                    {hoverPlayerStats
+                      ? economyRateDiff > 0
+                        ? `${economyRateDiff} ${String.fromCharCode(8593)}`
+                        : `${economyRateDiff * -1} ${String.fromCharCode(8595)}`
+                      : null}
+                  </span>
+                )}
               </div>
               <div className="w-4/6">
                 <span className={`${newFormScorePercent < 0 ? "text-red-500" : "text-green-500"}`}>
@@ -236,6 +250,34 @@ function PlayerInformationSwap({
                   ) : (
                     <span className="text-gray-500">HOVER TO VIEW</span>
                   )}
+                </span>
+              </div>
+            </div>
+            <div className="flex text-dream11FontColor">
+              <div className="font-bold w-2/6">Runs:</div>
+              <div className="font-bold w-4/6">Team Team Score:</div>
+            </div>
+            <div className="flex text-white">
+              <div className="w-2/6">
+                <span>{playerInfo?.Runs < 0 || playerInfo?.Runs === "Infinity" ? "-" : playerInfo?.Runs}</span>
+                {playerInfo?.Runs < 0 || playerInfo?.Runs === "Infinity" ? null : (
+                  <span className={`${runsDiff > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
+                    {hoverPlayerStats
+                      ? runsDiff > 0
+                        ? `${runsDiff} ${String.fromCharCode(8593)}`
+                        : `${runsDiff * -1} ${String.fromCharCode(8595)}`
+                      : null}
+                  </span>
+                )}
+              </div>
+              <div className="w-4/6">
+                <span>{totalScore.toFixed(2)}</span>
+                <span className={`${totalScoreDiff > 0 ? "text-green-500" : "text-red-500"} ml-4`}>
+                  {hoverPlayerStats
+                    ? totalScoreDiff > 0
+                      ? `${totalScoreDiff} ${String.fromCharCode(8593)}`
+                      : `${totalScoreDiff * -1} ${String.fromCharCode(8595)}`
+                    : null}
                 </span>
               </div>
             </div>

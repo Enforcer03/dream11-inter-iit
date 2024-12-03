@@ -89,8 +89,8 @@ function PlayerInformation({
               <div className="w-1/2">{child6}</div>
             </div>
             <div className="flex mt-4 text-dream11FontColor">
-              <div className="font-bold w-1/2">Bowling Points:</div>
-              <div className="font-bold w-1/2">Fielding Points:</div>
+              <div className="font-bold w-1/2">Expected Bowling Points:</div>
+              <div className="font-bold w-1/2">Expected Fielding Points:</div>
             </div>
             <div className="flex text-white">
               <div className="w-1/2">{child7}</div>
@@ -102,7 +102,7 @@ function PlayerInformation({
             </div>
             <div className="flex text-white">
               <div className="w-1/2">{child9}</div>
-              <div className="w-1/2">{child10}</div>
+              <div className="w-1/2">{Math.pow(child10, 0.5).toFixed(2)}</div>
             </div>
           </div>
         </div>
