@@ -90,13 +90,13 @@ function PlayerList({
             <hr className="player-hr" />
             <div className="player-bio">
               <div className="flex flex-col">
-                <p className="w-full ">🏏: {playerStatsLookup[player].batting_points.toFixed(2)}</p>
-                <p className="w-full">W: {playerStatsLookup[player].fielding_points.toFixed(2)}</p>
+                <p className="w-full ">🏏: {playerStatsLookup[player].batting_points.toFixed(1)}</p>
+                <p className="w-full">W: {playerStatsLookup[player].fielding_points.toFixed(1)}</p>
               </div>
               <hr className="badge-hr" />
               <div className="flex flex-col">
-                <p className="w-full">⚾️: {playerStatsLookup[player].bowling_points.toFixed(2)}</p>
-                <p className="w-full">Av: {playerStatsLookup[player].mean_points.toFixed(2)}</p>
+                <p className="w-full">⚾️: {playerStatsLookup[player].bowling_points.toFixed(1)}</p>
+                <p className="w-full">Av: {playerStatsLookup[player].mean_points.toFixed(1)}</p>
               </div>
             </div>
           </div>

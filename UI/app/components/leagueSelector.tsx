@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { SquadApiResponse } from "../types/squadApiResponse";
+import { useState } from "react";
+import { MatchDetails, SquadApiResponse } from "../types/squadApiResponse";
 
 export default function LeagueSelector({
   setLeague,
@@ -9,12 +9,14 @@ export default function LeagueSelector({
   setAllMatches,
   allData,
   dateLength,
+  setMatchData,
 }: {
   setLeague: (league: string) => void;
   allLeagues: string[];
   setAllMatches: (matches: string[]) => void;
   allData: SquadApiResponse | null;
   dateLength: number;
+  setMatchData: (matchData: MatchDetails | null) => void;
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -24,7 +26,12 @@ export default function LeagueSelector({
     const newIndex = (selectedIndex - 1 + allLeagues.length) % allLeagues.length;
     setSelectedIndex(newIndex);
     setLeague(allLeagues[newIndex]);
+
     setAllMatches(Object.keys(allData[allLeagues[newIndex]]));
+    const league = allLeagues[newIndex];
+    const allNewMatches = Object.keys(allData[league]);
+
+    setMatchData(allData[league][allNewMatches[0]]);
   };
 
   const handleNext = () => {
@@ -34,6 +41,10 @@ export default function LeagueSelector({
     setSelectedIndex(newIndex);
     setLeague(allLeagues[newIndex]);
     setAllMatches(Object.keys(allData[allLeagues[newIndex]]));
+    const league = allLeagues[newIndex];
+    const allNewMatches = Object.keys(allData[league]);
+
+    setMatchData(allData[league][allNewMatches[0]]);
   };
 
   function handleDirectClick(index: number) {
@@ -42,6 +53,10 @@ export default function LeagueSelector({
     setSelectedIndex(index);
     setLeague(allLeagues[index]);
     setAllMatches(Object.keys(allData[allLeagues[index]]));
+    const league = allLeagues[index];
+    const allNewMatches = Object.keys(allData[league]);
+
+    setMatchData(allData[league][allNewMatches[0]]);
   }
 
   const shortenWord = (word) => {

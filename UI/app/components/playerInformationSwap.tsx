@@ -258,7 +258,7 @@ function PlayerInformationSwap({
             </div>
             <div className="flex text-dream11FontColor">
               <div className="font-bold w-2/6">Runs:</div>
-              <div className="font-bold w-4/6">Team Team Score:</div>
+              <div className="font-bold w-4/6">Team Score:</div>
             </div>
             <div className="flex text-white">
               <div className="w-2/6">

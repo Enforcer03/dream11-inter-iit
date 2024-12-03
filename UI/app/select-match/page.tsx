@@ -12,6 +12,7 @@ import VideoComp from "../components/videoSet";
 import { useMatchData } from "../contexts/matchDataContext";
 import { MatchDetails, SquadApiResponse } from "../types/squadApiResponse";
 import BackButtonComponent from "../components/backButton";
+import { replaceNullData } from "../components/dummyData";
 
 type MatchDateInputProps = {
   date: string;
@@ -128,6 +129,9 @@ function SelectMatchScreen() {
   async function handleNextButton() {
     try {
       if (matchData === null) return;
+      console.log("League", league);
+
+      console.log("Match Data", matchData);
 
       const teams = Object.keys(matchData).filter((team) => team != "Format");
 
@@ -139,7 +143,9 @@ function SelectMatchScreen() {
       const combinePlayerList = teamPlayers.map((team) => team.players).flat();
 
       const response = await getAggregateStats(combinePlayerList, matchData["Format"]);
-      setAggregateStats(response);
+      console.log("Aggregate", response);
+      const modifiedResponse = replaceNullData(response);
+      setAggregateStats(modifiedResponse);
       router.push(nextPage);
     } catch (error) {
       console.error(error);
@@ -165,6 +171,7 @@ function SelectMatchScreen() {
           setAllMatches={setAllMatches}
           allData={allData}
           dateLength={date.length}
+          setMatchData={setMatchData}
         />
         <MatchSelector
           allMatches={allMatches}
