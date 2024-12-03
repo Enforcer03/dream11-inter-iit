@@ -117,21 +117,21 @@ with st.sidebar.expander("🎯 Technical Guidelines", expanded=True):
     - Higher λ: Lesser deviation in performance ratio
     
     **2. Historical Window**
-    $$M_{matches} \\in [20, 500], \\text{ default} = 40$$
+    $$M_{matches} \\in [20, 500], \\text{ default} = 65$$
     - Number of past matches to analyze
     - Affects statistical estimations
     
-    **3. Consistency Threshold (α₁)**
+    **3. Consistency Threshold**
     $$\\alpha_c \\in [0.1, 1.0], \\text{ default} = 0.5$$
     - Minimum required Sharpe ratio
     - Controls reliability of selections
     
-    **4. Diversity Threshold (α₂)**
+    **4. Diversity Threshold**
     $$\\alpha_d \\in [0.1, 1.0], \\text{ default} = 0.5$$
     - Enforces point distribution entropy
     - Prevents over-reliance on few players
     
-    **5. Form Threshold (α₃)**
+    **5. Form Threshold**
     $$\\alpha_f \\in [0.1, 1.0], \\text{ default} = 0.333$$
     - Proportion of in-form players
     - Based on form quantile cutoff
@@ -466,7 +466,7 @@ if squad_info:
         "Number of past matches to consider",
         min_value=1,
         max_value=500,
-        value=40,
+        value=65,
         step=1,
         key='num_matches_assess'
     )
@@ -575,7 +575,7 @@ if squad_info:
     num_matches = st.slider("Number of past matches to consider", 
                        min_value=20, 
                        max_value=500, 
-                       value=40, 
+                       value=65, 
                        step=1,
                        key='num_matches_slider')
 

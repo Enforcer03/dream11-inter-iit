@@ -1,11 +1,13 @@
 from flask import Flask, jsonify, request
 import json
+from flask_cors import CORS
 
 
 # Path to the JSON file
 squads = "../data/processed/datewise_squad.json"
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 with open(squads, 'r') as file:
     squads_data = json.load(file)

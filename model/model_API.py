@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 import json
 import pandas as pd
 from pipeline import calculate_optimal_team, evaluate_team
@@ -11,6 +12,7 @@ Test_fantasy_points = "../data/processed/player_fantasy_points_test.json"
 
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
  
 
 @app.route('/generate_best_team', methods=['POST'])
