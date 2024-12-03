@@ -90,6 +90,11 @@ function MatchDateInput({
       setAllMatches(newAllMatches);
       setMatchData(newMatchData);
     } catch (error) {
+      if (error.response.data.error==="No match found") {
+        console.log(error.response.data.error);
+        return;
+      }
+
       console.error(error);
     }
   }
