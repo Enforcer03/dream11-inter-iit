@@ -2,6 +2,11 @@
 
 # AI Team Builder - Inter IIT 13.0
 
+## Directory Structure
+
+- `model/`: contains all the logic for the methodology implemented and other experiments.
+<!-- add the test of the directories and their descriptions -->
+
 ## Dependencies
 
 <!-- <mention what all to install (libraries)> -->
