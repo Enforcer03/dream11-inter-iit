@@ -9,6 +9,7 @@ import InfoReportPlayer from "../components/infoReportPlayer";
 import PageTemplate from "../components/pageTemplate";
 import { useMatchData } from "../contexts/matchDataContext";
 import { areStringArraysEqualIgnoreOrder } from "../utils/TeamCompare";
+import BackButtonComponent from "../components/backButton";
 
 interface PlayerData {
   id: number;
@@ -50,7 +51,6 @@ const PeopleDisplay = () => {
     useMatchData();
 
   const [isLoading, setIsLoading] = useState(false);
-  const prevPage = "/playing11";
 
   useEffect(() => {
     async function checkLoading() {
@@ -111,7 +111,7 @@ const PeopleDisplay = () => {
         </div>
       </PageTemplate>
       <div className="buttonCompDiv">
-        <Button nextPage={prevPage}>BACK</Button>
+        <BackButtonComponent>BACK</BackButtonComponent>
         <Button downloadScreenshot={true}>SAVE</Button>
       </div>
     </div>

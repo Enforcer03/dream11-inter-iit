@@ -11,6 +11,7 @@ import PageTemplate from "../components/pageTemplate";
 import VideoComp from "../components/videoSet";
 import { useMatchData } from "../contexts/matchDataContext";
 import { MatchDetails, SquadApiResponse } from "../types/squadApiResponse";
+import BackButtonComponent from "../components/backButton";
 
 type MatchDateInputProps = {
   date: string;
@@ -90,7 +91,7 @@ function MatchDateInput({
       setAllMatches(newAllMatches);
       setMatchData(newMatchData);
     } catch (error) {
-      if (error.response.data.error==="No match found") {
+      if (error.response.data.error === "No match found") {
         console.log(error.response.data.error);
         return;
       }
@@ -123,7 +124,6 @@ function SelectMatchScreen() {
   const router = useRouter();
 
   const nextPage = "/player-selection";
-  const prevPage = "/";
 
   async function handleNextButton() {
     try {
@@ -175,7 +175,7 @@ function SelectMatchScreen() {
         />
       </div>
       <div className="buttonCompDiv">
-        <ButtonComponent nextPage={prevPage}>BACK</ButtonComponent>
+        <BackButtonComponent>BACK</BackButtonComponent>
         <ButtonComponent onClick={handleNextButton} disabled={!matchData}>
           NEXT
         </ButtonComponent>

@@ -9,6 +9,7 @@ import PageTemplate from "../components/pageTemplate";
 import PlayerInformation from "../components/playerDetailedInformation";
 import { useMatchData } from "../contexts/matchDataContext";
 import Image from "next/image";
+import BackButtonComponent from "../components/backButton";
 
 export default function SwapPlayer() {
   const { aggregateStats, matchData } = useMatchData();
@@ -20,7 +21,6 @@ export default function SwapPlayer() {
   const id = searchParams.get("id");
   const image = searchParams.get("image");
 
-  const prevPage = "/playing11";
   const nextPage = "/swap-player";
 
   const format = matchData?.Format;
@@ -133,7 +133,7 @@ export default function SwapPlayer() {
         </div>
       </PageTemplate>
       <div className="buttonCompDiv">
-        <ButtonComponent nextPage={prevPage}>BACK</ButtonComponent>
+        <BackButtonComponent>BACK</BackButtonComponent>
         <ButtonComponent nextPage={nextPage}>SWAP</ButtonComponent>
       </div>
     </>

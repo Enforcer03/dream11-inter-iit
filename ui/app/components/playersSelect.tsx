@@ -8,6 +8,7 @@ import AnonymousPlayer from "./anonymousPlayer";
 import Button from "./buttonComp";
 import PlayerInformation from "./playerInformation";
 import SelectedPlayer from "./selectedPlayer";
+import BackButtonComponent from "./backButton";
 
 type SimplifiedPlayer = {
   id: number;
@@ -139,7 +140,6 @@ function PeopleDisplay() {
       : "/default.png";
   }
 
-  const prevPage = "/select-match";
   const nextPage = "/playing11";
 
   const countTeam1 = selectedData.length;
@@ -320,7 +320,7 @@ function PeopleDisplay() {
             PREDICT 11
           </Button>
         )}
-        <Button nextPage={prevPage}>BACK</Button>
+        <BackButtonComponent>BACK</BackButtonComponent>
       </div>
     </div>
   );
