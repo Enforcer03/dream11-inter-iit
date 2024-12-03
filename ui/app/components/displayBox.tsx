@@ -26,7 +26,6 @@ function PlayerList({
   );
 
   function handlePlayerClick(id: number, image: string) {
-    console.log("pushed");
     router.push(`/player-information?id=${id}&image=${encodeURIComponent(image)}`);
   }
 
@@ -61,8 +60,8 @@ function PlayerList({
         return playerLastName === lastName;
       });
     }
-
-    return matchingPlayer ? matchingPlayer.image : "default_player_image_url";
+    
+    return matchingPlayer ? matchingPlayer.image : "https://cdn.sportmonks.com/images/cricket/placeholder.png";
   }
 
   return (

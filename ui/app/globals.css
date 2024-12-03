@@ -155,8 +155,8 @@ body {
 }
 
 .outer-page {
-  background-image: url("../public/back.png");
-  background-size: cover;
+  background-image: url("../public/image.png");
+  background-size: 100% 100%;
   background-repeat: no-repeat;
 }
 
@@ -369,6 +369,16 @@ body {
 .leftArrowBtn {
   position: absolute;
   left: -5rem;
+  background: url("../public/leftArrow.svg") no-repeat center;
+  background-size: contain;
+  width: 2rem;
+  height: 2rem;
+}
+
+.downArrowBtn {
+  position: absolute;
+  right: 27.3rem;
+  bottom: 12rem;
   background: url("../public/leftArrow.svg") no-repeat center;
   background-size: contain;
   width: 2rem;

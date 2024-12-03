@@ -8,6 +8,7 @@ import AnonymousPlayer from "./anonymousPlayer";
 import Button from "./buttonComp";
 import PlayerInformation from "./playerInformation";
 import SelectedPlayer from "./selectedPlayer";
+import defaultPhoto from "../../public/Grass.svg";
 
 type SimplifiedPlayer = {
   id: number;
@@ -134,11 +135,11 @@ function PeopleDisplay() {
         }
       });
       if (!matchingPlayer) {
-        return playersImages.data[2790].image_path;
+        return defaultPhoto;
       }
     }
 
-    return matchingPlayer ? matchingPlayer.image_path : playersImages.data[4].image_path;
+    return matchingPlayer ? matchingPlayer.image_path : "https://cdn.sportmonks.com/images/cricket/placeholder.png";
   }
 
   const prevPage = "/select-match";
@@ -267,6 +268,15 @@ function PeopleDisplay() {
         </div>
       </div>
       <div className="selectListDiv">
+        <div
+          className={`
+            downArrowBtn 
+            -rotate-90 
+            z-40 
+            animate-[pulse_1.5s_ease-in-out_5]
+          `}
+          aria-label="Previous team"
+        />
         <div className="-mb-2 ml-5">
           <h1 className="text-xl font-bold text-[#FFD700] inline">SELECTED PLAYERS</h1>
           <button className="autoSelectBtn" onClick={handleSelection}>
