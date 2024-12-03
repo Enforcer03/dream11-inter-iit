@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { RevaluateTeamApiResponse } from "../types/modelApiResponse";
+import { useMatchData } from "../contexts/matchDataContext";
 
 type PlayerOptionsProps = {
   selectedPlayer: number | null;
@@ -31,6 +32,8 @@ function PlayerCard({
   setNewTeamStats,
   setHoverPlayer,
 }: PlayerCardProps) {
+  const { setTotalScore, playerStats } = useMatchData();
+
   function handleEnterHoverPlayer() {
     setHoverPlayer(player.name);
     const newPredictedTeam = [...predictedTeam];
@@ -47,6 +50,22 @@ function PlayerCard({
     if (selectedPlayer === null) return;
     const newPredictedTeam = [...predictedTeam];
     newPredictedTeam[selectedPlayer] = player.name;
+
+    let totalScoreHoverPlayer = 0;
+    let totalScoreSelectedPlayer = 0;
+
+    for (let i = 0; i < playerStats.length; i++) {
+      if (playerStats[i].player === player.name) {
+        totalScoreHoverPlayer = playerStats[i].mean_points;
+      }
+      if (playerStats[i].player === predictedTeam[selectedPlayer]) {
+        totalScoreSelectedPlayer = playerStats[i].mean_points;
+      }
+    }
+
+    const totalScoreDiff = totalScoreHoverPlayer - totalScoreSelectedPlayer;
+
+    setTotalScore((prev: number) => prev + totalScoreDiff);
 
     setPredictedTeam(newPredictedTeam);
 

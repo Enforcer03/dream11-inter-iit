@@ -8,6 +8,7 @@ import AnonymousPlayer from "./anonymousPlayer";
 import Button from "./buttonComp";
 import PlayerInformation from "./playerInformation";
 import SelectedPlayer from "./selectedPlayer";
+import BackButtonComponent from "./backButton";
 
 type SimplifiedPlayer = {
   id: number;
@@ -139,7 +140,6 @@ function PeopleDisplay() {
       : "/default.png";
   }
 
-  const prevPage = "/select-match";
   const nextPage = "/playing11";
 
   const countTeam1 = selectedData.length;
@@ -163,22 +163,22 @@ function PeopleDisplay() {
             let economyRate = aggregateStats[details.name]?.["Economy Rate"];
             let bowlingSR = aggregateStats[details.name]?.["Bowling S/R"];
 
-            if (battingSR == null || battingSR === Infinity || battingSR < 0) {
+            if (battingSR == null || battingSR === "Infinity" || battingSR < 0) {
               battingSR = "-";
             }
-            if (runs == null || runs === Infinity || runs < 0) {
+            if (runs == null || runs === "Infinity" || runs < 0) {
               runs = "-";
             }
-            if (battingAvg == null || battingAvg === Infinity || battingAvg < 0) {
+            if (battingAvg == null || battingAvg === "Infinity" || battingAvg < 0) {
               battingAvg = "-";
             }
-            if (wickets == null || wickets === Infinity || wickets < 0) {
+            if (wickets == null || wickets === "Infinity" || wickets < 0) {
               wickets = "-";
             }
-            if (economyRate == null || economyRate === Infinity || economyRate < 0) {
+            if (economyRate == null || economyRate === "Infinity" || economyRate < 0) {
               economyRate = "-";
             }
-            if (bowlingSR == null || bowlingSR === Infinity || bowlingSR < 0) {
+            if (bowlingSR == null || bowlingSR === "Infinity" || bowlingSR < 0) {
               bowlingSR = "-";
             }
 
@@ -320,7 +320,7 @@ function PeopleDisplay() {
             PREDICT 11
           </Button>
         )}
-        <Button nextPage={prevPage}>BACK</Button>
+        <BackButtonComponent>BACK</BackButtonComponent>
       </div>
     </div>
   );

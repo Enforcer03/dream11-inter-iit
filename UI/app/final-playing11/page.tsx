@@ -8,6 +8,7 @@ import DisplayBox from "../components/displayBox";
 import PageTemplate from "../components/pageTemplate";
 import { useMatchData } from "../contexts/matchDataContext";
 import { areStringArraysEqualIgnoreOrder } from "../utils/TeamCompare";
+import BackButtonComponent from "../components/backButton";
 
 function FinalPlaying11() {
   const { playerStats, predictedTeam, selectedPlayersTeamA, selectedPlayersTeamB, instructionLLM, setInstructionLLM } =
@@ -15,7 +16,6 @@ function FinalPlaying11() {
 
   const [totalScore, setTotalScore] = useState(0);
   const router = useRouter();
-  const prevPage = "/player-selection";
 
   const handlePredictedScoreClick = () => {
     router.push("/information-report");
@@ -58,9 +58,10 @@ function FinalPlaying11() {
     <div>
       <PageTemplate title="PLAYING 11" />
       <div className="displayBoxDivDiv">
-        <button className="predictedScoreBtn" onClick={handlePredictedScoreClick}>
-          PREDICTED TOTAL SCORE {totalScore.toFixed(2)}
-        </button>
+        <div className="predictedScoreBtn uppercase" onClick={handlePredictedScoreClick}>
+          Get Team Info
+        </div>
+
         <div className="displayBoxDiv">
           <DisplayBox
             predictedTeam={predictedTeam}
@@ -69,9 +70,10 @@ function FinalPlaying11() {
             selectedPlayersTeamB={selectedPlayersTeamB}
           />
         </div>
+        <button className="predictedScoreBtn mt-4">PREDICTED TOTAL SCORE {totalScore.toFixed(2)}</button>
       </div>
       <div className="buttonCompDiv">
-        <Button nextPage={prevPage}>BACK</Button>
+        <BackButtonComponent>BACK</BackButtonComponent>
         <Button downloadScreenshot={true}>SAVE</Button>
       </div>
     </div>

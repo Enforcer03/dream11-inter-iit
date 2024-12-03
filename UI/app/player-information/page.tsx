@@ -8,17 +8,19 @@ import ButtonComponent from "../components/buttonComp";
 import PageTemplate from "../components/pageTemplate";
 import PlayerInformation from "../components/playerDetailedInformation";
 import { useMatchData } from "../contexts/matchDataContext";
+import Image from "next/image";
+import BackButtonComponent from "../components/backButton";
 
 export default function SwapPlayer() {
   const { aggregateStats, matchData } = useMatchData();
   const [playerLLMInfo, setPlayerLLMInfo] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { predictedTeam, playerStats } = useMatchData();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const image = searchParams.get("image");
 
-  const prevPage = "/playing11";
   const nextPage = "/swap-player";
 
   const format = matchData?.Format;
@@ -26,6 +28,7 @@ export default function SwapPlayer() {
   useEffect(() => {
     async function handleLLMForPlayers() {
       try {
+        setIsLoading(true);
         const res = await handleLLMPlayer(format, id, predictedTeam);
 
         // const res = {
@@ -33,6 +36,7 @@ export default function SwapPlayer() {
         //     "GJ Delany was likely selected due to his strong fielding skills and decent bowling performance, despite mediocre batting stats. Key positives include:\n\n- **Bowling**: 67 wickets, economy rate of 7.5, and high dot ball percentage (35.5%).\n- **Fielding**: 28 catches.\n\nBest statistics:\n- **Wickets**: 67\n- **Economy Rate**: 7.5\n- **Catches**: 28",
         // };
         setPlayerLLMInfo(res.analysis);
+        setIsLoading(false);
       } catch (error) {
         console.error(error);
       }
@@ -56,22 +60,22 @@ export default function SwapPlayer() {
                 let economyRate = aggregateStats[id]?.["Economy Rate"];
                 let bowlingSR = aggregateStats[id]?.["Bowling S/R"];
 
-                if (battingSR == null || battingSR === Infinity || battingSR < 0) {
+                if (battingSR == null || battingSR === "Infinity" || battingSR < 0) {
                   battingSR = "-";
                 }
-                if (runs == null || runs === Infinity || runs < 0) {
+                if (runs == null || runs === "Infinity" || runs < 0) {
                   runs = "-";
                 }
-                if (battingAvg == null || battingAvg === Infinity || battingAvg < 0) {
+                if (battingAvg == null || battingAvg === "Infinity" || battingAvg < 0) {
                   battingAvg = "-";
                 }
-                if (wickets == null || wickets === Infinity || wickets < 0) {
+                if (wickets == null || wickets === "Infinity" || wickets < 0) {
                   wickets = "-";
                 }
-                if (economyRate == null || economyRate === Infinity || economyRate < 0) {
+                if (economyRate == null || economyRate === "Infinity" || economyRate < 0) {
                   economyRate = "-";
                 }
-                if (bowlingSR == null || bowlingSR === Infinity || bowlingSR < 0) {
+                if (bowlingSR == null || bowlingSR === "Infinity" || bowlingSR < 0) {
                   bowlingSR = "-";
                 }
 
@@ -82,18 +86,18 @@ export default function SwapPlayer() {
                 let mean_points = playerData?.["mean_points"];
                 let variance = playerData?.["variance"];
 
-                if (batting_points == null || batting_points === Infinity || batting_points < 0) {
+                if (batting_points == null || batting_points === "Infinity" || batting_points < 0) {
                   batting_points = "-";
                 }
 
-                if (bowling_points == null || bowling_points === Infinity || bowling_points < 0) {
+                if (bowling_points == null || bowling_points === "Infinity" || bowling_points < 0) {
                   bowling_points = "-";
                 }
 
-                if (mean_points == null || mean_points === Infinity || mean_points < 0) {
+                if (mean_points == null || mean_points === "Infinity" || mean_points < 0) {
                   mean_points = "-";
                 }
-                if (variance == null || variance === Infinity || variance < 0) {
+                if (variance == null || variance === "Infinity" || variance < 0) {
                   variance = "-";
                 }
 
@@ -117,13 +121,19 @@ export default function SwapPlayer() {
                 );
               })()}
           </div>
-          <div className="flex flex-col text-slate-300 w-[50rem] tracking-wider text-lg ml-[24rem] mb-[18rem] leading-relaxed overflow-hidden">
-            <ReactMarkdown>{playerLLMInfo}</ReactMarkdown>
+          <div className="flex flex-col text-slate-300 w-[50rem] tracking-wider text-lg ml-[24rem] mb-[18rem] leading-relaxed overflow-y-scroll">
+            {isLoading ? (
+              <div className="loader-container">
+                <Image src="/loading.gif" alt="Loading..." width={100} height={100} priority />
+              </div>
+            ) : (
+              <ReactMarkdown>{playerLLMInfo}</ReactMarkdown>
+            )}
           </div>
         </div>
       </PageTemplate>
       <div className="buttonCompDiv">
-        <ButtonComponent nextPage={prevPage}>BACK</ButtonComponent>
+        <BackButtonComponent>BACK</BackButtonComponent>
         <ButtonComponent nextPage={nextPage}>SWAP</ButtonComponent>
       </div>
     </>

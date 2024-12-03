@@ -98,7 +98,7 @@ function PlayerInformation({
             </div>
             <div className="flex text-dream11FontColor">
               <div className="font-bold w-1/2">Mean Points:</div>
-              <div className="font-bold w-1/2">Variance:</div>
+              <div className="font-bold w-1/2">Std Deviation:</div>
             </div>
             <div className="flex text-white">
               <div className="w-1/2">{child9}</div>

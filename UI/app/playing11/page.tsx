@@ -11,6 +11,7 @@ import PageTemplate from "../components/pageTemplate";
 import { PlayerStats, useMatchData } from "../contexts/matchDataContext";
 import { PlayerInfo } from "../types/modelApiResponse";
 import { areStringArraysEqualIgnoreOrder } from "../utils/TeamCompare";
+import BackButtonComponent from "../components/backButton";
 
 // const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -34,7 +35,6 @@ function Playing11() {
 
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const prevPage = "/player-selection";
   const nextPage = "/swap-player";
 
   const handlePredictedScoreClick = () => {
@@ -124,8 +124,8 @@ function Playing11() {
     <div>
       <PageTemplate title="PLAYING 11" />
       <div className="displayBoxDivDiv">
-        <button className="predictedScoreBtn" onClick={handlePredictedScoreClick}>
-          PREDICTED TOTAL SCORE {totalScore.toFixed(2)}
+        <button className="predictedScoreBtn uppercase" onClick={handlePredictedScoreClick}>
+          Get Team Info
         </button>
         <div className="displayBoxDiv">
           <DisplayBox
@@ -135,9 +135,10 @@ function Playing11() {
             selectedPlayersTeamB={selectedPlayersTeamB}
           />
         </div>
+        <button className="predictedScoreBtn mt-4">PREDICTED TOTAL SCORE {totalScore.toFixed(2)}</button>
       </div>
       <div className="buttonCompDiv">
-        <Button nextPage={prevPage}>BACK</Button>
+        <BackButtonComponent>BACK</BackButtonComponent>
         <Button nextPage={nextPage}>SWAP</Button>
       </div>
     </div>
