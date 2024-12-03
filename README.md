@@ -42,7 +42,7 @@ End[End Application]
 
     - Generates team squad data in two formats:
       1.  **MatchID-wise Squads:** For model user interface (UI).
-      2.  **Date-wise Hierarchical Squads:** For frontend use, which also includes an additional squad for both teams. This additional squad comprises players who played in the last 10 matches of the same format for the respective teams.
+      2.  **Date-wise Hierarchical Squads:** For frontend use, which also includes an additional squad for both teams. This additional squad comprises players who played in the last 10 matches of the same format and same gender identity for the respective teams.
 
 4.  **`Json_Formatter.ipynb`:**
 
