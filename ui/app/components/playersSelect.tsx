@@ -17,47 +17,53 @@ type SimplifiedPlayer = {
 };
 
 function PeopleDisplay() {
-  const {
-    aggregateStats,
-    matchData,
-    setSelectedPlayersTeamA,
-    setSelectedPlayersTeamB,
-    selectedPlayersTeamA,
-    selectedPlayersTeamB,
-  } = useMatchData();
+  const { aggregateStats, matchData, setSelectedPlayersTeamA, setSelectedPlayersTeamB } = useMatchData();
   const router = useRouter();
 
-  // if (!aggregateStats) return null;
+  const teamNames = Object.keys(matchData).filter((team) => team !== "Format" && !team.includes("Second_Squad"));
+
+  const playersTeamAforAutoSelect = matchData[teamNames[0]];
+  const playersTeamBforAutoSelect = matchData[teamNames[1]];
+
+  const totalPlayersTeamA = playersTeamAforAutoSelect.concat(matchData[`${teamNames[0]}_Second_Squad`]);
+  const totalPlayersTeamB = playersTeamBforAutoSelect.concat(matchData[`${teamNames[1]}_Second_Squad`]);
 
   const [currentDataset, setCurrentDataset] = useState(1);
-  const [selectedPlayers, setSelectedPlayers] = useState(
-    matchData ? matchData[Object.keys(matchData).filter((team) => team !== "Format")[currentDataset - 1]] : []
-  );
   const [selectedData, setSelectedData] = useState([]);
   const [filledDivs, setFilledDivs] = useState<(null | SimplifiedPlayer)[]>(Array(11).fill(null));
   const [details, setDetails] = useState(
     matchData && {
       id: 0,
-      name: matchData[Object.keys(matchData).filter((team) => team !== "Format")[currentDataset - 1]][0],
+      name: totalPlayersTeamA[0],
     }
   );
 
   const format = matchData?.Format;
 
-  function handleSelection() {
-    const simplifiedPlayers = selectedPlayers.slice(0, 11).map((player, index) => ({
+  function handleAutoSelection() {
+    const teamName = Object.keys(matchData).filter((team) => team !== "Format" && !team.includes("Second_Squad"))[
+      currentDataset - 1
+    ];
+
+    const playersActualInSquad = matchData[teamName];
+
+    const simplifiedPlayers = playersActualInSquad.slice(0, 11).map((player, index) => ({
       id: index,
       name: player,
       image: getPlayerImagePath(player),
     }));
+
+    while (simplifiedPlayers.length < 11) {
+      simplifiedPlayers.push(null);
+    }
     setFilledDivs(simplifiedPlayers);
   }
 
-  function handleDetails(player: (typeof playersData.players)[0]) {
+  function handleDetails(player) {
     setDetails(player);
   }
 
-  function handleOptionClick(player: (typeof playersData.players)[0]) {
+  function handleOptionClick(player) {
     handleDetails(player);
     if (filledDivs.some((filledPlayer) => filledPlayer?.id === player.id)) {
       return;
@@ -94,8 +100,7 @@ function PeopleDisplay() {
   function handleNext() {
     if (currentDataset === 1) {
       setCurrentDataset(2);
-      setSelectedPlayers(matchData[Object.keys(matchData).filter((team) => team !== "Format")[1]]);
-      setDetails({ id: 0, name: matchData[Object.keys(matchData).filter((team) => team !== "Format")[1]][0] });
+      setDetails({ id: 0, name: totalPlayersTeamB[0] });
       setSelectedData(filledDivs.filter((player) => player !== null));
       setSelectedPlayersTeamA(filledDivs.filter((player) => player !== null));
       setFilledDivs(Array(11).fill(null));
@@ -111,7 +116,6 @@ function PeopleDisplay() {
     setSelectedPlayersTeamB(filledDivs.filter((player) => player !== null));
 
     setFilledDivs(Array(11).fill(null));
-    console.log(selectedPlayersTeamA, selectedPlayersTeamB);
 
     router.push(nextPage);
   }
@@ -205,8 +209,7 @@ function PeopleDisplay() {
       <div className={`selectionListDiv`}>
         <div className="players-list ">
           {(() => {
-            const firstTeam = Object.keys(matchData).filter((team) => team !== "Format")[currentDataset - 1];
-            const teamPlayers = matchData[firstTeam];
+            const teamPlayers = currentDataset === 1 ? totalPlayersTeamA : totalPlayersTeamB;
 
             return teamPlayers.map((playerName, playerIndex) => {
               const playerStats = aggregateStats[playerName];
@@ -232,7 +235,7 @@ function PeopleDisplay() {
 
               return (
                 <div
-                  key={`${firstTeam}-${playerIndex}`}
+                  key={`${currentDataset}-${playerIndex}`}
                   onClick={() => handleOptionClick({ id: playerIndex, name: playerName })}
                   className={`text-center cursor-pointer badge-bg ${
                     filledDivs.some((filledPlayer) => filledPlayer?.id === playerName.id) ? "cursor-not-allowed" : ""
@@ -279,7 +282,7 @@ function PeopleDisplay() {
         />
         <div className="-mb-2 ml-5">
           <h1 className="text-xl font-bold text-[#FFD700] inline">SELECTED PLAYERS</h1>
-          <button className="autoSelectBtn" onClick={handleSelection}>
+          <button className="autoSelectBtn" onClick={handleAutoSelection}>
             AUTO SELECT
           </button>
         </div>
