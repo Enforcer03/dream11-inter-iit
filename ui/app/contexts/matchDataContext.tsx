@@ -2,8 +2,8 @@
 
 import React, { createContext, ReactNode, useContext, useState } from "react";
 import { AggregateApiResponse } from "../types/aggregateApiResponse";
-import { MatchDetails } from "../types/squadApiResponse";
 import { RevaluateTeamApiResponse } from "../types/modelApiResponse";
+import { MatchDetails } from "../types/squadApiResponse";
 
 interface MatchDataContextProps {
   matchData: MatchDetails | null;
@@ -24,6 +24,8 @@ interface MatchDataContextProps {
   setSelectedPlayersTeamB: React.Dispatch<React.SetStateAction<string[]>>;
   teamStats: RevaluateTeamApiResponse;
   setTeamStats: React.Dispatch<React.SetStateAction<RevaluateTeamApiResponse>>;
+  instructionLLM: TeamLLMPara;
+  setInstructionLLM: React.Dispatch<React.SetStateAction<TeamLLMPara>>;
 }
 
 export type PlayerStats = {
@@ -34,6 +36,11 @@ export type PlayerStats = {
   bowling_points: number;
   fielding_points: number;
   team: string;
+};
+
+export type TeamLLMPara = {
+  team: string[];
+  instruction: string;
 };
 
 const MatchDataContext = createContext<MatchDataContextProps | undefined>(undefined);
@@ -52,6 +59,7 @@ export const MatchDataProvider: React.FC<{ children: ReactNode }> = ({ children 
     team_diversity_score: 0,
     form_score: 0,
   });
+  const [instructionLLM, setInstructionLLM] = useState<TeamLLMPara>({ team: [], instruction: "" });
 
   return (
     <MatchDataContext.Provider
@@ -74,6 +82,8 @@ export const MatchDataProvider: React.FC<{ children: ReactNode }> = ({ children 
         setSelectedPlayersTeamB,
         teamStats,
         setTeamStats,
+        instructionLLM,
+        setInstructionLLM,
       }}
     >
       {children}

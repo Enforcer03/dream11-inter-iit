@@ -3,10 +3,12 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { handleLLMTeam } from "../api/llmApi";
 import Button from "../components/buttonComp";
 import InfoReportPlayer from "../components/infoReportPlayer";
 import PageTemplate from "../components/pageTemplate";
 import { useMatchData } from "../contexts/matchDataContext";
+import { areStringArraysEqualIgnoreOrder } from "../utils/TeamCompare";
 
 interface PlayerData {
   id: number;
@@ -44,30 +46,28 @@ function getPlayerImagePath(
 }
 
 const PeopleDisplay = () => {
-  const { predictedTeam, selectedPlayersTeamA, selectedPlayersTeamB, playerStats } = useMatchData();
+  const { predictedTeam, selectedPlayersTeamA, selectedPlayersTeamB, instructionLLM, playerStats, setInstructionLLM } =
+    useMatchData();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [instruction, setInstruction] = useState<string>("");
   const prevPage = "/playing11";
 
   useEffect(() => {
-    async function fetchInstructions() {
-      try {
+    async function checkLoading() {
+      if (areStringArraysEqualIgnoreOrder(predictedTeam, instructionLLM.team)) {
+        if (instructionLLM.instruction === "") setIsLoading(true);
+        else setIsLoading(false);
+      } else {
         setIsLoading(true);
         const response = await handleLLMTeam(predictedTeam, JSON.stringify(playerStats), "T20");
-        setInstruction(response["team analysis"]);
+
+        setInstructionLLM({ team: predictedTeam, instruction: response["team analysis"] });
         setIsLoading(false);
-        // setInstruction(
-        //   "### Team Analysis: Optimal Combination of Players\n\n#### 1. Overall Team Balance and Composition\nThe team is well-balanced with a strong mix of batting and bowling skills. The average win percentage (38.73%) suggests a balanced approach to both offense and defense. The total combined experience of 1190 matches indicates a solid base of veteran players who can contribute effectively.\n\n#### 2. Batting Lineup Strength and Depth\n- **Batting Average**: The team has a good batting average, with players like SC Getkate (16.23) and GH Dockrell (22.52) providing a solid base.\n- **Strike Rate**: Players such as PR Stirling (141.7), KJ O'Brien (133.8), and SC Williams (126.3) offer high strike rates, which can be crucial in fantasy cricket.\n- **Consistency**: Players like MR Adair (24.9) and SC Getkate (19.9) have higher consistency scores, ensuring they perform reliably across different conditions.\n\n#### 3. Bowling Attack Variety and Effectiveness\n- **Bowling Types**: The team features a mix of right-arm pacers (KJ O'Brien, MR Adair, SC Getkate, GH Dockrell, SF Mire, KM Jarvis, TL Chatara, H Masakadza) and left-arm orthodox spinners (GH Dockrell, SC Williams).\n- **Economy Rate and Wickets**: Bowlers like GH Dockrell (7.4) and SC Williams (7.1) have low economy rates and decent wicket-taking abilities, contributing to a strong bowling attack.\n- **Wickets**: The combined total of 568 wickets from 1190 matches shows a high overall bowling quality.\n\n#### 4. Fielding Capabilities\n- **Catches**: The team boasts a robust fielding record with 252 catches (PR Stirling, KJ O'Brien, MR Adair, GH Dockrell, SC Williams, SF Mire, KM Jarvis, TL Chatara, H Masakadza) and 24 runouts, indicating strong defensive skills.\n- **Experience**: High experience levels (e.g., GH Dockrell with 167 games) contribute to better fielding coordination and positioning.\n\n#### 5. Experience and Win-Rate Contribution\n- **Experience**: The team has a combined experience of 1"
-        // );
-      } catch (error) {
-        console.error(error);
-        // console.error("There was an error fetching the instructions.");
       }
     }
 
-    fetchInstructions();
-  }, [playerStats, predictedTeam]);
+    checkLoading();
+  }, [instructionLLM, predictedTeam, playerStats, setInstructionLLM]);
 
   return (
     <div>
@@ -106,7 +106,7 @@ const PeopleDisplay = () => {
               <Image src="/loading.gif" alt="Loading..." width={100} height={100} priority />
             </div>
           ) : (
-            <ReactMarkdown>{instruction}</ReactMarkdown>
+            <ReactMarkdown>{instructionLLM.instruction}</ReactMarkdown>
           )}
         </div>
       </PageTemplate>
