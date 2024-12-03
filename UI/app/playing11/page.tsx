@@ -124,8 +124,8 @@ function Playing11() {
     <div>
       <PageTemplate title="PLAYING 11" />
       <div className="displayBoxDivDiv">
-        <button className="predictedScoreBtn" onClick={handlePredictedScoreClick}>
-          PREDICTED TOTAL SCORE {totalScore.toFixed(2)}
+        <button className="predictedScoreBtn uppercase" onClick={handlePredictedScoreClick}>
+          Get Team Info
         </button>
         <div className="displayBoxDiv">
           <DisplayBox
@@ -135,6 +135,7 @@ function Playing11() {
             selectedPlayersTeamB={selectedPlayersTeamB}
           />
         </div>
+        <button className="predictedScoreBtn mt-4">PREDICTED TOTAL SCORE {totalScore.toFixed(2)}</button>
       </div>
       <div className="buttonCompDiv">
         <BackButtonComponent>BACK</BackButtonComponent>
