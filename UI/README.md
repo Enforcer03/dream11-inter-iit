@@ -1,6 +1,9 @@
 # Product UI
 
-This folder contains the user interface (UI) components and layout designs for the **Product** module of the AI Model Predictor. The UI serves as the interactive layer where users can create and manage their fantasy teams, receive predictive insights, and explore game features.
+## Overview
+The Product UI for the Dream11 Team Prediction Game provides an intuitive and engaging platform for users to create and manage their fantasy teams. It bridges the gap between the backend AI models and users, showcasing predictions and player insights in a visually appealing manner.
+
+With features like real-time statistics and a user-friendly interface, the UI enhances the traditional fantasy gaming experience. Designed to be responsive and efficient, it caters to both casual users and competitive fantasy enthusiasts, ensuring an enjoyable and seamless gameplay experience.
 
 ## Contents
 
@@ -32,24 +35,22 @@ UI/
 
 ## Technologies Used
 
-- **React.js**: For building reusable and dynamic user interface components.
-- **Next.js**: Framework for server-side rendering and routing.
+- **ReactJs**: For building reusable and dynamic user interface components.
+- **NextJs**: Framework for server-side rendering and routing.
 - **Tailwind CSS**: For efficient and customizable styling.
-- **Axios/Fetch**: For API integration to fetch predictive and player data.
+- **Axios**: For API integration to fetch predictive and player data.
 
 ## Dependencies
 
-- The only you need for running the UI is [NodeJS](https://nodejs.org/en). Here is the installation guide for all platforms - [Installation Guide](https://nodejs.org/en/download/package-manager)
+- The only dependency you need for running the Product UI is [NodeJs](https://nodejs.org/en). Here is the installation guide for all platforms - [Installation Guide](https://nodejs.org/en/download/package-manager)
 
 ## How to Setup
 
 1. **Install Yarn** (if not already installed):
 
-- With npm:
-
-  ```bash
-    npm install --global yarn
-  ```
+   ```bash
+   npm install --global yarn
+   ```
 
 2. Navigate to the `UI/` folder:
 
@@ -73,3 +74,41 @@ UI/
    ```
    http://localhost:3000
    ```
+
+## Screenshots
+
+### Instructions Screen
+
+<p>
+  <img src="public/InstructionsCapture.png" alt="Project Screenshot" width="600">
+</p>
+
+### Match Input Screen
+
+<p>
+  <img src="public/InputMatchDetailsCapture.png" alt="Project Screenshot" width="600">
+</p>
+
+### Player Selection Screen
+
+<p>
+  <img src="public/PlayerSelectionCapture.png" alt="Project Screenshot" width="600">
+</p>
+
+### Predicted Playing XI Screen
+
+<p>
+  <img src="public/Playing11Capture.png" alt="Project Screenshot" width="600">
+</p>
+
+### Swap Player Screen
+
+<p>
+  <img src="public/SwapPlayerCapture.png" alt="Project Screenshot" width="600">
+</p>
+
+### Final Playing XI Screen
+
+<p>
+  <img src="public/FinalPlaying11Capture.png" alt="Project Screenshot" width="600">
+</p>
