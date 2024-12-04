@@ -6,7 +6,7 @@
 
 - `model/`: contains all the logic for the methodology implemented and other experiments.
 - `data_preprocessing/`: COMPLETE TEXT
-- `UI/`: contains the Product UI for the user to interact and predict the optimal team
+- `UI/`: contains the Product UI which provides interactive experience to the user and predict the optimal team
 <!-- add the test of the directories and their descriptions -->
 
 ## Dependencies
@@ -16,6 +16,36 @@
 ## How to run the Product UI?
 
 - [`Product UI README`](./UI/README.md)
+
+1. **Install Yarn** (if not already installed):
+
+   ```bash
+   npm install --global yarn
+   ```
+
+2. Navigate to the `UI/` folder:
+
+   ```bash
+   cd UI
+   ```
+
+3. Install the dependencies:
+
+   ```bash
+   yarn install
+   ```
+
+4. Start the development server:
+
+   ```bash
+   yarn dev
+   ```
+
+5. Open your browser and navigate to:
+
+   ```
+   http://localhost:3000
+   ```
 
 <!-- <mention steps to run the product UI> -->
 <!-- <include screenshots> -->

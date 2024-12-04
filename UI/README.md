@@ -1,6 +1,7 @@
 # Product UI
 
 ## Overview
+
 The Product UI for the Dream11 Team Prediction Game provides an intuitive and engaging platform for users to create and manage their fantasy teams. It bridges the gap between the backend AI models and users, showcasing predictions and player insights in a visually appealing manner.
 
 With features like real-time statistics and a user-friendly interface, the UI enhances the traditional fantasy gaming experience. Designed to be responsive and efficient, it caters to both casual users and competitive fantasy enthusiasts, ensuring an enjoyable and seamless gameplay experience.
@@ -74,6 +75,20 @@ UI/
    ```
    http://localhost:3000
    ```
+
+## Game Instructions
+
+1. **Press the START button** to kick off the game.
+2. If you need help, feel free to watch the **Video Demo**.
+3. First, enter the **date of the match**. For test matches, use the date the test started.
+4. Select the **league** for the match from the available options, choose the match, and click **NEXT**.
+5. Pick **at least 11 players in total** from both teams by clicking on their player cards.
+6. If you need to remove a player, just click on their name in the **SELECTED PLAYERS** section.
+7. After selecting your players, click **PREDICT 11** and let the model suggest the best team based on fantasy points.
+8. You’ll see the **Predicted 11**. Click on any player to see why they were chosen for the team.
+9. Click **Get Team Info** to see a summary of your team.
+10. Use the **SWAP** option to replace a player and instantly see how it affects your team.
+11. Once you’re happy with your team, click **FINALIZE** to confirm. You can then click **SAVE** to capture a screenshot of your final team.
 
 ## Screenshots
 
