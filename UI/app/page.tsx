@@ -13,7 +13,7 @@ function InstructionsPage() {
         <InstructionSet />
       </PageTemplate>
       <div className="buttonCompDiv">
-        <Button nextPage={nextPage}>NEXT</Button>
+        <Button nextPage={nextPage}>START</Button>
       </div>
       <div className="videoCompDiv">
         <VideoComp nextPage="/video-instructions">

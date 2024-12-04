@@ -1,10 +1,11 @@
-1. Press the "Start" button to begin the process.
-2. Make sure your device is connected to the internet before proceeding.
-3. Save your work frequently to avoid losing progress.
-4. If an error occurs, restart the application and try again.
-5. Complete the form on the next screen to continue.
-6. Double-check all the fields for accuracy before submitting.
-7. Ensure the battery is charged to at least 50% for optimal performance.
-8. Click "Next" to move to the next step of the tutorial.
-9. Reach out to support if you encounter any issues.
-10. If the issue persists, reinstall the application and try again.If the issue persists, reinstall the application and try again.If the issue persists, reinstall the application and try again.
+1. Press the START button to initialise the game.
+2. You can watch the Video Demo if you need any help.
+3. First input the date of the match. For test matches input the date the test started
+4. Select the league of the match from the available options and then select the relevant match and click NEXT.
+5. Select atleast 11 players from both the teams by clicking on the player cards. 
+6. If you want to remove some player from the team, just click on the player in the SELECTED PLAYERS section.
+7. After selecting players from both the teams, click on PREDICT 11 and wait for the model to give the predicted team with the most fantasy points
+8. Now you will see the Predicted 11 from the model. You click on individual player cards to get information why they were taken in the team.
+9. You can also click on Get Team Info to get the team summary.
+10. Now you can click on SWAP to replace any player with other and see in real-time the changes it would make to the team.
+11. Click FINALIZE to get the final team after swapping. You can click SAVE to save the team as screenshot.
