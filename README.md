@@ -1,4 +1,4 @@
-<img src="media/d11_logo.png" width="200">
+<img src="d11_logo.png" width="200">
 
 # AI Team Builder - Inter IIT 13.0
 
