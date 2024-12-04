@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Product UI
 
-## Getting Started
+This folder contains the user interface (UI) components and layout designs for the **Product** module of the AI Model Predictor. The UI serves as the interactive layer where users can create and manage their fantasy teams, receive predictive insights, and explore game features.
 
-First, run the development server:
+## Contents
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- [Features](#features)
+- [Folder Structure](#folder-structure)
+- [Technologies Used](#technologies-used)
+- [Dependencies](#dependencies)
+- [Setup](#how-to-setup)
+
+## Features
+
+- **Team Creation Interface**: Allows users to select players and create fantasy teams.
+- **Prediction Visualization**: Displays predictive insights to assist users in building better teams.
+- **User-Friendly Design**: Responsive and intuitive design tailored for a seamless gaming experience.
+- **Interactive Dashboard**: View team performance and player statistics.
+
+## Folder Structure
+
+```plaintext
+UI/
+├── app/           # Contains the core application structure
+│   ├── api/  # API requests for different functions using axios
+│   ├── components/  # Reusable React components for the UI
+│   ├── contexts/  # React contexts for state management
+│   ├── types/  # Typescript types
+│   └── [route]/      # Page-specific layouts and views
+├── public/        # Static assets such as images, icons, and logos
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Technologies Used
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **React.js**: For building reusable and dynamic user interface components.
+- **Next.js**: Framework for server-side rendering and routing.
+- **Tailwind CSS**: For efficient and customizable styling.
+- **Axios/Fetch**: For API integration to fetch predictive and player data.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Dependencies
 
-## Learn More
+- The only you need for running the UI is [NodeJS](https://nodejs.org/en). Here is the installation guide for all platforms - [Installation Guide](https://nodejs.org/en/download/package-manager)
 
-To learn more about Next.js, take a look at the following resources:
+## How to Setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Install Yarn** (if not already installed):
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- With npm:
 
-## Deploy on Vercel
+  ```bash
+    npm install --global yarn
+  ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. Navigate to the `UI/` folder:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```bash
+   cd UI
+   ```
+
+3. Install the dependencies:
+
+   ```bash
+   yarn install
+   ```
+
+4. Start the development server:
+
+   ```bash
+   yarn dev
+   ```
+
+5. Open your browser and navigate to:
+   ```
+   http://localhost:3000
+   ```
