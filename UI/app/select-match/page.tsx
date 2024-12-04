@@ -2,19 +2,19 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { getAggregateStats } from "../api/aggregateSquad";
 import { getSquadsByDate } from "../api/squads";
+import BackButtonComponent from "../components/backButton";
 import ButtonComponent from "../components/buttonComp";
+import { replaceNullData } from "../components/dummyData";
 import LeagueSelector from "../components/leagueSelector";
 import MatchSelector from "../components/matchSelector";
 import PageTemplate from "../components/pageTemplate";
 import VideoComp from "../components/videoSet";
 import { useMatchData } from "../contexts/matchDataContext";
 import { MatchDetails, SquadApiResponse } from "../types/squadApiResponse";
-import BackButtonComponent from "../components/backButton";
-import { replaceNullData } from "../components/dummyData";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 type MatchDateInputProps = {
   date: string;
@@ -29,6 +29,16 @@ type MatchDateInputProps = {
 function isValidDateFormat(dateString: string) {
   const datePattern = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
   return datePattern.test(dateString);
+}
+
+function formatDate(value: string) {
+  if (value.length > 4) {
+    return `${value.slice(0, 2)}/${value.slice(2, 4)}/${value.slice(4)}`;
+  } else if (value.length > 2) {
+    return `${value.slice(0, 2)}/${value.slice(2)}`;
+  } else {
+    return value;
+  }
 }
 
 function formatWithPlaceholder(value: string) {
@@ -56,14 +66,20 @@ function MatchDateInput({
 }: MatchDateInputProps) {
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     let value = e.target.value.replace(/[^0-9]/g, "");
+
+    if (e.nativeEvent.inputType === "deleteContentBackward") {
+      const updatedValue = value.slice(0, -1); // Remove the last character
+      const formattedDate = formatDate(updatedValue);
+      setDate(formattedDate);
+      if (isValidDateFormat(formattedDate)) {
+        handleGetSquads(formattedDate);
+      }
+      return;
+    }
+
     if (value.length > 8) value = value.slice(0, 8);
 
-    let formattedDate = value;
-    if (value.length > 4) {
-      formattedDate = `${value.slice(0, 2)}/${value.slice(2, 4)}/${value.slice(4)}`;
-    } else if (value.length > 2) {
-      formattedDate = `${value.slice(0, 2)}/${value.slice(2)}`;
-    }
+    const formattedDate = formatDate(value);
 
     setDate(formattedDate);
     if (isValidDateFormat(formattedDate)) {
