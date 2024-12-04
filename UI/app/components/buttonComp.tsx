@@ -48,7 +48,7 @@ const ButtonComponent = ({ children, nextPage, onClick, disabled, downloadScreen
     <button
       onClick={handleClick}
       disabled={disabled}
-      className={`buttonComp backdrop-blur uppercase ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+      className={`buttonComp backdrop-blur-4xl uppercase ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
     >
       {children}
     </button>

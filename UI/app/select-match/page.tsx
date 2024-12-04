@@ -13,6 +13,8 @@ import { useMatchData } from "../contexts/matchDataContext";
 import { MatchDetails, SquadApiResponse } from "../types/squadApiResponse";
 import BackButtonComponent from "../components/backButton";
 import { replaceNullData } from "../components/dummyData";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 type MatchDateInputProps = {
   date: string;
@@ -92,12 +94,9 @@ function MatchDateInput({
       setAllMatches(newAllMatches);
       setMatchData(newMatchData);
     } catch (error) {
-      if (error.response.data.error === "No match found") {
-        console.log(error.response.data.error);
-        return;
-      }
-
-      console.error(error);
+      console.log(error.response.data.error);
+      toast.error(error.response.data.error);
+      throw error;
     }
   }
 
@@ -129,9 +128,6 @@ function SelectMatchScreen() {
   async function handleNextButton() {
     try {
       if (matchData === null) return;
-      console.log("League", league);
-
-      console.log("Match Data", matchData);
 
       const teams = Object.keys(matchData).filter((team) => team != "Format");
 
@@ -143,7 +139,7 @@ function SelectMatchScreen() {
       const combinePlayerList = teamPlayers.map((team) => team.players).flat();
 
       const response = await getAggregateStats(combinePlayerList, matchData["Format"]);
-      console.log("Aggregate", response);
+
       const modifiedResponse = replaceNullData(response);
       setAggregateStats(modifiedResponse);
       router.push(nextPage);
@@ -192,6 +188,7 @@ function SelectMatchScreen() {
           VIDEO <span className="text-white">DEMO</span>
         </VideoComp>
       </div>
+      <ToastContainer theme="dark" />
     </div>
   );
 }
