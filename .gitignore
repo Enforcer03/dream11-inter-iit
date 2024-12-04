@@ -181,5 +181,5 @@ old_data/
 node_modules/
 raw/
 
-.vscode
+.vscode/
 APIs/
