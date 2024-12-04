@@ -544,3 +544,21 @@ th {
   height: 300px;
   width: 300px;
 }
+
+.badge-bg-captain {
+  background-image: url("../public/Captain.svg");
+  background-repeat: no-repeat;
+  padding: 10px;
+  margin: 0rem 0.7rem;
+  width: 9.5rem;
+  height: 17rem;
+}
+
+.badge-bg-vcaptain {
+  background-image: url("../public/VCaptain.svg");
+  background-repeat: no-repeat;
+  padding: 10px;
+  margin: 0rem 0.7rem;
+  width: 9.5rem;
+  height: 17rem;
+}

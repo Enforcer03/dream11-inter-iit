@@ -64,6 +64,9 @@ export const MatchDataProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [instructionLLM, setInstructionLLM] = useState<TeamLLMPara>({ team: [], instruction: "" });
   const [totalScore, setTotalScore] = useState<number>(0);
 
+  const [highestScorePlayer, setHighestScorePlayer] = useState(0);
+  const [secondHighestScorePlayer, setSecondHighestScorePlayer] = useState(0);
+
   return (
     <MatchDataContext.Provider
       value={{
@@ -89,6 +92,10 @@ export const MatchDataProvider: React.FC<{ children: ReactNode }> = ({ children 
         setInstructionLLM,
         totalScore,
         setTotalScore,
+        highestScorePlayer,
+        setHighestScorePlayer,
+        secondHighestScorePlayer,
+        setSecondHighestScorePlayer,
       }}
     >
       {children}

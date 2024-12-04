@@ -31,6 +31,10 @@ function Playing11() {
     setInstructionLLM,
     totalScore,
     setTotalScore,
+    setHighestScorePlayer,
+    setSecondHighestScorePlayer,
+    highestScorePlayer,
+    secondHighestScorePlayer,
   } = useMatchData();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -84,9 +88,28 @@ function Playing11() {
 
         let total_score = 0;
 
+        const scores = [];
+
         for (let i = 0; i < player_stats.length; i++) {
           if (response.best_team.includes(player_stats[i].player)) {
-            if (player_stats[i].mean_points > 0) total_score += player_stats[i].mean_points;
+            if (player_stats[i].mean_points > 0) {
+              scores.push(player_stats[i].mean_points);
+              total_score += player_stats[i].mean_points;
+            }
+          }
+        }
+
+        scores.sort();
+
+        for (let i = 0; i < player_stats.length; i++) {
+          if (response.best_team.includes(player_stats[i].player)) {
+            if (player_stats[i].mean_points === scores[scores.length - 1]) {
+              setHighestScorePlayer({ name: player_stats[i].player, score: scores[scores.length - 1] });
+            }
+
+            if (player_stats[i].mean_points === scores[scores.length - 2]) {
+              setSecondHighestScorePlayer({ name: player_stats[i].player, score: scores[scores.length - 2] });
+            }
           }
         }
 
@@ -114,6 +137,8 @@ function Playing11() {
     selectedPlayersTeamB,
     setTeamStats,
     setTotalScore,
+    setHighestScorePlayer,
+    setSecondHighestScorePlayer,
   ]);
 
   if (isLoading) {
@@ -133,6 +158,8 @@ function Playing11() {
             playerStats={playerStats}
             selectedPlayersTeamA={selectedPlayersTeamA}
             selectedPlayersTeamB={selectedPlayersTeamB}
+            highestScorePlayer={highestScorePlayer}
+            secondHighestScorePlayer={secondHighestScorePlayer}
           />
         </div>
         <button className="predictedScoreBtn mt-4">PREDICTED TOTAL SCORE {totalScore.toFixed(2)}</button>

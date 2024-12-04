@@ -9,6 +9,8 @@ function PlayerList({
   playerStats,
   selectedPlayersTeamA,
   selectedPlayersTeamB,
+  highestScorePlayer,
+  secondHighestScorePlayer,
 }: {
   predictedTeam: string[];
   playerStats: PlayerStats[];
@@ -66,42 +68,121 @@ function PlayerList({
 
   return (
     <div className="players-list">
-      {predictedTeam.map((player, index) => (
-        <div
-          key={index}
-          className="badge-bg cursor-pointer"
-          onClick={() =>
-            handlePlayerClick(player, getPlayerImagePath(player, selectedPlayersTeamA, selectedPlayersTeamB))
-          }
-        >
-          <div className="player-image-container">
-            <div className="image-container">
-              <img
-                src={getPlayerImagePath(player, selectedPlayersTeamA, selectedPlayersTeamB)}
-                alt="Player Image"
-                className="player-image"
-              />
+      {predictedTeam.map((player, index) => {
+        if (player === highestScorePlayer.name) {
+          return (
+            <div
+              key={index}
+              className="badge-bg-captain cursor-pointer"
+              onClick={() =>
+                handlePlayerClick(player, getPlayerImagePath(player, selectedPlayersTeamA, selectedPlayersTeamB))
+              }
+            >
+              <div className="player-image-container">
+                <div className="image-container">
+                  <img
+                    src={getPlayerImagePath(player, selectedPlayersTeamA, selectedPlayersTeamB)}
+                    alt="Player Image"
+                    className="player-image"
+                  />
+                </div>
+              </div>
+              <div className="player-bio-container">
+                <h4 className="player-name">
+                  {player.split(" ")[0].charAt(0)}. {player.split(" ").slice(1).join(" ").slice(0, 10)}
+                </h4>
+                <hr className="player-hr" />
+                <div className="player-bio">
+                  <div className="flex flex-col">
+                    <p className="w-full ">🏏: {playerStatsLookup[player].batting_points.toFixed(1)}</p>
+                    <p className="w-full">W: {playerStatsLookup[player].fielding_points.toFixed(1)}</p>
+                  </div>
+                  <hr className="badge-hr" />
+                  <div className="flex flex-col">
+                    <p className="w-full">⚾️: {playerStatsLookup[player].bowling_points.toFixed(1)}</p>
+                    <p className="w-full">Av: {playerStatsLookup[player].mean_points.toFixed(1)}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        if (player === secondHighestScorePlayer.name) {
+          return (
+            <div
+              key={index}
+              className="badge-bg-vcaptain cursor-pointer"
+              onClick={() =>
+                handlePlayerClick(player, getPlayerImagePath(player, selectedPlayersTeamA, selectedPlayersTeamB))
+              }
+            >
+              <div className="player-image-container">
+                <div className="image-container">
+                  <img
+                    src={getPlayerImagePath(player, selectedPlayersTeamA, selectedPlayersTeamB)}
+                    alt="Player Image"
+                    className="player-image"
+                  />
+                </div>
+              </div>
+              <div className="player-bio-container">
+                <h4 className="player-name">
+                  {player.split(" ")[0].charAt(0)}. {player.split(" ").slice(1).join(" ").slice(0, 10)}
+                </h4>
+                <hr className="player-hr" />
+                <div className="player-bio">
+                  <div className="flex flex-col">
+                    <p className="w-full ">🏏: {playerStatsLookup[player].batting_points.toFixed(1)}</p>
+                    <p className="w-full">W: {playerStatsLookup[player].fielding_points.toFixed(1)}</p>
+                  </div>
+                  <hr className="badge-hr" />
+                  <div className="flex flex-col">
+                    <p className="w-full">⚾️: {playerStatsLookup[player].bowling_points.toFixed(1)}</p>
+                    <p className="w-full">Av: {playerStatsLookup[player].mean_points.toFixed(1)}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        }
+        return (
+          <div
+            key={index}
+            className="badge-bg cursor-pointer"
+            onClick={() =>
+              handlePlayerClick(player, getPlayerImagePath(player, selectedPlayersTeamA, selectedPlayersTeamB))
+            }
+          >
+            <div className="player-image-container">
+              <div className="image-container">
+                <img
+                  src={getPlayerImagePath(player, selectedPlayersTeamA, selectedPlayersTeamB)}
+                  alt="Player Image"
+                  className="player-image"
+                />
+              </div>
+            </div>
+            <div className="player-bio-container">
+              <h4 className="player-name">
+                {player.split(" ")[0].charAt(0)}. {player.split(" ").slice(1).join(" ").slice(0, 10)}
+              </h4>
+              <hr className="player-hr" />
+              <div className="player-bio">
+                <div className="flex flex-col">
+                  <p className="w-full ">🏏: {playerStatsLookup[player].batting_points.toFixed(1)}</p>
+                  <p className="w-full">W: {playerStatsLookup[player].fielding_points.toFixed(1)}</p>
+                </div>
+                <hr className="badge-hr" />
+                <div className="flex flex-col">
+                  <p className="w-full">⚾️: {playerStatsLookup[player].bowling_points.toFixed(1)}</p>
+                  <p className="w-full">Av: {playerStatsLookup[player].mean_points.toFixed(1)}</p>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="player-bio-container">
-            <h4 className="player-name">
-              {player.split(" ")[0].charAt(0)}. {player.split(" ").slice(1).join(" ").slice(0, 10)}
-            </h4>
-            <hr className="player-hr" />
-            <div className="player-bio">
-              <div className="flex flex-col">
-                <p className="w-full ">🏏: {playerStatsLookup[player].batting_points.toFixed(1)}</p>
-                <p className="w-full">W: {playerStatsLookup[player].fielding_points.toFixed(1)}</p>
-              </div>
-              <hr className="badge-hr" />
-              <div className="flex flex-col">
-                <p className="w-full">⚾️: {playerStatsLookup[player].bowling_points.toFixed(1)}</p>
-                <p className="w-full">Av: {playerStatsLookup[player].mean_points.toFixed(1)}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

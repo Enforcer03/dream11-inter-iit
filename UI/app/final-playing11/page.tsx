@@ -11,8 +11,18 @@ import { areStringArraysEqualIgnoreOrder } from "../utils/TeamCompare";
 import BackButtonComponent from "../components/backButton";
 
 function FinalPlaying11() {
-  const { playerStats, predictedTeam, selectedPlayersTeamA, selectedPlayersTeamB, instructionLLM, setInstructionLLM } =
-    useMatchData();
+  const {
+    playerStats,
+    predictedTeam,
+    selectedPlayersTeamA,
+    selectedPlayersTeamB,
+    instructionLLM,
+    setInstructionLLM,
+    setHighestScorePlayer,
+    setSecondHighestScorePlayer,
+    highestScorePlayer,
+    secondHighestScorePlayer,
+  } = useMatchData();
 
   const [totalScore, setTotalScore] = useState(0);
   const router = useRouter();
@@ -24,13 +34,32 @@ function FinalPlaying11() {
   useEffect(() => {
     let total_score = 0;
 
+    const scores = [];
+
     for (let i = 0; i < playerStats.length; i++) {
       if (predictedTeam.includes(playerStats[i].player)) {
-        if (playerStats[i].mean_points > 0) total_score += playerStats[i].mean_points;
+        if (playerStats[i].mean_points > 0) {
+          scores.push(playerStats[i].mean_points);
+          total_score += playerStats[i].mean_points;
+        }
+      }
+    }
+
+    scores.sort();
+
+    for (let i = 0; i < playerStats.length; i++) {
+      if (predictedTeam.includes(playerStats[i].player)) {
+        if (playerStats[i].mean_points === scores[scores.length - 1]) {
+          setHighestScorePlayer({ name: playerStats[i].player, score: scores[scores.length - 1] });
+        }
+
+        if (playerStats[i].mean_points === scores[scores.length - 2]) {
+          setSecondHighestScorePlayer({ name: playerStats[i].player, score: scores[scores.length - 2] });
+        }
       }
     }
     setTotalScore(total_score);
-  }, [playerStats, predictedTeam]);
+  }, [playerStats, predictedTeam, setHighestScorePlayer, setSecondHighestScorePlayer]);
 
   useEffect(() => {
     async function fetchInstructions() {
@@ -68,6 +97,8 @@ function FinalPlaying11() {
             playerStats={playerStats}
             selectedPlayersTeamA={selectedPlayersTeamA}
             selectedPlayersTeamB={selectedPlayersTeamB}
+            highestScorePlayer={highestScorePlayer}
+            secondHighestScorePlayer={secondHighestScorePlayer}
           />
         </div>
         <button className="predictedScoreBtn mt-4">PREDICTED TOTAL SCORE {totalScore.toFixed(2)}</button>
